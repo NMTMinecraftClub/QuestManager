@@ -1,5 +1,6 @@
 package nmt.minecraft.QuestManager;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,5 +17,71 @@ public class QuestManagerPlugin extends JavaPlugin {
 	public static QuestManagerPlugin questManagerPlugin;
 	
 	private List<QuestManager> managers;
+	
+	@Override
+	public void onLoad() {
+		QuestManagerPlugin.questManagerPlugin = this;
+		
+		
+	}
+	
+	@Override
+	public void onEnable() {
+		managers = new LinkedList<QuestManager>();
+		
+	}
+	
+	/**
+	 * Adds the requested manager to the list of active managers.<br />
+	 * @param manager
+	 */
+	public void registerManager(QuestManager manager) {
+		managers.add(manager);
+	}
+	
+	/**
+	 * Attempts to remove the passed manager.<br />
+	 * @param manager
+	 * @return
+	 */
+	public boolean unregisterManager(QuestManager manager) {
+		return managers.remove(manager);
+	}
+	
+	/**
+	 * Attempts to softly stop all running quest managers and quests.<br />
+	 * Quest managers (and underlying quests) may not be able to stop softly,
+	 * and this method is not guaranteed to stop all quests (<i>especially</i>
+	 * immediately).
+	 */
+	public void stopAllQuests() {
+		if (managers == null || managers.isEmpty()) {
+			return;
+		}
+	
+		for (QuestManager man : managers) {
+			man.stopQuests();
+		}
+	}
+	
+	/**
+	 * Performs a hard stop to all quests.<br />
+	 * Quests that are halted are not expected to perform any sort of save-state
+	 * procedure, not halt in a particularly pretty manner. <br />
+	 * Halting a quest <i>guarantees</i> that it will stop immediately upon
+	 * receipt of the halt notice.
+	 */
+	public void haltAllQuests() {
+		
+		if (managers == null || managers.isEmpty()) {
+			return;
+		}
+	
+		for (QuestManager man : managers) {
+			man.haltQuests();
+		}
+		
+	}
+	
 	
 }
