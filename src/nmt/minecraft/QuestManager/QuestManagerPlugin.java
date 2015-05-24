@@ -1,8 +1,14 @@
 package nmt.minecraft.QuestManager;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -22,9 +28,17 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private List<QuestManager> managers;
 	
+	private YamlConfiguration config;
+	
+	private static String configFileName = "QuestManagerConfig.yml";
+	
+	public static final double version = 1.00;
+	
 	@Override
 	public void onLoad() {
 		QuestManagerPlugin.questManagerPlugin = this;
+		
+		//load up config
 		
 		
 	}
