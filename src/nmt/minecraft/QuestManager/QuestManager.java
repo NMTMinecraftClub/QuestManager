@@ -17,6 +17,15 @@ public class QuestManager {
 		quests = new LinkedList<Quest>();
 	}
 	
+	/**
+	 * Registers the quest, providing no frequency information.<br />
+	 * Quests without frequency information are given equal chances of being
+	 * produced when requesting a random quest.
+	 */
+	public void registerQuest(Quest quest) {
+		quests.add(quest);
+	}
+	
 	
 	/**
 	 * Passes a stop signal to all quest managers, requesting a soft stop.<br />
