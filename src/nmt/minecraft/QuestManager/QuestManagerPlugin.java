@@ -10,7 +10,11 @@ import org.bukkit.plugin.java.JavaPlugin;
  * the user. <br />
  * 
  * @author Skyler
- *
+ * @todo Figure out where QuestManagers are going to be created. Through a
+ * command? If so, how do you specify which quests for which manager? Do you
+ * go through every single one and add it? Maybe instead through configs? 
+ * What do the configs need? Maybe world name, list of quest names? How do
+ * we look up quests by quest name? [next step]
  */
 public class QuestManagerPlugin extends JavaPlugin {
 	
