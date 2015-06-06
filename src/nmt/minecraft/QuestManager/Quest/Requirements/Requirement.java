@@ -41,7 +41,6 @@ public abstract class Requirement {
 	public Requirement(Goal goal, String description) {
 		this.goal = goal;
 		this.desc = description;
-		this.state = false;
 	}
 	
 	/**
