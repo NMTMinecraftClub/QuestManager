@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
  * 
  * @breakdown
  * quests run and stop. They save their state and load their state. They 
- * subscribe to events and have objectives. They are completed or failed.
+ * subscribe to events and have {@link Requirement Requirements}. They are completed or failed.
  * They have rewards, disperse rewards, and collect tolls. They do whatever
  * the heck they want.
  * 
