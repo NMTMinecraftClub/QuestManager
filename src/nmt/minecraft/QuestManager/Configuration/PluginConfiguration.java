@@ -22,8 +22,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class PluginConfiguration {
 	
-	public static final double generatorVersion = 1.00;
-	
 	private YamlConfiguration config;
 	
 	
