@@ -2,6 +2,7 @@ package nmt.minecraft.QuestManager.Configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class QuestState {
 	@SuppressWarnings("unchecked")
 	public void load(YamlConfiguration config) throws InvalidConfigurationException {
 		
-		if (!config.contains("name") || !config.contains("goals")) {
+		if (!config.contains("saveTime") || !config.contains("name") || !config.contains("goals")) {
 			throw new InvalidConfigurationException();
 		}
 		
@@ -40,6 +41,8 @@ public class QuestState {
 	
 	public void save(File file) throws IOException {
 		YamlConfiguration config = new YamlConfiguration();
+		
+		config.set("saveTime", (new Date()).getTime());
 		
 		config.set("name", name);
 		
