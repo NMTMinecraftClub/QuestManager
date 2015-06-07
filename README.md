@@ -10,7 +10,7 @@ Abstraction
 
 Typically in games involving quests, very specific information (such as location information, dialog & dialog options, etc) is very closely married (coupled) with the codebase behind it. Quest systems derived from configuration files typically only include text-based RPG's and similar, as the more specific information is neccassary for games with a higher dimenionallity/complexity. To address this issue, QM:
 
-	* Defines an expanded configuration vocabulary
-	* Is optimized for large configuration file reading
+    * Defines an expanded configuration vocabulary
+    * Is optimized for large configuration file reading
 
 
