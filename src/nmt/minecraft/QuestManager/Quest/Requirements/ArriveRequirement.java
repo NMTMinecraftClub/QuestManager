@@ -8,6 +8,11 @@ import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+/**
+ * Requirement that a participant must arrive at a location (or be within some radius of it)
+ * @author Skyler
+ *
+ */
 public class ArriveRequirement extends Requirement {
 	
 	/**
