@@ -124,8 +124,8 @@ public class QuestPlayer implements Participant {
 	}
 
 	@Override
-	public Collection<Participant> getParticipants() {
-		Collection<Participant> col = new ArrayList<Participant>();
+	public Collection<QuestPlayer> getParticipants() {
+		Collection<QuestPlayer> col = new ArrayList<QuestPlayer>();
 		col.add(this);
 		return col;
 	}

@@ -1,6 +1,5 @@
 package nmt.minecraft.QuestManager.Player;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,7 +38,7 @@ public class Party implements Participant {
 	}
 	
 	@Override
-	public Collection<Participant> getParticipants() {
-		return new ArrayList<Participant>(players);
+	public Collection<QuestPlayer> getParticipants() {
+		return players;
 	}
 }

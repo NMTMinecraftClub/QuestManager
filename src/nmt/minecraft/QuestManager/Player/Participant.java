@@ -19,6 +19,6 @@ public interface Participant {
 	 * @return
 	 * @todo decouple implementation :'(
 	 */
-	Collection<Participant> getParticipants();
+	Collection<QuestPlayer> getParticipants();
 	
 }
