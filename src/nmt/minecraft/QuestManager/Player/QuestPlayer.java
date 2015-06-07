@@ -102,6 +102,10 @@ public class QuestPlayer implements Participant {
 		return quests.remove(quest);
 	}
 	
+	public Player getPlayer() {
+		return player;
+	}
+	
 	/**
 	 * Returns the currently-stored information in a YamlConfiguration. <br />
 	 * Output from this method should be expected to be used with {@link QuestPlayer#fromConfig(YamlConfiguration)}
