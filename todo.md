@@ -33,5 +33,5 @@ Extra Features
 + Visual information, like hovering text over monsters or party members, etc
 + A nice visual way of interacting with quest components, like clicking
   responses in the chat bar instead of typing in commands
-
++ Add a graphical editor for quest configuration files
 
