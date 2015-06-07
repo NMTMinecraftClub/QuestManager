@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -37,14 +39,36 @@ public class QuestPlayer implements Participant {
 		
 		QuestPlayer qp = null;
 		
+		if (!config.contains("Player") || !config.contains("History") || !config.contains("Quests")) {
+			throw new InvalidConfigurationException();
+		}
 		
 		
 		
-		//TODO
+		/*
+		 * config.set("Player", player.getUniqueId().toString());
+		config.set("History", history.toConfig());
+		config.set("Quests", quests);
+		 */
 		
+		qp = new QuestPlayer();
+		
+		UUID id = UUID.fromString(config.getString("Player"));
+		Player player = Bukkit.getPlayer(id);
+		History history = History.fromConfig((YamlConfiguration) config.getConfigurationSection("History"));
+		@SuppressWarnings("unchecked")
+		List<Quest> quests = (List<Quest>) config.getList("Quests");
+		
+		qp.player = player;
+		qp.history = history;
+		qp.quests = quests;
 		
 		return qp;
 		
+	}
+	
+	private QuestPlayer() {
+		; //do nothing. This is for non-redundant defining of QuestPlayers from config
 	}
 	
 	/**
