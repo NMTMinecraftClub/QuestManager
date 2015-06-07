@@ -1,6 +1,7 @@
 package nmt.minecraft.QuestManager.Quest;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
@@ -43,7 +44,7 @@ public abstract class Requirement {
 		this.desc = description;
 	}
 	
-	public abstract void fromConfig(YamlConfiguration config);
+	public abstract void fromConfig(YamlConfiguration config) throws InvalidConfigurationException;
 	
 	/**
 	 * Returns the goal this requirement belongs to

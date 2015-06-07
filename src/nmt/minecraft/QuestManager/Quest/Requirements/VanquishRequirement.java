@@ -1,6 +1,7 @@
 package nmt.minecraft.QuestManager.Quest.Requirements;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.RequirementState;
 import nmt.minecraft.QuestManager.Configuration.StatekeepingRequirement;
 import nmt.minecraft.QuestManager.Quest.Goal;
@@ -18,7 +19,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * Requirement that a given entity must be slain.<br />
@@ -95,15 +95,8 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		foeSection.set("name", foe.getCustomName());
 		foeSection.set("location", foe.getLocation());
 		
-		//do equips the dirty way :S
-		ConfigurationSection equips = foeSection.createSection("equipment");
-		EntityEquipment equipment = foe.getEquipment();
-		
-		equips.set("head", equipment.getHelmet());
-		equips.set("chest", equipment.getChestplate());
-		equips.set("legs", equipment.getLeggings());
-		equips.set("boots", equipment.getBoots());
-		equips.set("held", equipment.getItemInHand());
+		EquipmentConfiguration econ = new EquipmentConfiguration(foe.getEquipment());
+		foeSection.set("equipment", econ.getConfiguration());
 		
 		return myState;
 	}
@@ -124,21 +117,24 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		foe.setCustomName(foeState.getString("name"));
 		
 		EntityEquipment equipment = foe.getEquipment();
-		equipment.setHelmet(
-				(ItemStack) foeState.get("head"));
-		equipment.setChestplate(
-				(ItemStack) foeState.get("chest"));
-		equipment.setLeggings(
-				(ItemStack) foeState.get("legs"));
-		equipment.setBoots(
-				(ItemStack) foeState.get("boots"));
-		equipment.setItemInHand(
-				(ItemStack) foeState.get("held"));
+		EquipmentConfiguration econ = new EquipmentConfiguration();
+		econ.load((YamlConfiguration) foeState.get("equipment"));
+		
+		equipment.setHelmet(econ.getHead());
+		equipment.setChestplate(econ.getChest());
+		equipment.setLeggings(econ.getLegs());
+		equipment.setBoots(econ.getBoots());
+		equipment.setItemInHand(econ.getHeld());
 	}
 
 	@Override
-	public void fromConfig(YamlConfiguration config) {
-		// TODO Auto-generated method stub
+	public void fromConfig(YamlConfiguration config) throws InvalidConfigurationException {
+		//what we need to load is the type of foe and his states
+		//this is pretty much loadState
+		
+		//for laziness imma just do the same thing
+		loadState((RequirementState) config);
+		
 		
 	}
 	
