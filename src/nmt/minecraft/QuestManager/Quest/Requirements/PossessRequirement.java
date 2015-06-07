@@ -72,6 +72,8 @@ public class PossessRequirement extends Requirement implements Listener {
 		}
 		
 		state = false;
+		
+		updateQuest();
 	}
 	
 	
