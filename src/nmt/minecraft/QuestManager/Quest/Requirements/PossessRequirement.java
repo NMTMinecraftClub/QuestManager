@@ -23,17 +23,20 @@ public class PossessRequirement extends Requirement implements Listener {
 	
 	private Participant participants;
 	
-	public PossessRequirement(Goal goal, Material itemType) {
-		this(goal, "", itemType, 1);
+	public PossessRequirement(Participant participants, Goal goal, Material itemType) {
+		this(participants, goal, "", itemType, 1);
 	}
 	
-	public PossessRequirement(Goal goal, String description, Material itemType) {
-		this(goal, description, itemType, 1);
+	public PossessRequirement(Participant participants, Goal goal, String description, Material itemType) {
+		this(participants, goal, description, itemType, 1);
 	}
 	
-	public PossessRequirement(Goal goal, String description, Material itemType, int itemCount) {
+	public PossessRequirement(Participant participants, Goal goal, String description, Material itemType, int itemCount) {
 		super(goal, description);
 		state = false;
+		this.itemType = itemType;
+		this.itemCount = itemCount;
+		this.participants = participants;
 	}
 
 	/**
