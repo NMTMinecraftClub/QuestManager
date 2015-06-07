@@ -7,44 +7,44 @@ import nmt.minecraft.QuestManager.Quest.Requirement;
 
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 /**
- * Requirement that a participant must arrive at a location (or be within some radius of it)<br />
- * This requirement <b>does not require</b> that a participant <i>stay</i> at the location.
- * It only requires that someone get there at some point.
+ * Requirement that a participant must be at the provided location.<br />
+ * Unlike the {@link ArriveRequirement} this requirement is that someone be located there
+ * for this to be completed. That means if they leave, the requirement will no longer
+ * be satisfied!
  * @author Skyler
- * @see {@link PositionRequirement}
+ * @see {@link ArriveRequirement}
  */
-public class ArriveRequirement extends Requirement implements Listener {
+public class PositionRequirement extends Requirement implements Listener {
 	
 	/**
-	 * Who's involved
+	 * Who must satisfy the requirement?
 	 */
 	private Participant participants;
 	
 	/**
-	 * Where they need to go
+	 * Where the participant must be
 	 */
 	private Location destination;
 	
 	/**
-	 * How close they can be to the destination to call it good (in blocks)
+	 * How close they can be to the destination to count as satisfied
 	 */
 	private double targetRange;
 	
-	public ArriveRequirement(Goal goal, Participant participants, Location location, double range) {
-		this(goal, "", participants, location, range);
+	public PositionRequirement(Goal goal, Participant participants, Location destination, double range) {
+		this(goal, "", participants, destination, range);
 	}
 	
-	public ArriveRequirement(Goal goal, String description, Participant participants, Location location, double range) {
+	public PositionRequirement(Goal goal, String description, Participant participants, Location destination, double range) {
 		super(goal, description);
-		
 		this.participants = participants;
-		this.destination = location;
+		this.destination = destination;
 		this.targetRange = range;
+		this.state = false;
 	}
 
 	/**
@@ -74,22 +74,15 @@ public class ArriveRequirement extends Requirement implements Listener {
 	}
 	
 	/**
-	 * Checks if any of the involved participants is within range of the location.
+	 * Checks whether at least one participant is in the required area
 	 */
 	@Override
 	public void update() {
 		
-		if (state) {
-			return;
-		}
-		
 		for (QuestPlayer player : participants.getParticipants()) {
-			if (player.getPlayer().getLocation().distance(destination) < targetRange) {
+			if (player.getPlayer().getLocation().distance(destination) <= targetRange) {
 				state = true;
 				updateQuest();
-				
-				//unregister listener, cause we'll never switch to unsatisfied
-				HandlerList.unregisterAll(this);
 				return;
 			}
 		}
@@ -97,7 +90,4 @@ public class ArriveRequirement extends Requirement implements Listener {
 		state = false;
 		updateQuest();
 	}
-	
-	
-	
 }
