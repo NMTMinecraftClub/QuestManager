@@ -62,8 +62,22 @@ public abstract class Quest implements Listener {
 	
 	private History history;
 	
+	private boolean ready;
 	
-	public Quest(String name, String description) {
+	/**
+	 * Whether or not this quest should be triggered on and then never evaluated again,
+	 * or if it can go between completed and not completed depending on its requirements.<br />
+	 * In other words, does this quest be ready to turn in and never can be un-ready after.
+	 * <p>
+	 * As a specific example, consider a quest to deliver 10 apples. This quest can be ready
+	 * to turn in by the player obtaining 10 apples. If the player drops some of the apples,
+	 * however, the quest is no longer ready to be turned in. In this case, keepState is false.
+	 */
+	private boolean keepState;
+	
+		
+	
+	public Quest(String name, String description, boolean keepState) {
 		this.name = name;
 		this.description = description;
 		
@@ -72,6 +86,8 @@ public abstract class Quest implements Listener {
 		this.goals = new LinkedList<Goal>();
 		
 		this.history = new History();
+		ready = false;
+		this.keepState = keepState;
 		
 		this.ID = (int) (Math.random() * Integer.MAX_VALUE);
 	}
@@ -83,6 +99,17 @@ public abstract class Quest implements Listener {
 	 */
 	public boolean isRunning() {
 		return running;
+	}
+	
+	/**
+	 * Returns whether or not the quest is ready to turn in.<br />
+	 * This method causes its goals to be re-evaluated to guarantee the returned result
+	 * is accurate at the time the method is called
+	 * @return
+	 */
+	public boolean isReady() {
+		update();
+		return ready;
 	}
 	
 	/**
@@ -180,9 +207,31 @@ public abstract class Quest implements Listener {
 		}
 	}
 	
+	/**
+	 * Updates the quest information, including contained goals and requirements.
+	 */
 	protected void update() {
-		//TODO should this be abstract? Should this be used with displaying quest
-		//status? how is that going to work? :S
+		
+		//check if keepState is active and the quest is already ready
+		if (keepState && ready) {
+			return;
+		}
+		
+		//if there are no goals, default to ready to turn in
+		if (goals.isEmpty()) {
+			ready = true;
+			return;
+		}
+		
+		for (Goal goal : goals) {
+			//as soon as a single goal isn't ready, the quest is not ready
+			if (!goal.isComplete()) {
+				ready = false;
+				return;
+			}
+		}
+		
+		ready = true;
 	}
 	
 	@Override
