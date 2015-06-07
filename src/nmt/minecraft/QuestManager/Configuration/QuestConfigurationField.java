@@ -21,7 +21,8 @@ public enum QuestConfigurationField {
 	
 	NAME("name", "Generated Quest"),
 	DESCRIPTION("description", "No Description"),
-	GOALS("goals", new LinkedList<Goal>());
+	GOALS("goals", new LinkedList<Goal>()),
+	SAVESTATE("savestate", false);
 	
 	private Object def;
 	
