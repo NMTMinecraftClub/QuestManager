@@ -61,12 +61,6 @@ public abstract class Goal {
 		requirements.add(requirement);
 	}
 	
-	/**
-	 * Causes a reevaluation of 
-	 */
-	public void update() {
-		
-	}
 	
 	/**
 	 * Assesses and reports whether the goal has been completed.<br />
