@@ -1,14 +1,20 @@
 package nmt.minecraft.QuestManager.Quest;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import nmt.minecraft.QuestManager.QuestManager;
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.History.History;
 
-import org.bukkit.entity.Player;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -50,13 +56,15 @@ public class Quest implements Listener {
 	
 	private int ID;
 	
+	private QuestManager manager;
+	
 	private String name;
 	
 	private String description;
 	
 	private boolean running;
 	
-	private Set<Player> players;
+	private Set<QuestPlayer> players;
 	
 	private List<Goal> goals;	
 	
@@ -77,12 +85,12 @@ public class Quest implements Listener {
 	
 		
 	
-	public Quest(String name, String description, boolean keepState) {
+	public Quest(QuestManager manager, String name, String description, boolean keepState) {
 		this.name = name;
 		this.description = description;
+		this.manager = manager;
 		
 		this.running = false;
-		this.players = new HashSet<Player>();
 		this.goals = new LinkedList<Goal>();
 		
 		this.history = new History();
@@ -118,15 +126,63 @@ public class Quest implements Listener {
 	 * deliver players back to an area where they are free to roam and return
 	 * to homeworld portals (or the equivalent) when they stop.
 	 */
-	public abstract void stop();
+	public void stop() {
+		
+		//get config location!
+		File saveLoc = new File(manager.getSaveLocation(), name + "_" + ID);
+		
+		YamlConfiguration output = new YamlConfiguration();
+		
+		//store name information, just for cross checking
+		output.set("name", name);
+		
+		List<ConfigurationSection> goalStates = new ArrayList<ConfigurationSection>(goals.size());
+		
+		if (!goals.isEmpty()) {	
+			for (Goal goal : goals) {
+				goalStates.add(goal.toConfig());
+			}
+		}
+		
+		output.set("goals", goalStates);
+		
+		
+		QuestManagerPlugin.questManagerPlugin.getLogger().info("Saving quest state: " + 
+				saveLoc.getAbsolutePath());
+		try {
+			output.save(saveLoc);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (players.isEmpty()) {
+			return;
+		}
+		
+		//do player stuff
+		for (QuestPlayer player : players) {
+			removePlayer(player);
+		}
+	}
 	
 	/**
 	 * <i>Immediately</i> stops the quest, returning players to a free-roaming
-	 * state. Quests are not expected to perform save-state procedures when
-	 * halted, but may. <br/>
+	 * state. Quests are not to perform save-state procedures when
+	 * halted. <br/>
 	 * <b>Quests must immediately stop execution when asked to halt.<b>
 	 */
-	public abstract void halt();
+	public void halt() {
+
+		if (players.isEmpty()) {
+			return;
+		}
+		
+		//just remove players
+		for (QuestPlayer player : players) {
+			removePlayer(player);
+		}
+	}
 	
 	/**
 	 * Return all players involved in this quests.<br />
@@ -135,7 +191,7 @@ public class Quest implements Listener {
 	 * involved in the quest.
 	 * @return
 	 */
-	public Collection<Player> getPlayers() {
+	public Collection<QuestPlayer> getPlayers() {
 		return players;
 	}
 	
@@ -145,7 +201,11 @@ public class Quest implements Listener {
 	 * starting equipment?
 	 * @param player
 	 */
-	public abstract void addPlayer(Player player);
+	public void addPlayer(QuestPlayer player) {
+		players.add(player);
+		
+		//TODO starting location, etc?
+	}
 	
 	/**
 	 * Removes a player from the quest.<br />
@@ -153,7 +213,12 @@ public class Quest implements Listener {
 	 * @param player Which player to remove
 	 * @return Whether or not the player was successfully removed
 	 */
-	public abstract boolean removePlayer(Player player);
+	public boolean removePlayer(QuestPlayer player) {
+		
+		//TODO get them out of a dungeon, etc?
+		
+		return players.remove(player);
+	}
 	
 	/**
 	 * Returns the name of the quest, including text formatters and colors.
