@@ -6,6 +6,7 @@ import nmt.minecraft.QuestManager.Quest.Goal;
 
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 /**
@@ -13,7 +14,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
  * @author Skyler
  *
  */
-public class ArriveRequirement extends Requirement {
+public class ArriveRequirement extends Requirement implements Listener {
 	
 	/**
 	 * Who's involved
