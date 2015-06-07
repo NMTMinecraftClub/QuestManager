@@ -71,6 +71,7 @@ public class PositionRequirement extends Requirement implements Listener {
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
 		update();
+		updateQuest();
 	}
 	
 	/**
@@ -82,12 +83,10 @@ public class PositionRequirement extends Requirement implements Listener {
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().getLocation().distance(destination) <= targetRange) {
 				state = true;
-				updateQuest();
 				return;
 			}
 		}
 		
 		state = false;
-		updateQuest();
 	}
 }

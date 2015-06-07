@@ -57,6 +57,7 @@ public class PossessRequirement extends Requirement implements Listener {
 	@EventHandler
 	public void onInventoryChange(InventoryEvent e) {
 		update();
+		updateQuest();
 	}
 	
 	/**
@@ -72,14 +73,11 @@ public class PossessRequirement extends Requirement implements Listener {
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().getInventory().contains(new ItemStack(itemType, itemCount))) {
 				this.state = true;
-				updateQuest();
 				return;
 			}
 		}
 		
 		state = false;
-		
-		updateQuest();
 	}
 	
 	

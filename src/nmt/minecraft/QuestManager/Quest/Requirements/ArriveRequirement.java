@@ -71,6 +71,7 @@ public class ArriveRequirement extends Requirement implements Listener {
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
 		update();
+		updateQuest();
 	}
 	
 	/**
@@ -86,7 +87,6 @@ public class ArriveRequirement extends Requirement implements Listener {
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().getLocation().distance(destination) <= targetRange) {
 				state = true;
-				updateQuest();
 				
 				//unregister listener, cause we'll never switch to unsatisfied
 				HandlerList.unregisterAll(this);
@@ -95,7 +95,6 @@ public class ArriveRequirement extends Requirement implements Listener {
 		}
 		
 		state = false;
-		updateQuest();
 	}
 	
 	
