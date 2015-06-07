@@ -4,6 +4,19 @@ import java.util.LinkedList;
 
 import nmt.minecraft.QuestManager.Quest.Goal;
 
+/**
+ * Holds key and default information for defined quest config fields.
+ * <p>
+ * Fields|Keys|Defaults are:
+ * <ul>
+ * <li>NAME | name | "Generated Quest"</li>
+ * <li>DESCRIPTION | description | "No Description"</li>
+ * <li>GOALS | goals | <i>Empty List</i></li>
+ * </ul>
+ * </p>
+ * @author Skyler
+ *
+ */
 public enum QuestConfigurationField {
 	
 	NAME("name", "Generated Quest"),

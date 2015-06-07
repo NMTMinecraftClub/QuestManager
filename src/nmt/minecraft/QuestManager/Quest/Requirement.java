@@ -23,6 +23,8 @@ public abstract class Requirement {
 	
 	protected boolean state;
 	
+	public static abstract Requirement fromConfig(YamlConfiguration config);
+	
 	/**
 	 * Creates a requirement with an empty string for a description
 	 * @param goal

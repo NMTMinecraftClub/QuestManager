@@ -3,6 +3,8 @@ package nmt.minecraft.QuestManager.Quest;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+
 /**
  * Tracks objectives in a quest.<br />
  * Goals have specific requirements that must be met before they are considered clear.
@@ -19,6 +21,10 @@ public abstract class Goal {
 	
 	private Quest quest;
 	
+	
+	public static Goal fromConfig(YamlConfiguration config) {
+		
+	}
 	
 	public Goal(Quest quest, String name, String description) {
 		this.quest = quest;
@@ -82,6 +88,14 @@ public abstract class Goal {
 	}
 	
 	
+	public YamlConfiguration toConfig() {
+		
+		YamlConfiguration config = new YamlConfiguration();
+		
+		//TODO
+		
+		return config;
+	}
 	
 	
 }
