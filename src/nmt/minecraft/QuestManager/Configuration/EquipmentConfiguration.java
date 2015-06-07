@@ -62,6 +62,22 @@ public class EquipmentConfiguration {
 		state.save(file);
 	}
 	
+	public YamlConfiguration getConfiguration() {
+		
+		YamlConfiguration state = new YamlConfiguration();
+		
+		//unique identification
+		state.set("type", "ecnf");
+		
+		state.set("head", head);
+		state.set("chest", chest);
+		state.set("legs", legs);
+		state.set("boots", boots);
+		state.set("held", held);
+		
+		return state;
+	}
+	
 	public void load(YamlConfiguration config) throws InvalidConfigurationException {
 		
 		if (!config.contains("type") || !config.getString("type").equals("ecnf")) {
