@@ -8,6 +8,8 @@ import nmt.minecraft.QuestManager.Quest.Requirement;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -92,5 +94,21 @@ public class PositionRequirement extends Requirement implements Listener {
 		}
 		
 		state = false;
+	}
+
+	@Override
+	public void fromConfig(YamlConfiguration config)
+			throws InvalidConfigurationException {
+		//we need location information and range information
+		//  type: "posr"
+		//  range: [double]
+		//  destination: [location]
+		
+		if (!config.contains("type") || !config.getString("type").equals("posr")) {
+			throw new InvalidConfigurationException();
+		}
+		
+		this.targetRange = config.getDouble("range", 1.0);
+		this.destination = (Location) config.get("destination");
 	}
 }

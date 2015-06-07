@@ -8,6 +8,8 @@ import nmt.minecraft.QuestManager.Quest.Requirement;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -99,6 +101,23 @@ public class ArriveRequirement extends Requirement implements Listener {
 		}
 		
 		state = false;
+	}
+
+	@Override
+	public void fromConfig(YamlConfiguration config)
+			throws InvalidConfigurationException {
+		// same of Position Requirements's loading
+		//  type: "arrr"
+		//  range: [double]
+		//  destination: [location]
+			
+		if (!config.contains("type") || !config.getString("type").equals("arrr")) {
+			throw new InvalidConfigurationException();
+		}
+			
+		this.targetRange = config.getDouble("range", 1.0);
+		this.destination = (Location) config.get("destination");
+		
 	}
 	
 	

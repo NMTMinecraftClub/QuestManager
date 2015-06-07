@@ -8,6 +8,8 @@ import nmt.minecraft.QuestManager.Quest.Requirement;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryEvent;
@@ -82,6 +84,25 @@ public class PossessRequirement extends Requirement implements Listener {
 		}
 		
 		state = false;
+	}
+
+	@Override
+	public void fromConfig(YamlConfiguration config) throws InvalidConfigurationException {
+		//we need to load information about what we need to possess and how much
+		//our config is 
+		//  type: "pr"
+		//  itemYype: (Material. ENUM CONSTANT NAME)
+		//  count: [int]
+		
+		if (!config.contains("type") || !config.getString("type").equals("pr")) {
+			throw new InvalidConfigurationException();
+		}
+		
+		this.itemType = Material.valueOf(
+				config.getString("itemType", "AIR"));
+		
+		this.itemCount = config.getInt("count", 1);
+		
 	}
 	
 	
