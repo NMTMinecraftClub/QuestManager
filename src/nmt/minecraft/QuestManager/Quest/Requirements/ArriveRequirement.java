@@ -84,7 +84,7 @@ public class ArriveRequirement extends Requirement implements Listener {
 		}
 		
 		for (QuestPlayer player : participants.getParticipants()) {
-			if (player.getPlayer().getLocation().distance(destination) < targetRange) {
+			if (player.getPlayer().getLocation().distance(destination) <= targetRange) {
 				state = true;
 				updateQuest();
 				
