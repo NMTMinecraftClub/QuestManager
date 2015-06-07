@@ -92,4 +92,76 @@ public class EquipmentConfiguration {
 		
 		
 	}
+
+	/**
+	 * @return the head
+	 */
+	public ItemStack getHead() {
+		return head;
+	}
+
+	/**
+	 * @param head the head to set
+	 */
+	public void setHead(ItemStack head) {
+		this.head = head;
+	}
+
+	/**
+	 * @return the chest
+	 */
+	public ItemStack getChest() {
+		return chest;
+	}
+
+	/**
+	 * @param chest the chest to set
+	 */
+	public void setChest(ItemStack chest) {
+		this.chest = chest;
+	}
+
+	/**
+	 * @return the legs
+	 */
+	public ItemStack getLegs() {
+		return legs;
+	}
+
+	/**
+	 * @param legs the legs to set
+	 */
+	public void setLegs(ItemStack legs) {
+		this.legs = legs;
+	}
+
+	/**
+	 * @return the boots
+	 */
+	public ItemStack getBoots() {
+		return boots;
+	}
+
+	/**
+	 * @param boots the boots to set
+	 */
+	public void setBoots(ItemStack boots) {
+		this.boots = boots;
+	}
+
+	/**
+	 * @return the held
+	 */
+	public ItemStack getHeld() {
+		return held;
+	}
+
+	/**
+	 * @param held the held to set
+	 */
+	public void setHeld(ItemStack held) {
+		this.held = held;
+	}
+	
+	
 }
