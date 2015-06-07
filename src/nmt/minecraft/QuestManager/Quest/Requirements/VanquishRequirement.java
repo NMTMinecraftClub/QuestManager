@@ -1,8 +1,10 @@
 package nmt.minecraft.QuestManager.Quest.Requirements;
 
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirement;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -28,6 +30,8 @@ public class VanquishRequirement extends Requirement implements Listener {
 		super(goal, description);
 		this.foe = foe;
 		state = false;
+		
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
