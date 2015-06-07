@@ -46,7 +46,7 @@ import org.bukkit.event.Listener;
  * @author Skyler
  *
  */
-public abstract class Quest implements Listener {
+public class Quest implements Listener {
 	
 	private int ID;
 	
@@ -176,7 +176,7 @@ public abstract class Quest implements Listener {
 	 * Appends the provided goal to the current list of goals
 	 * @param goal
 	 */
-	protected void addGoal(Goal goal) {
+	public void addGoal(Goal goal) {
 		goals.add(goal);
 	}
 	

@@ -11,7 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @author Skyler
  *
  */
-public abstract class Goal {
+public class Goal {
 	
 	private List<Requirement> requirements;
 	

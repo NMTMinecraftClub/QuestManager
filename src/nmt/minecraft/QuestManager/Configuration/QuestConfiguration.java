@@ -1,12 +1,11 @@
 package nmt.minecraft.QuestManager.Configuration;
 
 import java.util.List;
-import java.util.Set;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.Quest;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -95,25 +94,40 @@ public class QuestConfiguration {
 //		return names;
 //	}
 	
+	/**
+	 * Gets whether or not the embedded quest has {@link nmt.minecraft.QuestManager.Quest.Quest#keepState save-state} enabled
+	 * @return
+	 */
+	public boolean getSaveState() {
+		return config.getBoolean(QuestConfigurationField.SAVESTATE.getKey(), 
+				(boolean) QuestConfigurationField.SAVESTATE.getDefault());
+	}
 	
-	public List<Goal> getGoals() {
+	/**
+	 * Returns the complete {@link nmt.minecraft.QuestManager.Quest.Quest Quest} this configuration represents.<br />
+	 * Subsequent calls to this method return new instances of the represented quest. It is
+	 * up to the caller to keep track of returned quests and optimize performance when simply
+	 * needing a reference to previously-instantiated Quests
+	 * @return
+	 */
+	public Quest getQuest() {
 		
 		if (!config.contains(QuestConfigurationField.GOALS.getKey())) {
 			return null;
 		}
 		
 		@SuppressWarnings("unchecked")
-		List<ConfigurationSection> goalList = (List<ConfigurationSection>) config.getList(
+		List<YamlConfiguration> goalList = (List<YamlConfiguration>) config.getList(
 				QuestConfigurationField.GOALS.getKey());
 		
-		List<Goal> goals;
+		Quest quest = new Quest(getName(), getDescription(), getSaveState());
 		
-		for (ConfigurationSection section : goalList) {
+		for (YamlConfiguration section : goalList) {
 			Goal goal = Goal.fromConfig(section);
-			goals.add(goal);
+			quest.addGoal(goal);
 		}
 		
-		return goals;
+		return quest;
 	}
 	
 }

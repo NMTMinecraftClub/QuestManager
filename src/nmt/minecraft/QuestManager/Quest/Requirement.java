@@ -1,6 +1,7 @@
 package nmt.minecraft.QuestManager.Quest;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Represesnts a specific requirement needed to acheive a goal in a quest.<br />
@@ -23,8 +24,7 @@ public abstract class Requirement {
 	
 	protected boolean state;
 	
-	public static abstract Requirement fromConfig(YamlConfiguration config);
-	
+
 	/**
 	 * Creates a requirement with an empty string for a description
 	 * @param goal
@@ -42,6 +42,8 @@ public abstract class Requirement {
 		this.goal = goal;
 		this.desc = description;
 	}
+	
+	public abstract void fromConfig(YamlConfiguration config);
 	
 	/**
 	 * Returns the goal this requirement belongs to
