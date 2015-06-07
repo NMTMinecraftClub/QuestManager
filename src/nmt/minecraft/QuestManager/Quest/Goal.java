@@ -3,8 +3,6 @@ package nmt.minecraft.QuestManager.Quest;
 import java.util.LinkedList;
 import java.util.List;
 
-import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
-
 /**
  * Tracks objectives in a quest.<br />
  * Goals have specific requirements that must be met before they are considered clear.

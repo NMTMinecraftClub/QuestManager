@@ -1,6 +1,4 @@
-package nmt.minecraft.QuestManager.Quest.Requirements;
-
-import nmt.minecraft.QuestManager.Quest.Goal;
+package nmt.minecraft.QuestManager.Quest;
 
 import org.bukkit.Bukkit;
 

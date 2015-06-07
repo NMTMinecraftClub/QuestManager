@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import nmt.minecraft.QuestManager.Quest.History.History;
-import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
-import nmt.minecraft.QuestManager.Quest.Requirements.RequirementUpdateEvent;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

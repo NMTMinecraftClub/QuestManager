@@ -3,6 +3,7 @@ package nmt.minecraft.QuestManager.Quest.Requirements;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.Requirement;
 
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
