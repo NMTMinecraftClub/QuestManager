@@ -4,6 +4,7 @@ import nmt.minecraft.QuestManager.Quest.Goal;
 
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
@@ -45,6 +46,9 @@ public class VanquishRequirement extends Requirement implements Listener {
 		
 		if (e.getEntity().equals(foe)) {
 			state = true;
+			
+			//unregister listen, as we'll never need to check again
+			HandlerList.unregisterAll(this);
 			updateQuest();
 		}
 		

@@ -6,11 +6,14 @@ import nmt.minecraft.QuestManager.Quest.Goal;
 
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 /**
- * Requirement that a participant must arrive at a location (or be within some radius of it)
+ * Requirement that a participant must arrive at a location (or be within some radius of it)<br />
+ * This requirement <b>does not require</b> that a participant <i>stay</i> at the location.
+ * It only requires that someone get there at some point.
  * @author Skyler
  *
  */
@@ -75,10 +78,17 @@ public class ArriveRequirement extends Requirement implements Listener {
 	@Override
 	public void update() {
 		
+		if (state) {
+			return;
+		}
+		
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().getLocation().distance(destination) < targetRange) {
 				state = true;
 				updateQuest();
+				
+				//unregister listener, cause we'll never switch to unsatisfied
+				HandlerList.unregisterAll(this);
 				return;
 			}
 		}
