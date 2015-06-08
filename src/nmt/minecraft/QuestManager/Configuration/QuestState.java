@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -19,11 +18,11 @@ public class QuestState {
 	
 	private String name;
 	
-	private List<ConfigurationSection> goalState;
+	private List<GoalState> goalState;
 	
 	public QuestState() {
 		this.name = "";
-		this.goalState = new LinkedList<ConfigurationSection>();
+		this.goalState = new LinkedList<GoalState>();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -35,7 +34,7 @@ public class QuestState {
 		
 		this.name = config.getString("name");
 		
-		this.goalState = (List<ConfigurationSection>) config.getList("goals");
+		this.goalState = (List<GoalState>) config.getList("goals");
 		
 	}
 	
@@ -68,11 +67,11 @@ public class QuestState {
 	/**
 	 * @return the goalState
 	 */
-	public List<ConfigurationSection> getGoalState() {
+	public List<GoalState> getGoalState() {
 		return goalState;
 	}
 	
-	public void addGoalState(ConfigurationSection goalState) {
+	public void addGoalState(GoalState goalState) {
 		this.goalState.add(goalState);
 	}
 	
