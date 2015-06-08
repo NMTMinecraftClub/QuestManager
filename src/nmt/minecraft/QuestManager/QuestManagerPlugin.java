@@ -62,16 +62,26 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		//parse config
 		for (String managerName : config.getQuestManagerNames()) {
+			File sDir = new File(saveDirectory, managerName);
+			if (!sDir.exists()) {
+				sDir.mkdirs();
+			}
 			QuestManager manager = new QuestManager(
 					managerName,
-					questDirectory,
-					saveDirectory,
+					questDirectory, 
+					sDir,
 					config.getQuests(managerName));
 			
 			registerManager(manager);
 		}
 		
 		
+	}
+	
+	@Override
+	public void onDisable() {
+		
+		stopAllQuests();
 	}
 	
 	/**
@@ -125,6 +135,5 @@ public class QuestManagerPlugin extends JavaPlugin {
 		}
 		
 	}
-	
 	
 }

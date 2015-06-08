@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
+import nmt.minecraft.QuestManager.Configuration.QuestState;
 import nmt.minecraft.QuestManager.Quest.Quest;
 
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -70,6 +71,55 @@ public class QuestManager {
 			questTemplates.add(questTemplate);
 			
 		}
+		
+		//check if there is any state information for this manager
+		if (saveDirectory.listFiles().length != 0) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().info(name + " fetching state "
+					+ "information...");	
+			
+			
+			//files are [name]_[id]
+			for (File stateFile : saveDirectory.listFiles()) {
+				String questName = stateFile.getName().substring(0, 
+						stateFile.getName().indexOf("_"));
+				
+				QuestConfiguration template = getQuestTemplate(questName);
+				Quest quest;
+				try {
+					quest = template.instanceQuest(this);
+					
+				} catch (InvalidConfigurationException e) {
+					e.printStackTrace();
+					continue;
+				}
+				
+				QuestState state = new QuestState();
+				YamlConfiguration config = new YamlConfiguration();
+				
+				
+				try {
+					config.load(stateFile);
+					state.load(config);
+				} catch (Exception e) {
+					e.printStackTrace();
+					continue;
+				} 
+				
+				try {
+					quest.loadState(state);
+				} catch (InvalidConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					continue;
+				}
+				
+				
+						
+			}
+
+			QuestManagerPlugin.questManagerPlugin.getLogger().info(name + " finished!");	
+			
+		}
 	}
 	
 	/**
@@ -114,5 +164,26 @@ public class QuestManager {
 	public String getName() {
 		return this.name;
 	}
+	
+	/**
+	 * Looks up the matching quest config based on name.
+	 * This manager does not look beyond the quests allowed to it
+	 * @param questName 
+	 * @return the Quest Configuration used as a template, or null if it wasn't found
+	 */
+	private QuestConfiguration getQuestTemplate(String questName) {
+		if (questTemplates.isEmpty()) {
+			return null;
+		}
+		
+		for (QuestConfiguration qc : questTemplates) {
+			if (qc.getName().equals(questName)) {
+				return qc;
+			}
+		}
+		
+		return null;
+	}
+
 	
 }
