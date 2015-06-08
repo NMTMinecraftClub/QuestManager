@@ -14,3 +14,13 @@ Typically in games involving quests, very specific information (such as location
     * Is optimized for large configuration file reading
 
 
+
+
+Still To Come
+-------------
+
+An official documentation of the configuration:
+
+- Structure
+- Equipment Specification
+- Requirement Enumeration/Types
