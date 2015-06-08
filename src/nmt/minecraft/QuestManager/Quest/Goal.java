@@ -2,6 +2,7 @@ package nmt.minecraft.QuestManager.Quest;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.GoalState;
@@ -99,9 +100,10 @@ public class Goal {
 		//WARNING:
 		//this is assuming that the lists are maintianed in the right order.
 		//it should work this way, but this is a point of error!
-		for (RequirementState rs : state.getRequirementStates()) {
-			if (rs instanceof StatekeepingRequirement) {
-				((StatekeepingRequirement) rs).loadState(rs);
+		ListIterator<RequirementState> states = state.getRequirementStates().listIterator();
+		for (Requirement req : requirements) {
+			if (req instanceof StatekeepingRequirement) {
+				((StatekeepingRequirement) req).loadState(states.next());
 			}
 		}
 	}
