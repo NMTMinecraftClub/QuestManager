@@ -114,10 +114,8 @@ public class PluginConfiguration {
 		questNames.add("An Unlikely Guest");
 		questNames.add("Trial By Fire");
 		managers.set("manager_1", questNames);
-		
-		ConfigurationSection locations = config.createSection("locations");
-		locations.set("quests", "quests/");
-		locations.set("saves", "savedata/");
+		config.set("quests", "quests/");
+		config.set("saves", "savedata/");
 		
 		try {
 			config.save(configFile);

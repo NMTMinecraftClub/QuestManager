@@ -5,7 +5,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import nmt.minecraft.QuestManager.Configuration.PluginConfiguration;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.Quest;
+import nmt.minecraft.QuestManager.Quest.Requirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -73,6 +81,28 @@ public class QuestManagerPlugin extends JavaPlugin {
 					config.getQuests(managerName));
 			
 			registerManager(manager);
+			
+			/////////////////////
+			//ADD PLAYER INFO to state!
+			Player dove = Bukkit.getPlayer("dove_bren");
+			QuestPlayer qD = new QuestPlayer(dove);
+			Quest quest = new Quest(manager, "Quest for the Apples", "Journey to find a kingdom's worth of apples!", false);
+			Goal appleGoal = new Goal(quest, "Collect Apples", "Collect 10 apples");
+			Requirement appleReq = new PossessRequirement(qD, appleGoal, "Collect 10 Apples", Material.APPLE, 10);
+			
+			appleGoal.addRequirement(appleReq);
+			quest.addGoal(appleGoal);
+			qD.addQuest(quest);
+			manager.registerQuest(quest);
+			
+			
+			
+			
+			
+			/////////////////////
+			
+			
+			
 		}
 		
 		

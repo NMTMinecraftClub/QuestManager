@@ -37,7 +37,7 @@ public class QuestManager {
 		
 		//lookup and load templates for each quest name given
 		for (String questName : questNames) {
-			File questConfigFile = new File(questDirectory, questName);
+			File questConfigFile = new File(questDirectory, questName + ".yml");
 			if (!questConfigFile.exists() || questConfigFile.isDirectory()) {
 				QuestManagerPlugin.questManagerPlugin.getLogger().warning(
 						"Unable to locate quest config file: "

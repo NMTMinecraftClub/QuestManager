@@ -46,6 +46,19 @@ public class GoalState {
 		
 		config.save(file);
 	}
+	
+	public YamlConfiguration asConfig() {
+
+		YamlConfiguration config = new YamlConfiguration();
+		
+		config.set("type", "goalstate");
+		
+		config.set("name", name);
+		
+		config.set("requirements", requirementStates);
+		
+		return config;
+	}
 
 	/**
 	 * @return the name

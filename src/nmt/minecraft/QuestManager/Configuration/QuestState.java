@@ -2,6 +2,7 @@ package nmt.minecraft.QuestManager.Configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +46,12 @@ public class QuestState {
 		
 		config.set("name", name);
 		
-		config.set("goals", goalState);
+		List<YamlConfiguration> goalList = new ArrayList<YamlConfiguration>(goalState.size());
+		for (GoalState conf : goalState) {
+			goalList.add(conf.asConfig());
+		}
+		
+		config.set("goals", goalList);
 		
 		config.save(file);
 	}

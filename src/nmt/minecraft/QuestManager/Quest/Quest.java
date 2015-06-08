@@ -3,6 +3,7 @@ package nmt.minecraft.QuestManager.Quest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -103,6 +104,8 @@ public class Quest implements Listener {
 		ready = false;
 		this.keepState = keepState;
 		
+		players = new HashSet<QuestPlayer>();
+		
 		this.ID = (int) (Math.random() * Integer.MAX_VALUE);
 	}
 	
@@ -177,7 +180,7 @@ public class Quest implements Listener {
 	public void stop() {
 		
 		//get config location!
-		File saveLoc = new File(manager.getSaveLocation(), name + "_" + ID);
+		File saveLoc = new File(manager.getSaveLocation(), name + "_" + ID + ".yml");
 		
 		QuestState state = new QuestState();
 		
