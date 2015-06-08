@@ -1,14 +1,11 @@
 package nmt.minecraft.QuestManager;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
+import nmt.minecraft.QuestManager.Configuration.PluginConfiguration;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -28,9 +25,13 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private List<QuestManager> managers;
 	
-	private YamlConfiguration config;
+	private PluginConfiguration config;
 	
-	private static String configFileName = "QuestManagerConfig.yml";
+	private File saveDirectory;
+	
+	private File questDirectory;
+	
+	private final static String configFileName = "QuestManagerConfig.yml";
 	
 	public static final double version = 1.00;
 	
@@ -39,13 +40,37 @@ public class QuestManagerPlugin extends JavaPlugin {
 		QuestManagerPlugin.questManagerPlugin = this;
 		
 		//load up config
+		File configFile = new File(getDataFolder(), configFileName);
 		
+		config = new PluginConfiguration(configFile);		
 		
+		//perform directory checks
+		saveDirectory = new File(getDataFolder(), config.getSavePath());
+		if (!saveDirectory.exists()) {
+			saveDirectory.mkdirs();
+		}
+		
+		questDirectory = new File(getDataFolder(), config.getQuestPath());
+		if (!questDirectory.exists()) {
+			questDirectory.mkdirs();
+		}
 	}
 	
 	@Override
 	public void onEnable() {
 		managers = new LinkedList<QuestManager>();
+		
+		//parse config
+		for (String managerName : config.getQuestManagerNames()) {
+			QuestManager manager = new QuestManager(
+					managerName,
+					questDirectory,
+					saveDirectory,
+					config.getQuests(managerName));
+			
+			registerManager(manager);
+		}
+		
 		
 	}
 	

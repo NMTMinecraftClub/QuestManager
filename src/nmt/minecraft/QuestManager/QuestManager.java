@@ -26,16 +26,15 @@ public class QuestManager {
 	 * the manager configuration section ready. The config passed is expected to have
 	 * one key (the name of the manager) and the value be a list of strings (name of quests)
 	 */
-	public QuestManager(File questDirectory, File saveDirectory, YamlConfiguration config) {
+	public QuestManager(String name, File questDirectory, File saveDirectory, 
+			List<String> questNames) {
+		
 		runningQuests = new LinkedList<Quest>();
 		questTemplates = new LinkedList<QuestConfiguration>();
 		
 		this.saveDirectory = saveDirectory;
 		
-		this.name = config.getKeys(false).iterator().next();
-		
-		//config gives us a list of names we need to go and lookup the templates for
-		List<String> questNames = config.getStringList(name);
+		//lookup and load templates for each quest name given
 		for (String questName : questNames) {
 			File questConfigFile = new File(questDirectory, questName);
 			if (!questConfigFile.exists() || questConfigFile.isDirectory()) {
@@ -110,6 +109,10 @@ public class QuestManager {
 	
 	public File getSaveLocation() {
 		return saveDirectory;
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 	
 }
