@@ -9,8 +9,10 @@ import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
 import nmt.minecraft.QuestManager.Configuration.QuestState;
 import nmt.minecraft.QuestManager.Quest.Quest;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 public class QuestManager {
 	
@@ -70,6 +72,15 @@ public class QuestManager {
 			
 			questTemplates.add(questTemplate);
 			
+			
+			try {
+				registerQuest(questTemplate.instanceQuest(this));
+
+			} catch (InvalidConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 		
 		//check if there is any state information for this manager
@@ -128,6 +139,9 @@ public class QuestManager {
 	 * produced when requesting a random quest.
 	 */
 	public void registerQuest(Quest quest) {
+		if (quest == null) {
+			System.out.println("error!");
+		}
 		runningQuests.add(quest);
 	}
 	

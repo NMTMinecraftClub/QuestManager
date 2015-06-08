@@ -1,6 +1,7 @@
 package nmt.minecraft.QuestManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,10 +11,15 @@ import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.Requirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -62,11 +68,45 @@ public class QuestManagerPlugin extends JavaPlugin {
 		if (!questDirectory.exists()) {
 			questDirectory.mkdirs();
 		}
+		
+		
 	}
 	
 	@Override
 	public void onEnable() {
 		managers = new LinkedList<QuestManager>();
+		
+		YamlConfiguration c = new YamlConfiguration(),
+				x = new YamlConfiguration(),
+				y = new YamlConfiguration(),
+				z = new YamlConfiguration();
+		c.set("key", "value");
+		x.set("1", "a");
+		x.set("2", "b");
+		x.set("3", "b");
+		y.set("1", "a");
+		y.set("2", "b");
+		y.set("3", "b");
+		z.set("1", "a");
+		z.set("2", new ItemStack(Material.APPLE, 10));
+		z.set("3", Bukkit.getWorlds().iterator().next().getSpawnLocation());
+		
+		
+		
+		List<YamlConfiguration> l = new LinkedList<YamlConfiguration>();
+		l.add(x);
+		l.add(y);
+		l.add(z);
+		
+		c.set("list", l);
+		
+		try {
+			c.save(new File(QuestManagerPlugin.questManagerPlugin.getDataFolder(),
+					"temporary.yml"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//parse config
 		for (String managerName : config.getQuestManagerNames()) {
@@ -84,16 +124,26 @@ public class QuestManagerPlugin extends JavaPlugin {
 			
 			/////////////////////
 			//ADD PLAYER INFO to state!
-			Player dove = Bukkit.getPlayer("dove_bren");
-			QuestPlayer qD = new QuestPlayer(dove);
-			Quest quest = new Quest(manager, "Quest for the Apples", "Journey to find a kingdom's worth of apples!", false);
-			Goal appleGoal = new Goal(quest, "Collect Apples", "Collect 10 apples");
-			Requirement appleReq = new PossessRequirement(qD, appleGoal, "Collect 10 Apples", Material.APPLE, 10);
 			
-			appleGoal.addRequirement(appleReq);
-			quest.addGoal(appleGoal);
-			qD.addQuest(quest);
-			manager.registerQuest(quest);
+			
+			
+			
+//			Player dove = Bukkit.getPlayer("dove_bren");
+//			if (!dove.isOnline()) {
+//				return;
+//			}
+//			QuestPlayer qD = new QuestPlayer(dove);
+//			Quest quest = new Quest(manager, "Quest for the Apples", "Journey to find a kingdom's worth of apples!", false);
+//			Goal appleGoal = new Goal(quest, "Collect Apples", "Collect 10 apples");
+//			Requirement appleReq = new PossessRequirement(qD, appleGoal, "Collect 10 Apples", Material.APPLE, 10);
+//			LivingEntity foe = (LivingEntity) dove.getLocation().getWorld().spawnEntity(dove.getLocation(), EntityType.CHICKEN);
+//			Requirement killReq = new VanquishRequirement(appleGoal, foe);
+//			
+//			appleGoal.addRequirement(appleReq);
+//			appleGoal.addRequirement(killReq);
+//			quest.addGoal(appleGoal);
+//			qD.addQuest(quest);
+//			manager.registerQuest(quest);
 			
 			
 			

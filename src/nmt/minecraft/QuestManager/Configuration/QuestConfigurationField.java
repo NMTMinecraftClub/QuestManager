@@ -12,6 +12,7 @@ import nmt.minecraft.QuestManager.Quest.Goal;
  * <li>NAME | name | "Generated Quest"</li>
  * <li>DESCRIPTION | description | "No Description"</li>
  * <li>GOALS | goals | <i>Empty List</i></li>
+ * <li>SAVESTATE | savestate | false</li>
  * </ul>
  * </p>
  * @author Skyler

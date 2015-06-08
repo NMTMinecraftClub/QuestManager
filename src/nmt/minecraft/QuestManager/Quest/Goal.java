@@ -3,6 +3,7 @@ package nmt.minecraft.QuestManager.Quest;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.GoalState;
@@ -29,13 +30,18 @@ public class Goal {
 	
 	private Quest quest;
 	
+
+//	public static Goal fromConfig(Quest quest, YamlConfiguration config) throws InvalidConfigurationException {
+//		return fromMap(quest, config.)
+//	}
+	
 	/**
 	 * Creates a goal from the provided goal configuration
 	 * @param config
 	 * @return
 	 * @throws InvalidConfigurationException 
 	 */
-	public static Goal fromConfig(Quest quest, YamlConfiguration config) throws InvalidConfigurationException {
+	public static Goal fromMap(Quest quest, Map<String, Object> map) throws InvalidConfigurationException {
 		/* goal construction configuration involves:
 		 * Goal name, description
 		 * The requirements that are in it
@@ -45,27 +51,43 @@ public class Goal {
 		 * up the req
 		 */
 		
-		if (!config.contains("type") || !config.getString("type").equals("goalcnf")) {
+		if (!map.containsKey("type") || !map.get("type").equals("goalcnf")) {
 			throw new InvalidConfigurationException();
 		}
 		
 		String name, description;
 		
-		name = config.getString("name", "");
-		description = config.getString("description", "");
+		name = (String) map.get("name");
+		description = (String) map.get("description");
 		
 
 		Goal goal = new Goal(quest, name, description);
 		
-		@SuppressWarnings("unchecked")
-		List<YamlConfiguration> reqs = (List<YamlConfiguration>) config.getList("requirements");
-		if (reqs == null || reqs.isEmpty()) {
-			return goal;
-		}
+//		@SuppressWarnings("unchecked")
+//		List<YamlConfiguration> reqs = (List<YamlConfiguration>) map.get("requirements");
+//		if (reqs == null || reqs.isEmpty()) {
+//			return goal;
+//		}
+//		
+//		for (YamlConfiguration req : reqs) {
+//			String type = req.getKeys(false).iterator().next();
+//			YamlConfiguration conf = (YamlConfiguration) req.getConfigurationSection(type);
+//			
+//			Requirement r = RequirementType.valueOf(type).instance();
+//			
+//			r.fromConfig(conf);
+//			
+//			goal.addRequirement(r);
+//		}
 		
-		for (YamlConfiguration req : reqs) {
-			String type = req.getKeys(false).iterator().next();
-			YamlConfiguration conf = (YamlConfiguration) req.getConfigurationSection(type);
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> reqs = (List<Map<String, Object>>) map.get("requirements");
+		
+		for (Map<String, Object> req : reqs) {
+			String type = req.keySet().iterator().next();
+			Map<String, Object> cmap = (Map<String, Object>) req.get(type);
+			YamlConfiguration conf = new YamlConfiguration();
+			conf.createSection(type, cmap);
 			
 			Requirement r = RequirementType.valueOf(type).instance();
 			
