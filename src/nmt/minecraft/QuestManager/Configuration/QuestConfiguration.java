@@ -2,6 +2,7 @@ package nmt.minecraft.QuestManager.Configuration;
 
 import java.util.List;
 
+import nmt.minecraft.QuestManager.QuestManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
@@ -109,8 +110,9 @@ public class QuestConfiguration {
 	 * up to the caller to keep track of returned quests and optimize performance when simply
 	 * needing a reference to previously-instantiated Quests
 	 * @return
+	 * @throws InvalidConfigurationException 
 	 */
-	public Quest getQuest() {
+	public Quest instanceQuest(QuestManager manager) throws InvalidConfigurationException {
 		
 		if (!config.contains(QuestConfigurationField.GOALS.getKey())) {
 			return null;
@@ -120,10 +122,10 @@ public class QuestConfiguration {
 		List<YamlConfiguration> goalList = (List<YamlConfiguration>) config.getList(
 				QuestConfigurationField.GOALS.getKey());
 		
-		Quest quest = new Quest(getName(), getDescription(), getSaveState());
+		Quest quest = new Quest(manager, getName(), getDescription(), getSaveState());
 		
 		for (YamlConfiguration section : goalList) {
-			Goal goal = Goal.fromConfig(section);
+			Goal goal = Goal.fromConfig(quest, section);
 			quest.addGoal(goal);
 		}
 		
