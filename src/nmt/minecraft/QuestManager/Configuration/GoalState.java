@@ -25,7 +25,8 @@ public class GoalState {
 	
 	@SuppressWarnings("unchecked")
 	public void load(YamlConfiguration config) throws InvalidConfigurationException {
-		if (!config.contains("name") || !config.contains("requirementStates")) {
+		if (!config.contains("type") || !config.getString("type").equals("goalstate") 
+				|| !config.contains("name") || !config.contains("requirementStates")) {
 			throw new InvalidConfigurationException();
 		}
 		
@@ -36,6 +37,8 @@ public class GoalState {
 	
 	public void save(File file) throws IOException {
 		YamlConfiguration config = new YamlConfiguration();
+		
+		config.set("type", "goalstate");
 		
 		config.set("name", name);
 		
