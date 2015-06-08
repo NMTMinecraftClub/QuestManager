@@ -2,19 +2,20 @@ package nmt.minecraft.QuestManager.Quest;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import nmt.minecraft.QuestManager.QuestManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.GoalState;
+import nmt.minecraft.QuestManager.Configuration.QuestState;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.History.History;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -48,6 +49,13 @@ import org.bukkit.event.Listener;
  * they also like this other quest pack called QuestsByTrig and dropped that
  * in too. And then the quest manager was just set to collect the quests and
  * load them up! (future work)
+ * 
+ * @TODO maybe split this into 'involved quests' and 'casual quests', where 'involved quests'
+ * would not require any teleports out of dungeons, etc and 'involved quests' take you to
+ * a special location you cannot otherwise access? If so, this should be made abstract  again
+ * and the methods addPlayer and removePlayer should be made abstract and defined in subclasses,
+ * where casualQuests would just remove them from the list (like this class does) and 
+ * involvedQuests would teleport them out too
  * 
  * @author Skyler
  *
@@ -83,8 +91,6 @@ public class Quest implements Listener {
 	 */
 	private boolean keepState;
 	
-		
-	
 	public Quest(QuestManager manager, String name, String description, boolean keepState) {
 		this.name = name;
 		this.description = description;
@@ -98,6 +104,48 @@ public class Quest implements Listener {
 		this.keepState = keepState;
 		
 		this.ID = (int) (Math.random() * Integer.MAX_VALUE);
+	}
+	
+	/**
+	 * @throws InvalidConfigurationException 
+	 * Loads quest/objective/requirement state from the provided file
+	 * @param state
+	 * @throws  
+	 */
+	public void loadState(QuestState state) throws InvalidConfigurationException {
+		
+		if (!this.name.equals(state.getName())) {
+			QuestManagerPlugin.questManagerPlugin.getLogger()
+				.warning("Attempting to load state information from a mismatched quest!");
+			QuestManagerPlugin.questManagerPlugin.getLogger()
+			.info("[" + this.name + "] <-/-> [" + state.getName() + "]");
+		
+		}
+		
+		ListIterator<GoalState> states = state.getGoalState().listIterator();
+		
+		for (Goal goal : goals) {
+			goal.loadState(states.next());
+		}
+	}
+	
+	
+	public QuestState getState() {
+		//we need to definitely save goal state information (and requirement state). We also
+		//and... that's kind of it actually
+		QuestState state = new QuestState();
+		state.setName(name);
+		
+		if (goals.isEmpty()) {
+			return state;
+		}
+		
+		for (Goal goal : goals) {
+			state.addGoalState(
+					goal.getState());
+		}
+		
+		return state;
 	}
 	
 	/**
@@ -131,26 +179,20 @@ public class Quest implements Listener {
 		//get config location!
 		File saveLoc = new File(manager.getSaveLocation(), name + "_" + ID);
 		
-		YamlConfiguration output = new YamlConfiguration();
+		QuestState state = new QuestState();
 		
-		//store name information, just for cross checking
-		output.set("name", name);
-		
-		List<ConfigurationSection> goalStates = new ArrayList<ConfigurationSection>(goals.size());
+		state.setName(name);
 		
 		if (!goals.isEmpty()) {	
 			for (Goal goal : goals) {
-				goalStates.add(goal.toConfig());
+				state.addGoalState(goal.getState());
 			}
 		}
-		
-		output.set("goals", goalStates);
-		
 		
 		QuestManagerPlugin.questManagerPlugin.getLogger().info("Saving quest state: " + 
 				saveLoc.getAbsolutePath());
 		try {
-			output.save(saveLoc);
+			state.save(saveLoc);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
