@@ -62,25 +62,6 @@ public class Goal {
 
 		Goal goal = new Goal(quest, name, description);
 		
-//		@SuppressWarnings("unchecked")
-//		List<YamlConfiguration> reqs = (List<YamlConfiguration>) map.get("requirements");
-//		if (reqs == null || reqs.isEmpty()) {
-//			return goal;
-//		}
-//		
-//		for (YamlConfiguration req : reqs) {
-//			String type = req.getKeys(false).iterator().next();
-//			YamlConfiguration conf = (YamlConfiguration) req.getConfigurationSection(type);
-//			
-//			Requirement r = RequirementType.valueOf(type).instance();
-//			
-//			r.fromConfig(conf);
-//			
-//			goal.addRequirement(r);
-//		}
-		
-//		@SuppressWarnings("unchecked")
-//		List<ConfigurationSection> reqs = (List<ConfigurationSection>) config.get("requirements");
 		
 		List<ConfigurationSection> reqs = new LinkedList<ConfigurationSection>();
 		for (String requirementKey : config.getConfigurationSection("requirements").getKeys(false)) {
@@ -93,17 +74,6 @@ public class Goal {
 			
 			ConfigurationSection conf = req.getConfigurationSection(type);
 			
-//			System.out.println(req.get(type).getClass() + " | " + req.get(type));
-			
-//			@SuppressWarnings("unchecked")
-//			Map<String, Object> cmap = (Map<String, Object>) req.get(type);
-//			YamlConfiguration conf = new YamlConfiguration();
-//			
-//			for (String key : cmap.keySet()) {
-//				conf.set(key, cmap.get(key));
-//			}
-			
-//			conf.createSection(type, cmap);
 			
 			Requirement r = QuestManagerPlugin.questManagerPlugin.getRequirementManager()
 					.instanceRequirement(type, goal, conf);

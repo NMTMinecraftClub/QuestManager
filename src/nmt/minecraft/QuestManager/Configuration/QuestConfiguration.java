@@ -115,9 +115,7 @@ public class QuestConfiguration {
 	 * @throws InvalidConfigurationException 
 	 */
 	public Quest instanceQuest(QuestManager manager) throws InvalidConfigurationException {
-		
-		System.out.println("instancing...");
-		
+				
 		if (!config.contains(QuestConfigurationField.GOALS.getKey())) {
 			return null;
 		}
@@ -129,11 +127,7 @@ public class QuestConfiguration {
 		for (String key : questSection.getKeys(false)) {
 			goalList.add(questSection.getConfigurationSection(key));
 		}
-		
-//		@SuppressWarnings("unchecked")
-//		List<Map<String, Object>> goalList = (List<Map<String, Object>>) config.getList(
-//				QuestConfigurationField.GOALS.getKey());
-//		
+			
 		Quest quest = new Quest(manager, getName(), getDescription(), getSaveState());
 		
 		for (ConfigurationSection section : goalList) {
