@@ -129,6 +129,18 @@ public class Quest implements Listener {
 			.info("[" + this.name + "] <-/-> [" + state.getName() + "]");
 		
 		}
+		Participant pant = state.getParticipant();
+		if (pant != null) {
+			
+			if (pant instanceof Party) {
+				players.add(((Party) pant).getLeader());
+				for (QuestPlayer p : pant.getParticipants()) {
+					players.add(p);
+				}
+			} else {
+				players.add((QuestPlayer) pant);
+			}
+		}
 		
 		ListIterator<GoalState> states = state.getGoalState().listIterator();
 		
@@ -136,17 +148,7 @@ public class Quest implements Listener {
 			goal.loadState(states.next());
 		}
 		
-		Participant pant = state.getParticipant();
-		if (pant == null) {
-			return;
-		}
 		
-		if (pant instanceof Party) {
-			players.add(((Party) pant).getLeader());
-			for (QuestPlayer p : pant.getParticipants()) {
-				players.add(p);
-			}
-		}
 	}
 	
 	
@@ -370,7 +372,8 @@ public class Quest implements Listener {
 		Participant part = null;
 		if (players.size() == 1) {
 			part = players.iterator().next();
-		} if (players.size() == 0) {
+		} else if (players.size() == 0) {
+			System.out.println("size: 0");
 			return null;
 		} else {
 			QuestPlayer leader;

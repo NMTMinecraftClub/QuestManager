@@ -52,6 +52,10 @@ public abstract class Requirement {
 	
 	public abstract void fromConfig(ConfigurationSection config) throws InvalidConfigurationException;
 	
+	public void sync() {
+		this.participants = goal.getQuest().getParticipants();
+	}
+	
 	/**
 	 * Returns the goal this requirement belongs to
 	 * @return

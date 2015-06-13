@@ -47,6 +47,7 @@ public class QuestState {
 			goalState.add(gs);
 		}
 		
+		System.out.println("loading participants:");
 		this.participant = (Participant) config.get("participants");
 		
 	}

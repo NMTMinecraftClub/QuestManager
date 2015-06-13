@@ -114,6 +114,7 @@ public class Goal {
 		//it should work this way, but this is a point of error!
 		ListIterator<RequirementState> states = state.getRequirementStates().listIterator();
 		for (Requirement req : requirements) {
+			req.sync();
 			if (req instanceof StatekeepingRequirement) {
 				((StatekeepingRequirement) req).loadState(states.next());
 			}

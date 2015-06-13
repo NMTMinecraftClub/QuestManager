@@ -71,13 +71,13 @@ public class QuestManager {
 			questTemplates.add(questTemplate);
 			
 			
-			try {
-				registerQuest(questTemplate.instanceQuest(this));
-
-			} catch (InvalidConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				registerQuest(questTemplate.instanceQuest(this));
+//
+//			} catch (InvalidConfigurationException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			
 		}
 		
@@ -126,6 +126,10 @@ public class QuestManager {
 					quest.loadState(state);
 					//if successfull, remove state info so we don't duplicate
 					
+					QuestManagerPlugin.questManagerPlugin.getLogger().info(
+							"Successfully loaded state information for quest!");
+					registerQuest(quest);
+					
 					stateFile.delete();
 					
 				} catch (InvalidConfigurationException e) {
@@ -133,6 +137,7 @@ public class QuestManager {
 					e.printStackTrace();
 					continue;
 				}
+				
 				
 				
 						
@@ -162,10 +167,18 @@ public class QuestManager {
 	 * and are not guaranteed to stop all runningQuests.
 	 */
 	public void stopQuests() {
+		
 		if (runningQuests != null && !runningQuests.isEmpty()) {
+			
+			QuestManagerPlugin.questManagerPlugin.getLogger().info(
+					"Stopping quests and saving state information for " + runningQuests.size() +
+					" quests...");
+			
 			for (Quest quest : runningQuests) {
 				quest.stop();
 			}
+			
+			QuestManagerPlugin.questManagerPlugin.getLogger().info("done!");
 		}
 	}
 	
