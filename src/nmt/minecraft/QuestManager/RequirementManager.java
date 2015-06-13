@@ -3,6 +3,7 @@ package nmt.minecraft.QuestManager;
 import java.util.HashMap;
 import java.util.Map;
 
+import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
@@ -50,7 +51,7 @@ public class RequirementManager {
 	 * @param config The configuration section used to instantiate the requirement. 
 	 * @return A newly created requirement, or <b>null</b> on error.
 	 */
-	public Requirement instanceRequirement(String uniqueKey, YamlConfiguration config) {
+	public Requirement instanceRequirement(String uniqueKey, Goal goal, YamlConfiguration config) {
 		if (!factories.containsKey(uniqueKey)) {
 			QuestManagerPlugin.questManagerPlugin.getLogger()
 			.warning("Unable to find registered requirement factory for key: [" + uniqueKey + "]");
@@ -59,7 +60,7 @@ public class RequirementManager {
 		
 		RequirementFactory<?> factory = factories.get(uniqueKey);
 		
-		return factory.fromConfig(config);
+		return factory.fromConfig(goal, config);
 		
 		
 	}
