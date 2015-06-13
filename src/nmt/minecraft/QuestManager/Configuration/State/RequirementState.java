@@ -1,7 +1,6 @@
 package nmt.minecraft.QuestManager.Configuration.State;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Holds state information about a requirement.<br />

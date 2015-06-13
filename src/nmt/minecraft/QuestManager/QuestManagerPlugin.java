@@ -1,7 +1,6 @@
 package nmt.minecraft.QuestManager;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,11 +11,6 @@ import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -133,38 +127,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 					config.getQuests(managerName));
 			
 			registerManager(manager);
-			
-			/////////////////////
-			//ADD PLAYER INFO to state!
-			
-			
-			
-			
-//			Player dove = Bukkit.getPlayer("dove_bren");
-//			if (!dove.isOnline()) {
-//				return;
-//			}
-//			QuestPlayer qD = new QuestPlayer(dove);
-//			Quest quest = new Quest(manager, "Quest for the Apples", "Journey to find a kingdom's worth of apples!", false);
-//			Goal appleGoal = new Goal(quest, "Collect Apples", "Collect 10 apples");
-//			Requirement appleReq = new PossessRequirement(qD, appleGoal, "Collect 10 Apples", Material.APPLE, 10);
-//			LivingEntity foe = (LivingEntity) dove.getLocation().getWorld().spawnEntity(dove.getLocation(), EntityType.CHICKEN);
-//			Requirement killReq = new VanquishRequirement(appleGoal, foe);
-//			
-//			appleGoal.addRequirement(appleReq);
-//			appleGoal.addRequirement(killReq);
-//			quest.addGoal(appleGoal);
-//			qD.addQuest(quest);
-//			manager.registerQuest(quest);
-			
-			
-			
-			
-			
-			/////////////////////
-			
-			
-			
+					
 		}
 		
 		

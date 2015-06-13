@@ -38,22 +38,7 @@ public class ArriveRequirement extends Requirement implements Listener {
 		}
 		
 	}
-	
-	{
-		System.out.println(
-				"NEED TO PRETTY MUCH SAVE STATE FOR EVERY QUEST:"
-				+ "PLAYERS INVOLVED IS IMPORTANT AND NOT PART OF THE GENERAL TEMPLATES"
-				+ "I WAS THINKING MAYBE HAVE TEMPLATES, ACTIVES, AND STATES?"
-				+ "ACTIVES WILL BE RECREATED ON START, BUT AREN'T NECESSARY STATE-SAVY."
-				
-				
-				);
-		Object n = null;
-		n.getClass();
 		
-		
-	}
-	
 	/**
 	 * Who's involved
 	 */
