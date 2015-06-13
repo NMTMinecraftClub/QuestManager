@@ -2,6 +2,8 @@ package nmt.minecraft.QuestManager.Player;
 
 import java.util.Collection;
 
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
 /**
  * An entity involved in a quest.<br />
  * Specifically, a participant can either be a single player or a collection of players. It's
@@ -9,7 +11,7 @@ import java.util.Collection;
  * @author Skyler
  *
  */
-public interface Participant {
+public interface Participant extends ConfigurationSerializable {
 	
 	/**
 	 * Return the involved participants. This can either be a collection of one element,
