@@ -89,37 +89,36 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		managers = new LinkedList<QuestManager>();
 		
-		YamlConfiguration c = new YamlConfiguration(),
-				x = new YamlConfiguration(),
-				y = new YamlConfiguration(),
-				z = new YamlConfiguration();
-		c.set("key", "value");
-		x.set("1", "a");
-		x.set("2", "b");
-		x.set("3", "b");
-		y.set("1", "a");
-		y.set("2", "b");
-		y.set("3", "b");
-		z.set("1", "a");
-		z.set("2", new ItemStack(Material.APPLE, 10));
-		z.set("3", Bukkit.getWorlds().iterator().next().getSpawnLocation());
-		
-		
-		
-		List<YamlConfiguration> l = new LinkedList<YamlConfiguration>();
-		l.add(x);
-		l.add(y);
-		l.add(z);
-		
-		c.set("list", l);
-		
-		try {
-			c.save(new File(QuestManagerPlugin.questManagerPlugin.getDataFolder(),
-					"temporary.yml"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		YamlConfiguration c = new YamlConfiguration(),
+//				x,
+//				y,
+//				z;
+//
+//		YamlConfiguration l = (YamlConfiguration) c.createSection("l");
+//		z = (YamlConfiguration) c.createSection("z");
+//		x = (YamlConfiguration) l.createSection("x");
+//		
+//		c.set("key", "value");
+//		x.set("1", "a");
+//		x.set("2", "b");
+//		x.set("3", "b");
+//		y = (YamlConfiguration) x.createSection("ySex");
+//		y.set("1", "a");
+//		y.set("2", "b");
+//		y.set("3", "b");
+//		z.set("1", "a");
+//		z.set("2", new ItemStack(Material.APPLE, 10));
+//		z.set("3", Bukkit.getWorlds().iterator().next().getSpawnLocation());
+//		
+//		
+//		
+//		try {
+//			c.save(new File(QuestManagerPlugin.questManagerPlugin.getDataFolder(),
+//					"temporary.yml"));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		//parse config
 		for (String managerName : config.getQuestManagerNames()) {

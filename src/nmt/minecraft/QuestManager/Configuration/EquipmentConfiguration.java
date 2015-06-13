@@ -3,6 +3,7 @@ package nmt.minecraft.QuestManager.Configuration;
 import java.io.File;
 import java.io.IOException;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.EntityEquipment;
@@ -78,7 +79,7 @@ public class EquipmentConfiguration {
 		return state;
 	}
 	
-	public void load(YamlConfiguration config) throws InvalidConfigurationException {
+	public void load(ConfigurationSection config) throws InvalidConfigurationException {
 		
 		if (!config.contains("type") || !config.getString("type").equals("ecnf")) {
 			throw new InvalidConfigurationException();

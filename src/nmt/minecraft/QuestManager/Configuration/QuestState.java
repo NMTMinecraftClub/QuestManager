@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -25,8 +26,8 @@ public class QuestState {
 		this.name = "";
 		this.goalState = new LinkedList<GoalState>();
 	}
-	
-	@SuppressWarnings("unchecked")
+
+
 	public void load(YamlConfiguration config) throws InvalidConfigurationException {
 		
 		if (!config.contains("saveTime") || !config.contains("name") || !config.contains("goals")) {
@@ -35,7 +36,13 @@ public class QuestState {
 		
 		this.name = config.getString("name");
 		
-		this.goalState = (List<GoalState>) config.getList("goals");
+		this.goalState = new LinkedList<GoalState>();
+		
+		for (String goalKey : config.getConfigurationSection("goals").getKeys(false)) {
+			GoalState gs = new GoalState();
+			gs.load(config.getConfigurationSection("goals").getConfigurationSection(goalKey));
+			goalState.add(gs);
+		}
 		
 	}
 	
@@ -46,12 +53,12 @@ public class QuestState {
 		
 		config.set("name", name);
 		
-		List<YamlConfiguration> goalList = new ArrayList<YamlConfiguration>(goalState.size());
+		int i = 1;
 		for (GoalState conf : goalState) {
-			goalList.add(conf.asConfig());
+			config.set("goals." + i, conf.asConfig());
 		}
 		
-		config.set("goals", goalList);
+		//config.set("goals", goalList);
 		
 		config.save(file);
 	}

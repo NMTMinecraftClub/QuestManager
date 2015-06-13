@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -22,9 +23,9 @@ public class GoalState {
 		
 		requirementStates = new LinkedList<RequirementState>();
 	}
-	
-	@SuppressWarnings("unchecked")
-	public void load(YamlConfiguration config) throws InvalidConfigurationException {
+
+
+	public void load(ConfigurationSection config) throws InvalidConfigurationException {
 		if (!config.contains("type") || !config.getString("type").equals("goalstate") 
 				|| !config.contains("name") || !config.contains("requirementStates")) {
 			throw new InvalidConfigurationException();
@@ -32,7 +33,15 @@ public class GoalState {
 		
 		name = config.getString("name");
 		
-		requirementStates = (List<RequirementState>) config.getList("requirementStates");
+		requirementStates = new LinkedList<RequirementState>();
+		
+		for (String reqKey : config.getConfigurationSection("requirementStates").getKeys(false)) {
+			requirementStates.add(
+					new RequirementState(
+							config.getConfigurationSection("requirementStates")
+							.getConfigurationSection(reqKey))
+					);
+		}
 	}
 	
 	public void save(File file) throws IOException {
@@ -42,7 +51,13 @@ public class GoalState {
 		
 		config.set("name", name);
 		
-		config.set("goals", requirementStates);
+		int i = 1;
+		for (RequirementState state : requirementStates) {
+			config.set("requirementStates." + i, state.getConfig());
+			i++;
+		}
+		
+		//config.set("goals", requirementStates);
 		
 		config.save(file);
 	}
@@ -55,7 +70,11 @@ public class GoalState {
 		
 		config.set("name", name);
 		
-		config.set("requirements", requirementStates);
+		int i = 1;
+		for (RequirementState state : requirementStates) {
+			config.set("requirementStates." + i, state.getConfig());
+			i++;
+		}
 		
 		return config;
 	}

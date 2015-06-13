@@ -86,14 +86,14 @@ public class Goal {
 		
 		List<ConfigurationSection> reqs = new LinkedList<ConfigurationSection>();
 		for (String requirementKey : config.getConfigurationSection("requirements").getKeys(false)) {
-			reqs.add(config.getConfigurationSection("requirements")
+			reqs.add( config.getConfigurationSection("requirements")
 					.getConfigurationSection(requirementKey));
 		}
 		
 		for (ConfigurationSection req : reqs) {
 			String type = req.getKeys(false).iterator().next();
 			
-			YamlConfiguration conf = (YamlConfiguration) req.getConfigurationSection(type);
+			ConfigurationSection conf = req.getConfigurationSection(type);
 			
 //			System.out.println(req.get(type).getClass() + " | " + req.get(type));
 			

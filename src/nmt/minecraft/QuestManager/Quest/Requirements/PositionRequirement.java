@@ -8,8 +8,8 @@ import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -26,7 +26,7 @@ public class PositionRequirement extends Requirement implements Listener {
 	
 	public static class PositionFactory extends RequirementFactory<PositionRequirement> {
 		
-		public PositionRequirement fromConfig(Goal goal, YamlConfiguration config) {
+		public PositionRequirement fromConfig(Goal goal, ConfigurationSection config) {
 			PositionRequirement req = new PositionRequirement(goal);
 			try {
 				req.fromConfig(config);
@@ -115,7 +115,7 @@ public class PositionRequirement extends Requirement implements Listener {
 	}
 
 	@Override
-	public void fromConfig(YamlConfiguration config)
+	public void fromConfig(ConfigurationSection config)
 			throws InvalidConfigurationException {
 		//we need location information and range information
 		//  type: "posr"

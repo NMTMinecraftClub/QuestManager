@@ -4,8 +4,8 @@ import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.RequirementUpdateEvent;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Represents a specific requirement needed to achieve a goal in a quest.<br />
@@ -47,7 +47,7 @@ public abstract class Requirement {
 		this.desc = description;
 	}
 	
-	public abstract void fromConfig(YamlConfiguration config) throws InvalidConfigurationException;
+	public abstract void fromConfig(ConfigurationSection config) throws InvalidConfigurationException;
 	
 	/**
 	 * Returns the goal this requirement belongs to

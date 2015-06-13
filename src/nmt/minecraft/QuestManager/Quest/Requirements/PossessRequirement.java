@@ -8,6 +8,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
@@ -24,7 +25,7 @@ public class PossessRequirement extends Requirement implements Listener {
 	
 	public static class PossessFactory extends RequirementFactory<PossessRequirement> {
 		
-		public PossessRequirement fromConfig(Goal goal, YamlConfiguration config) {
+		public PossessRequirement fromConfig(Goal goal, ConfigurationSection config) {
 			PossessRequirement req = new PossessRequirement(goal);
 			try {
 				req.fromConfig(config);
@@ -104,7 +105,7 @@ public class PossessRequirement extends Requirement implements Listener {
 	}
 
 	@Override
-	public void fromConfig(YamlConfiguration config) throws InvalidConfigurationException {
+	public void fromConfig(ConfigurationSection config) throws InvalidConfigurationException {
 		//we need to load information about what we need to possess and how much
 		//our config is 
 		//  type: "pr"

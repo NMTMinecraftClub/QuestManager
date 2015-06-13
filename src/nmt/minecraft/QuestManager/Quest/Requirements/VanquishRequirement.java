@@ -123,7 +123,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	public void loadState(RequirementState reqState) throws InvalidConfigurationException {
 		
 		
-		YamlConfiguration myState = reqState.getConfig();
+		ConfigurationSection myState = reqState.getConfig();
 		
 		if (!myState.contains("type") || !myState.getString("type").equals("vr")) {
 			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'vr' but got " + myState.get("type", "null"));
@@ -131,7 +131,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		
 		System.out.println("keys: " + myState.getKeys(false));
 		
-		YamlConfiguration foeState = (YamlConfiguration) myState.getConfigurationSection("foe");
+		ConfigurationSection foeState =  myState.getConfigurationSection("foe");
 		System.out.println(myState.get("foe").getClass());
 		Location loc = ((LocationState) foeState.get("location")).getLocation();
 		
@@ -142,7 +142,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		
 		EntityEquipment equipment = foe.getEquipment();
 		EquipmentConfiguration econ = new EquipmentConfiguration();
-		econ.load((YamlConfiguration) foeState.get("equipment"));
+		econ.load( foeState.getConfigurationSection("equipment"));
 		
 		equipment.setHelmet(econ.getHead());
 		equipment.setChestplate(econ.getChest());
@@ -152,7 +152,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	}
 
 	@Override
-	public void fromConfig(YamlConfiguration config) throws InvalidConfigurationException {
+	public void fromConfig(ConfigurationSection config) throws InvalidConfigurationException {
 		//what we need to load is the type of foe and his states
 		//this is pretty much loadState
 		

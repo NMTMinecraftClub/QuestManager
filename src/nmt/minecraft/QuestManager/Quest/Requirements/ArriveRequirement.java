@@ -8,8 +8,8 @@ import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -27,7 +27,7 @@ public class ArriveRequirement extends Requirement implements Listener {
 	public static class ArriveFactory extends RequirementFactory<ArriveRequirement> {
 
 		@Override
-		public ArriveRequirement fromConfig(Goal goal, YamlConfiguration config) {
+		public ArriveRequirement fromConfig(Goal goal, ConfigurationSection config) {
 			ArriveRequirement req = new ArriveRequirement(goal);
 			try {
 				req.fromConfig(config);
@@ -127,7 +127,7 @@ public class ArriveRequirement extends Requirement implements Listener {
 	}
 
 	@Override
-	public void fromConfig(YamlConfiguration config)
+	public void fromConfig(ConfigurationSection config)
 			throws InvalidConfigurationException {
 		// same of Position Requirements's loading
 		//  type: "arrr"
