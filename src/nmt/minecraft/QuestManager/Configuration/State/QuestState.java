@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Player.Participant;
 
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -48,7 +49,8 @@ public class QuestState {
 		}
 		
 		System.out.println("loading participants:");
-		this.participant = (Participant) config.get("participants");
+		this.participant = (Participant) QuestManagerPlugin.questManagerPlugin.getPlayerManager()
+				.getParticipant(config.getString("participants"));
 		
 	}
 	
@@ -65,7 +67,7 @@ public class QuestState {
 		}
 		
 		//config.set("goals", goalList);
-		config.set("participants", participant);
+		config.set("participants", participant.getIDString());
 		
 		config.save(file);
 	}

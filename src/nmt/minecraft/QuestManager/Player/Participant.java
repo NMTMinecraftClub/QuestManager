@@ -21,6 +21,12 @@ public interface Participant extends ConfigurationSerializable {
 	 * @return
 	 * @todo decouple implementation :'(
 	 */
-	Collection<QuestPlayer> getParticipants();
+	public Collection<QuestPlayer> getParticipants();
+	
+	/**
+	 * Get a string-version of the ID that can be used to identify this Participant.
+	 * @return
+	 */
+	public String getIDString();
 	
 }

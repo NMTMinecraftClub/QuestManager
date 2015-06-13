@@ -236,6 +236,11 @@ public class QuestPlayer implements Participant {
 		
 		return qp;
 	}
+
+	@Override
+	public String getIDString() {
+		return player.getUniqueId().toString();
+	}
 	
 	
 }

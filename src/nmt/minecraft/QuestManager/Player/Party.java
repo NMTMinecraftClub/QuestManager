@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import nmt.minecraft.QuestManager.Configuration.Utils.GUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -40,6 +42,8 @@ public class Party implements Participant {
 	private Objective hover;
 	
 	private Objective board;
+	
+	private GUID id;
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -216,6 +220,15 @@ public class Party implements Participant {
 		
 		
 		return party;
+	}
+
+	@Override
+	public String getIDString() {
+		return id.toString();
+	}
+	
+	public GUID getID() {
+		return id;
 	}
 	
 	

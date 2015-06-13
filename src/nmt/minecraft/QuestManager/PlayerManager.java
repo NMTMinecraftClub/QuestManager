@@ -1,6 +1,7 @@
 package nmt.minecraft.QuestManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -80,6 +81,7 @@ public class PlayerManager {
 		
 		//initialize a player!
 		QuestPlayer player = new QuestPlayer(Bukkit.getOfflinePlayer(id));
+		players.put(id, player);
 		return player;
 	}
 	
@@ -98,15 +100,20 @@ public class PlayerManager {
 	}
 	
 	public Participant getParticipant(String idString) {
+		
 		if (GUID.valueOf(idString) != null) {
 			return parties.get(GUID.valueOf(idString));
 		}
 		
 		//assume it's a player string
-		return players.get(UUID.fromString(idString));
+		return getPlayer(UUID.fromString(idString));
 	}
 	
 	public void save(File saveFile) {
+		
+		QuestManagerPlugin.questManagerPlugin.getLogger().info(
+				"Saving player database...");
+		
 		YamlConfiguration config = new YamlConfiguration();
 		ConfigurationSection playSex = config.createSection("players");
 		
@@ -114,6 +121,19 @@ public class PlayerManager {
 			for (UUID key : players.keySet()) {
 				playSex.set(key.toString(), getPlayer(key));
 			}
+		}
+		
+		ConfigurationSection gSex = config.createSection("parties");
+		if (!parties.isEmpty()) {
+			for (GUID key : parties.keySet()) {
+				gSex.set(key.toString(), getParty(key));
+			}
+		}
+		
+		try {
+			config.save(saveFile);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
