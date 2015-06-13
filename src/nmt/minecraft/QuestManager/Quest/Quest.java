@@ -15,6 +15,7 @@ import nmt.minecraft.QuestManager.Configuration.GoalState;
 import nmt.minecraft.QuestManager.Configuration.QuestState;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.History.History;
+import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.EventHandler;

@@ -6,19 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import nmt.minecraft.QuestManager.Configuration.PluginConfiguration;
-import nmt.minecraft.QuestManager.Player.QuestPlayer;
-import nmt.minecraft.QuestManager.Quest.Goal;
-import nmt.minecraft.QuestManager.Quest.Quest;
-import nmt.minecraft.QuestManager.Quest.Requirement;
-import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
-import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -36,6 +27,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class QuestManagerPlugin extends JavaPlugin {
 	
 	public static QuestManagerPlugin questManagerPlugin;
+	
+	private RequirementManager reqManager;
 	
 	private List<QuestManager> managers;
 	
@@ -75,6 +68,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		managers = new LinkedList<QuestManager>();
+		reqManager = new RequirementManager();
 		
 		YamlConfiguration c = new YamlConfiguration(),
 				x = new YamlConfiguration(),
@@ -214,6 +208,10 @@ public class QuestManagerPlugin extends JavaPlugin {
 			man.haltQuests();
 		}
 		
+	}
+	
+	public RequirementManager getRequirementManager() {
+		return this.reqManager;
 	}
 	
 }

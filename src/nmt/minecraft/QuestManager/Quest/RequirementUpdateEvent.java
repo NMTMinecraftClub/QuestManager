@@ -1,5 +1,7 @@
 package nmt.minecraft.QuestManager.Quest;
 
+import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 

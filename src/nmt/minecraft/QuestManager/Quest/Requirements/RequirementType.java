@@ -1,6 +1,13 @@
 package nmt.minecraft.QuestManager.Quest.Requirements;
 
-import nmt.minecraft.QuestManager.Quest.Requirement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import nmt.minecraft.QuestManager.Quest.Goal;
+
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 
 /**
  * List of requirement types used when creating requirements from config
@@ -20,9 +27,12 @@ public enum RequirementType {
 		this.c = c;
 	}
 	
-	public Requirement instance() {
+	public Requirement instance(Goal goal, YamlConfiguration config) throws InvalidConfigurationException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
 		try {
-			return c.newInstance();
+			Constructor con = c.getConstructor(Goal.class);
+			Requirement r = (Requirement) con.newInstance(goal);
+			r.fromConfig(config);
+			return r;
 		} catch (InstantiationException | IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -1,19 +1,22 @@
-package nmt.minecraft.QuestManager.Quest;
+package nmt.minecraft.QuestManager.Quest.Requirements;
+
+import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.RequirementUpdateEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
- * Represesnts a specific requirement needed to acheive a goal in a quest.<br />
+ * Represents a specific requirement needed to achieve a goal in a quest.<br />
  * Requirements are the gnitty-gritty details of how to achieve a goal. Examples inlcude:<br />
  * <ul>
  * <li>Kill a boss</li>
  * <li>Reach the village</li>
  * <li>etc</li>
  * </ul>
- * Requirements are required to perform their own event checking and are required to update
- * their containing goal when upon state change.
+ * Requirements are <b>required</b> to perform their own event checking and are required to update
+ * their containing goal when upon state change. In addition, requirements must 
  * @author Skyler
  *
  */

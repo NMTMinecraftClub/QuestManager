@@ -1,5 +1,6 @@
 package nmt.minecraft.QuestManager.Quest;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -9,6 +10,7 @@ import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.GoalState;
 import nmt.minecraft.QuestManager.Configuration.RequirementState;
 import nmt.minecraft.QuestManager.Configuration.StatekeepingRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.RequirementType;
 
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -89,9 +91,10 @@ public class Goal {
 			YamlConfiguration conf = new YamlConfiguration();
 			conf.createSection(type, cmap);
 			
-			Requirement r = RequirementType.valueOf(type).instance();
+			Requirement r = QuestManagerPlugin.questManagerPlugin.getRequirementManager()
+					.instanceRequirement(type, conf);
 			
-			r.fromConfig(conf);
+				
 			
 			goal.addRequirement(r);
 		}

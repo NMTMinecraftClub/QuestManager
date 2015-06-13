@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
-import nmt.minecraft.QuestManager.Quest.Requirements.RequirementFactory;
+import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
- * Keep information about registered requirements and their factory classes.
+ * Keeps track of requirement keys and registered factories
  * @author Skyler
  *
  */
@@ -25,43 +25,43 @@ public class RequirementManager {
 	}
 	
 	/**
-	 * Attempts to look up an appropriate factory and return an instance of the requirement that factory is
-	 * paired to.<br />
-	 * Factories much first be registered with this manager before being able to be created from this method. 
-	 * @param key The registered key used to look up the factory. This is the same as the ID key in quest
-	 * configuration files used to identify the requirement.
-	 * @param config The portion of the config file used to initialize the requirement
-	 * @return
+	 * Registers the provided factory with the provided key.
+	 * @param uniqueKey The key to register the factory to. This is the key used in the configuration file to
+	 * invoke this factory
+	 * @param factory The factory
+	 * @return Whether the registration was successful. Failed registration usually is from non-unique keys.
 	 */
-	public Requirement instanceRequirement(String key, YamlConfiguration config) {
-		if (!factories.containsKey(key)) {
-			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to find "
-					+ "constructor for requirement of type: " + key);
-			return null;
-		}
-		
-		
-		Requirement r = factories.get(key).instance(config);
-		
-		return r;
-	}
-	
-	/**
-	 * Adds the factory to the manager's database with the given key.<br />
-	 * Multiple requirements may not share the same key. If a key already exists, the factory will be
-	 * refused.
-	 * @param key The key used in config to denote the requirement instantiated by the passed factory
-	 * @param factory The factory to be called when the user uses the above key
-	 * @return On success, this method returns true. If a collision occurs, this method returns false.
-	 */
-	public boolean registerRequirement(String key, RequirementFactory<?> factory) {
-		if (factories.containsKey(key)) {
-			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to register requirement"
-					+ " factory, as the name is already registered: " + key);
+	public boolean registerFactory(String uniqueKey, RequirementFactory<?> factory) {
+		if (factories.containsKey(uniqueKey)) {
+			QuestManagerPlugin.questManagerPlugin.getLogger()
+				.warning("Unable to register requirement factory: key already exists [" + uniqueKey + "]");
 			return false;
 		}
 		
-		factories.put(key, factory);
+		factories.put(uniqueKey, factory);
+		
 		return true;
 	}
+	
+	/**
+	 * Uses registered factories to instantiate a requirement from the given key and configuration file.<br />
+	 * Keys must first be registered using {@link #registerFactory(String, RequirementFactory)}
+	 * @param uniqueKey The key to look up, usually from the configuration file being loaded
+	 * @param config The configuration section used to instantiate the requirement. 
+	 * @return A newly created requirement, or <b>null</b> on error.
+	 */
+	public Requirement instanceRequirement(String uniqueKey, YamlConfiguration config) {
+		if (!factories.containsKey(uniqueKey)) {
+			QuestManagerPlugin.questManagerPlugin.getLogger()
+			.warning("Unable to find registered requirement factory for key: [" + uniqueKey + "]");
+			return null;
+		}
+		
+		RequirementFactory<?> factory = factories.get(uniqueKey);
+		
+		return factory.fromConfig(config);
+		
+		
+	}
+	
 }
