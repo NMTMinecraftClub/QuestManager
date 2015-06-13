@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -13,6 +14,8 @@ import nmt.minecraft.QuestManager.QuestManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.State.GoalState;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
+import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
@@ -149,6 +152,25 @@ public class Quest implements Listener {
 			state.addGoalState(
 					goal.getState());
 		}
+		
+		Participant part = null;
+		if (players.size() < 2) {
+			part = players.iterator().next();
+		} else {
+			QuestPlayer leader;
+			List<QuestPlayer> members = new LinkedList<QuestPlayer>();
+			Iterator<QuestPlayer> it = players.iterator();
+			
+			leader = it.next();
+			
+			while (it.hasNext()) {
+				members.add(it.next());
+			}
+			
+			part = new Party(leader, members);
+		}
+		
+		state.setParticipant(part);
 		
 		return state;
 	}

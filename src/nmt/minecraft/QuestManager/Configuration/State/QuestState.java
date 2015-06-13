@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import nmt.minecraft.QuestManager.Player.Participant;
+
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -20,6 +22,8 @@ public class QuestState {
 	
 	private List<GoalState> goalState;
 	
+	private Participant participant;
+	
 	public QuestState() {
 		this.name = "";
 		this.goalState = new LinkedList<GoalState>();
@@ -28,8 +32,9 @@ public class QuestState {
 
 	public void load(YamlConfiguration config) throws InvalidConfigurationException {
 		
-		if (!config.contains("saveTime") || !config.contains("name") || !config.contains("goals")) {
-			throw new InvalidConfigurationException();
+		if (!config.contains("saveTime") || !config.contains("participant") || !config.contains("name") || !config.contains("goals")) {
+			throw new InvalidConfigurationException("Some keys were missing in a quest state!"
+					+ (config.contains("name") ? config.getString("name") : ""));
 		}
 		
 		this.name = config.getString("name");
@@ -41,6 +46,8 @@ public class QuestState {
 			gs.load(config.getConfigurationSection("goals").getConfigurationSection(goalKey));
 			goalState.add(gs);
 		}
+		
+		this.participant = (Participant) config.get("participant");
 		
 	}
 	
@@ -59,6 +66,14 @@ public class QuestState {
 		//config.set("goals", goalList);
 		
 		config.save(file);
+	}
+	
+	public Participant getParticipant() {
+		return this.participant;
+	}
+	
+	public void setParticipant(Participant participant) {
+		this.participant = participant;
 	}
 
 	/**
