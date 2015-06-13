@@ -40,10 +40,6 @@ public class ArriveRequirement extends Requirement implements Listener {
 		
 	}
 		
-	/**
-	 * Who's involved
-	 */
-	private Participant participants;
 	
 	/**
 	 * Where they need to go

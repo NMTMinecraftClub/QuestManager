@@ -1,5 +1,6 @@
 package nmt.minecraft.QuestManager.Quest.Requirements;
 
+import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Quest.Goal;
 
 import org.bukkit.Bukkit;
@@ -27,6 +28,8 @@ public abstract class Requirement {
 	
 	protected boolean state;
 	
+	protected Participant participants;
+	
 
 	/**
 	 * Creates a requirement with an empty string for a description
@@ -44,6 +47,7 @@ public abstract class Requirement {
 	public Requirement(Goal goal, String description) {
 		this.goal = goal;
 		this.desc = description;
+		participants = goal.getQuest().getParticipants();
 	}
 	
 	public abstract void fromConfig(ConfigurationSection config) throws InvalidConfigurationException;

@@ -153,24 +153,9 @@ public class Quest implements Listener {
 					goal.getState());
 		}
 		
-		Participant part = null;
-		if (players.size() < 2) {
-			part = players.iterator().next();
-		} else {
-			QuestPlayer leader;
-			List<QuestPlayer> members = new LinkedList<QuestPlayer>();
-			Iterator<QuestPlayer> it = players.iterator();
-			
-			leader = it.next();
-			
-			while (it.hasNext()) {
-				members.add(it.next());
-			}
-			
-			part = new Party(leader, members);
-		}
 		
-		state.setParticipant(part);
+		
+		state.setParticipant(getParticipants());
 		
 		return state;
 	}
@@ -366,6 +351,26 @@ public class Quest implements Listener {
 		}
 		
 		ready = true;
+	}
+	
+	public Participant getParticipants() {
+		Participant part = null;
+		if (players.size() < 2) {
+			part = players.iterator().next();
+		} else {
+			QuestPlayer leader;
+			List<QuestPlayer> members = new LinkedList<QuestPlayer>();
+			Iterator<QuestPlayer> it = players.iterator();
+			
+			leader = it.next();
+			
+			while (it.hasNext()) {
+				members.add(it.next());
+			}
+			
+			part = new Party(leader, members);
+		}
+		return part;
 	}
 	
 	@Override

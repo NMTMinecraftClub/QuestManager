@@ -40,11 +40,6 @@ public class PositionRequirement extends Requirement implements Listener {
 	
 	
 	/**
-	 * Who must satisfy the requirement?
-	 */
-	private Participant participants;
-	
-	/**
 	 * Where the participant must be
 	 */
 	private Location destination;

@@ -40,8 +40,6 @@ public class PossessRequirement extends Requirement implements Listener {
 	
 	private int itemCount;
 	
-	private Participant participants;
-	
 	private PossessRequirement(Goal goal) {
 		super(goal);
 	}
