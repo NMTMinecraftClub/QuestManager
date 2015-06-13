@@ -151,6 +151,9 @@ public class Quest implements Listener {
 		
 	}
 	
+	public QuestManager getManager() {
+		return manager;
+	}
 	
 	public QuestState getState() {
 		//we need to definitely save goal state information (and requirement state). We also

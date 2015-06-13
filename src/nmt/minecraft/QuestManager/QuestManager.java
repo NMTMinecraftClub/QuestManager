@@ -9,8 +9,10 @@ import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
 import nmt.minecraft.QuestManager.Quest.Quest;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scoreboard.Scoreboard;
 
 public class QuestManager {
 	
@@ -22,6 +24,8 @@ public class QuestManager {
 	
 	private String name;
 	
+	private Scoreboard scoreboard;
+	
 	/**
 	 * Constructs a manager with the given directory information and a config file with
 	 * the manager configuration section ready. The config passed is expected to have
@@ -32,6 +36,7 @@ public class QuestManager {
 		
 		runningQuests = new LinkedList<Quest>();
 		questTemplates = new LinkedList<QuestConfiguration>();
+		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 		
 		this.saveDirectory = saveDirectory;
 		
@@ -200,6 +205,10 @@ public class QuestManager {
 	
 	public String getName() {
 		return this.name;
+	}
+	
+	public Scoreboard getScoreboard() {
+		return this.scoreboard;
 	}
 	
 	/**

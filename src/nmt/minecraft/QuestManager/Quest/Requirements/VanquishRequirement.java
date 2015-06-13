@@ -143,6 +143,8 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		foe.setHealth(foeState.getDouble("hp"));
 		foe.setCustomName(foeState.getString("name"));
 		
+		foe.setRemoveWhenFarAway(false);
+		
 		EntityEquipment equipment = foe.getEquipment();
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		econ.load( foeState.getConfigurationSection("equipment"));
