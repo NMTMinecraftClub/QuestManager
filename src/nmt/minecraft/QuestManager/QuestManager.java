@@ -99,6 +99,14 @@ public class QuestManager {
 					
 				} catch (InvalidConfigurationException e) {
 					e.printStackTrace();
+					
+					//remove it?
+					if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getKeepOnError()) {
+						stateFile.delete();
+					} else {
+						QuestManagerPlugin.questManagerPlugin.getLogger().info("Ignoring invalid config.");
+					}
+					
 					continue;
 				}
 				
@@ -116,6 +124,10 @@ public class QuestManager {
 				
 				try {
 					quest.loadState(state);
+					//if successfull, remove state info so we don't duplicate
+					
+					stateFile.delete();
+					
 				} catch (InvalidConfigurationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

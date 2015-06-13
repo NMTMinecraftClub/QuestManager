@@ -43,6 +43,11 @@ public class PluginConfiguration {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		if (config.getBoolean("conservativeMode", true)) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().info("Conservative mode is on,"
+					+ " so invalid configs will simply be ignored instead of destroyed.");
+		}
 	}
 	
 	/**

@@ -164,4 +164,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 		return this.reqManager;
 	}
 	
+	public PluginConfiguration getPluginConfiguration() {
+		return this.config;
+	}
+	
 }
