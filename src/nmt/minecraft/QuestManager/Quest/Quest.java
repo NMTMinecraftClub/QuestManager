@@ -9,11 +9,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import nmt.minecraft.QuestManager.QuestManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.State.GoalState;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
+import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
@@ -86,6 +88,8 @@ public class Quest implements Listener {
 	
 	private boolean ready;
 	
+	private Set<NPC> npcs;
+	
 	/**
 	 * Whether or not this quest should be triggered on and then never evaluated again,
 	 * or if it can go between completed and not completed depending on its requirements.<br />
@@ -104,6 +108,7 @@ public class Quest implements Listener {
 		
 		this.running = false;
 		this.goals = new LinkedList<Goal>();
+		this.npcs = new TreeSet<NPC>();
 		
 		this.history = new History();
 		ready = false;
@@ -230,9 +235,18 @@ public class Quest implements Listener {
 		}
 		
 		//do player stuff
+		if (!players.isEmpty())
 		for (QuestPlayer player : players) {
 			removePlayer(player);
 		}
+		
+		//remove NPCs
+		if (!npcs.isEmpty()) 
+		for (NPC npc : npcs) {
+			npc.getEntity().remove();
+		}
+		
+		
 	}
 	
 	/**
@@ -250,6 +264,19 @@ public class Quest implements Listener {
 		//just remove players
 		for (QuestPlayer player : players) {
 			removePlayer(player);
+		}
+		
+		//remove NPCs
+		if (!npcs.isEmpty()) 
+		for (NPC npc : npcs) {
+			npc.getEntity().remove();
+		}
+				
+		//stop goals
+		if (!goals.isEmpty()) {	
+			for (Goal goal : goals) {
+						goal.stop();
+			}
 		}
 	}
 	
