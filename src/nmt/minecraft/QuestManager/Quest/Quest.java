@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
-import java.util.TreeSet;
 
 import nmt.minecraft.QuestManager.QuestManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
@@ -108,7 +107,7 @@ public class Quest implements Listener {
 		
 		this.running = false;
 		this.goals = new LinkedList<Goal>();
-		this.npcs = new TreeSet<NPC>();
+		this.npcs = new HashSet<NPC>();
 		
 		this.history = new History();
 		ready = false;

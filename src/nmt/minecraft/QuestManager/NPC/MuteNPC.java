@@ -8,8 +8,9 @@ import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
@@ -25,6 +26,41 @@ import org.bukkit.inventory.EntityEquipment;
  * &nbsp;&nbsp;[valid {@link nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration}]
  */
 public class MuteNPC extends NPC {
+	
+	/**
+	 * Registers this class as configuration serializable with all defined 
+	 * {@link aliases aliases}
+	 */
+	public static void registerWithAliases() {
+		for (aliases alias : aliases.values()) {
+			ConfigurationSerialization.registerClass(MuteNPC.class, alias.getAlias());
+		}
+	}
+	
+	/**
+	 * Registers this class as configuration serializable with only the default alias
+	 */
+	public static void registerWithoutAliases() {
+		ConfigurationSerialization.registerClass(MuteNPC.class);
+	}
+	
+
+	private enum aliases {
+		FULL("nmt.minecraft.QuestManager.NPC.MuteNPC"),
+		DEFAULT(MuteNPC.class.getName()),
+		SHORT("MuteNPC"),
+		INFORMAL("MNPC");
+		
+		private String alias;
+		
+		private aliases(String alias) {
+			this.alias = alias;
+		}
+		
+		public String getAlias() {
+			return alias;
+		}
+	}
 
 	public static MuteNPC valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("name") || !map.containsKey("type") 
@@ -38,7 +74,9 @@ public class MuteNPC extends NPC {
 		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
-			econ.load((ConfigurationSection) map.get("equipment"));
+			YamlConfiguration tmp = new YamlConfiguration();
+			tmp.createSection("key",  (Map<?, ?>) map.get("equipment"));
+			econ.load(tmp.getConfigurationSection("key"));
 		} catch (InvalidConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
