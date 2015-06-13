@@ -5,6 +5,7 @@ import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.RequirementState;
 import nmt.minecraft.QuestManager.Configuration.StatekeepingRequirement;
 import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -28,7 +29,24 @@ import org.bukkit.inventory.EntityEquipment;
  */
 public class VanquishRequirement extends Requirement implements Listener, StatekeepingRequirement {
 	
+	public static class VanquishFactory extends RequirementFactory<VanquishRequirement> {
+		
+		public VanquishRequirement fromConfig(Goal goal, YamlConfiguration config) {
+			VanquishRequirement req = new VanquishRequirement(goal);
+			try {
+				req.fromConfig(config);
+			} catch (InvalidConfigurationException e) {
+				e.printStackTrace();
+			}
+			return req;
+		}
+	}
+	
 	private LivingEntity foe;
+	
+	private VanquishRequirement(Goal goal) {
+		super(goal);
+	}
 	
 	public VanquishRequirement(Goal goal, LivingEntity foe) {
 		this(goal, "", foe);

@@ -4,6 +4,7 @@ import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,6 +24,20 @@ import org.bukkit.event.player.PlayerMoveEvent;
  */
 public class PositionRequirement extends Requirement implements Listener {
 	
+	public static class PositionFactory extends RequirementFactory<PositionRequirement> {
+		
+		public PositionRequirement fromConfig(Goal goal, YamlConfiguration config) {
+			PositionRequirement req = new PositionRequirement(goal);
+			try {
+				req.fromConfig(config);
+			} catch (InvalidConfigurationException e) {
+				e.printStackTrace();
+			}
+			return req;
+		}
+	}
+	
+	
 	/**
 	 * Who must satisfy the requirement?
 	 */
@@ -37,6 +52,10 @@ public class PositionRequirement extends Requirement implements Listener {
 	 * How close they can be to the destination to count as satisfied
 	 */
 	private double targetRange;
+	
+	private PositionRequirement(Goal goal) {
+		super(goal);
+	}
 	
 	public PositionRequirement(Goal goal, Participant participants, Location destination, double range) {
 		this(goal, "", participants, destination, range);

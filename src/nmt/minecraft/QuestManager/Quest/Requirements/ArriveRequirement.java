@@ -4,6 +4,7 @@ import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,6 +24,21 @@ import org.bukkit.event.player.PlayerMoveEvent;
  */
 public class ArriveRequirement extends Requirement implements Listener {
 	
+	public static class ArriveFactory extends RequirementFactory<ArriveRequirement> {
+
+		@Override
+		public ArriveRequirement fromConfig(Goal goal, YamlConfiguration config) {
+			ArriveRequirement req = new ArriveRequirement(goal);
+			try {
+				req.fromConfig(config);
+			} catch (InvalidConfigurationException e) {
+				e.printStackTrace();
+			}
+			return req;
+		}
+		
+	}
+	
 	/**
 	 * Who's involved
 	 */
@@ -37,6 +53,14 @@ public class ArriveRequirement extends Requirement implements Listener {
 	 * How close they can be to the destination to call it good (in blocks)
 	 */
 	private double targetRange;
+	
+	/**
+	 * Super secret private constructor for factory call convenience
+	 * @param goal
+	 */
+	private ArriveRequirement(Goal goal) {
+		super(goal);		
+	}
 	
 	public ArriveRequirement(Goal goal, Participant participants, Location location, double range) {
 		this(goal, "", participants, location, range);

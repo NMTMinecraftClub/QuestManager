@@ -4,6 +4,7 @@ import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,11 +22,28 @@ import org.bukkit.inventory.ItemStack;
  */
 public class PossessRequirement extends Requirement implements Listener {
 	
+	public static class PossessFactory extends RequirementFactory<PossessRequirement> {
+		
+		public PossessRequirement fromConfig(Goal goal, YamlConfiguration config) {
+			PossessRequirement req = new PossessRequirement(goal);
+			try {
+				req.fromConfig(config);
+			} catch (InvalidConfigurationException e) {
+				e.printStackTrace();
+			}
+			return req;
+		}
+	}
+	
 	private Material itemType;
 	
 	private int itemCount;
 	
 	private Participant participants;
+	
+	private PossessRequirement(Goal goal) {
+		super(goal);
+	}
 	
 	public PossessRequirement(Participant participants, Goal goal, Material itemType) {
 		this(participants, goal, "", itemType, 1);
