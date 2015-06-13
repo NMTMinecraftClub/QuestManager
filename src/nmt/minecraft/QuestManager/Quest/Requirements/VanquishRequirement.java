@@ -2,8 +2,8 @@ package nmt.minecraft.QuestManager.Quest.Requirements;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
-import nmt.minecraft.QuestManager.Configuration.RequirementState;
-import nmt.minecraft.QuestManager.Configuration.StatekeepingRequirement;
+import nmt.minecraft.QuestManager.Configuration.State.RequirementState;
+import nmt.minecraft.QuestManager.Configuration.State.StatekeepingRequirement;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;

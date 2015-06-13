@@ -1,4 +1,4 @@
-package nmt.minecraft.QuestManager.Configuration;
+package nmt.minecraft.QuestManager.Configuration.State;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

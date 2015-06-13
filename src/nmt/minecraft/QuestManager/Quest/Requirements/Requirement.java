@@ -1,7 +1,6 @@
 package nmt.minecraft.QuestManager.Quest.Requirements;
 
 import nmt.minecraft.QuestManager.Quest.Goal;
-import nmt.minecraft.QuestManager.Quest.RequirementUpdateEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;

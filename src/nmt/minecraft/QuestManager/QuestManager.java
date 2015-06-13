@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
-import nmt.minecraft.QuestManager.Configuration.QuestState;
+import nmt.minecraft.QuestManager.Configuration.State.QuestState;
 import nmt.minecraft.QuestManager.Quest.Quest;
 
 import org.bukkit.configuration.InvalidConfigurationException;

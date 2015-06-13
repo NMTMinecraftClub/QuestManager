@@ -6,9 +6,9 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.Configuration.GoalState;
-import nmt.minecraft.QuestManager.Configuration.RequirementState;
-import nmt.minecraft.QuestManager.Configuration.StatekeepingRequirement;
+import nmt.minecraft.QuestManager.Configuration.State.GoalState;
+import nmt.minecraft.QuestManager.Configuration.State.RequirementState;
+import nmt.minecraft.QuestManager.Configuration.State.StatekeepingRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 
 import org.bukkit.configuration.ConfigurationSection;

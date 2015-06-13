@@ -1,4 +1,4 @@
-package nmt.minecraft.QuestManager.Configuration;
+package nmt.minecraft.QuestManager.Configuration.State;
 
 import java.io.File;
 import java.io.IOException;
