@@ -1,13 +1,14 @@
 package nmt.minecraft.QuestManager.Configuration;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import nmt.minecraft.QuestManager.QuestManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -121,14 +122,22 @@ public class QuestConfiguration {
 			return null;
 		}
 		
-		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> goalList = (List<Map<String, Object>>) config.getList(
+		ConfigurationSection questSection = config.getConfigurationSection(
 				QuestConfigurationField.GOALS.getKey());
 		
+		List<ConfigurationSection> goalList = new LinkedList<ConfigurationSection>();
+		for (String key : questSection.getKeys(false)) {
+			goalList.add(questSection.getConfigurationSection(key));
+		}
+		
+//		@SuppressWarnings("unchecked")
+//		List<Map<String, Object>> goalList = (List<Map<String, Object>>) config.getList(
+//				QuestConfigurationField.GOALS.getKey());
+//		
 		Quest quest = new Quest(manager, getName(), getDescription(), getSaveState());
 		
-		for (Map<String, Object> section : goalList) {
-			Goal goal = Goal.fromMap(quest, section);
+		for (ConfigurationSection section : goalList) {
+			Goal goal = Goal.fromConfig(quest, section);
 			quest.addGoal(goal);
 		}
 		

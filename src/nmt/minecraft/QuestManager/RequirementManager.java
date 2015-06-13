@@ -7,6 +7,7 @@ import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
@@ -48,10 +49,10 @@ public class RequirementManager {
 	 * Uses registered factories to instantiate a requirement from the given key and configuration file.<br />
 	 * Keys must first be registered using {@link #registerFactory(String, RequirementFactory)}
 	 * @param uniqueKey The key to look up, usually from the configuration file being loaded
-	 * @param config The configuration section used to instantiate the requirement. 
+	 * @param conf The configuration section used to instantiate the requirement. 
 	 * @return A newly created requirement, or <b>null</b> on error.
 	 */
-	public Requirement instanceRequirement(String uniqueKey, Goal goal, YamlConfiguration config) {
+	public Requirement instanceRequirement(String uniqueKey, Goal goal, ConfigurationSection conf) {
 		if (!factories.containsKey(uniqueKey)) {
 			QuestManagerPlugin.questManagerPlugin.getLogger()
 			.warning("Unable to find registered requirement factory for key: [" + uniqueKey + "]");
@@ -60,7 +61,7 @@ public class RequirementManager {
 		
 		RequirementFactory<?> factory = factories.get(uniqueKey);
 		
-		return factory.fromConfig(goal, config);
+		return factory.fromConfig(goal, conf);
 		
 		
 	}

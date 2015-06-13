@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 /**
  * Convenience class for saving and loading location data from config 
@@ -16,6 +17,43 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 public class LocationState implements ConfigurationSerializable {
 	
 	Location location;
+	
+	/**
+	 * Registers this class as configuration serializable with all defined 
+	 * {@link aliases aliases}
+	 */
+	public static void registerWithAliases() {
+		for (aliases alias : aliases.values()) {
+			ConfigurationSerialization.registerClass(LocationState.class, alias.getAlias());
+		}
+	}
+	
+	/**
+	 * Registers this class as configuration serializable with only the default alias
+	 */
+	public static void registerWithoutAliases() {
+		ConfigurationSerialization.registerClass(LocationState.class);
+	}
+	
+
+	private enum aliases {
+		BUKKIT("org.bukkit.Location"),
+		LOCATIONUPPER("LOCATION"),
+		LOCATIONLOWER("location"),
+		LOCATIONFORMAL("Location"),
+		DEFAULT(LocationState.class.getName()),
+		SIMPLE("LocationState");
+		
+		private String alias;
+		
+		private aliases(String alias) {
+			this.alias = alias;
+		}
+		
+		public String getAlias() {
+			return alias;
+		}
+	}
 	
 	/**
 	 * Stores fields and their config keys
@@ -86,8 +124,8 @@ public class LocationState implements ConfigurationSerializable {
 		x = (double) configMap.get(fields.X.getKey());
 		y = (double) configMap.get(fields.Y.getKey());
 		z = (double) configMap.get(fields.Z.getKey());
-		pitch = (float) configMap.get(fields.PITCH.getKey());
-		yaw = (float) configMap.get(fields.YAW.getKey());
+		pitch = (float) ((double) configMap.get(fields.PITCH.getKey()));
+		yaw = (float) ((double) configMap.get(fields.YAW.getKey()));
 		
 		return new LocationState(
 				new Location(

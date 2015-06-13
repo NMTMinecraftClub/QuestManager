@@ -4,6 +4,7 @@ import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.RequirementState;
 import nmt.minecraft.QuestManager.Configuration.StatekeepingRequirement;
+import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
@@ -31,7 +32,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	
 	public static class VanquishFactory extends RequirementFactory<VanquishRequirement> {
 		
-		public VanquishRequirement fromConfig(Goal goal, YamlConfiguration config) {
+		public VanquishRequirement fromConfig(Goal goal, ConfigurationSection config) {
 			VanquishRequirement req = new VanquishRequirement(goal);
 			try {
 				req.fromConfig(config);
@@ -101,7 +102,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 
 	@Override
 	public RequirementState getState() {
-		RequirementState myState = new RequirementState();
+		YamlConfiguration myState = new YamlConfiguration();
 		
 		myState.set("type", "vr");
 		
@@ -115,18 +116,24 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		EquipmentConfiguration econ = new EquipmentConfiguration(foe.getEquipment());
 		foeSection.set("equipment", econ.getConfiguration());
 		
-		return myState;
+		return new RequirementState(myState);
 	}
 
 	@Override
-	public void loadState(RequirementState myState) throws InvalidConfigurationException {
+	public void loadState(RequirementState reqState) throws InvalidConfigurationException {
+		
+		
+		YamlConfiguration myState = reqState.getConfig();
 		
 		if (!myState.contains("type") || !myState.getString("type").equals("vr")) {
-			throw new InvalidConfigurationException();
+			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'vr' but got " + myState.get("type", "null"));
 		}
 		
-		ConfigurationSection foeState = myState.getConfigurationSection("foe");
-		Location loc = (Location) foeState.get("location");
+		System.out.println("keys: " + myState.getKeys(false));
+		
+		YamlConfiguration foeState = (YamlConfiguration) myState.getConfigurationSection("foe");
+		System.out.println(myState.get("foe").getClass());
+		Location loc = ((LocationState) foeState.get("location")).getLocation();
 		
 		foe = (LivingEntity) loc.getWorld().spawnEntity(loc, EntityType.valueOf(foeState.getString("type")));
 		foe.setMaxHealth(foeState.getDouble("maxhp"));
@@ -150,7 +157,11 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		//this is pretty much loadState
 		
 		//for laziness imma just do the same thing
-		loadState((RequirementState) config);
+		loadState(new RequirementState(config));
+		
+//		RequirementState fakeState = new RequirementState();
+//		fakeState.importConfig(config);
+//		loadState(fakeState);
 		
 		
 	}

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import nmt.minecraft.QuestManager.Configuration.PluginConfiguration;
+import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
@@ -14,6 +15,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -82,6 +84,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
+		//register our Location util!
+		LocationState.registerWithAliases();
+		
 		managers = new LinkedList<QuestManager>();
 		
 		YamlConfiguration c = new YamlConfiguration(),

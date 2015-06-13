@@ -11,6 +11,7 @@ import nmt.minecraft.QuestManager.Configuration.RequirementState;
 import nmt.minecraft.QuestManager.Configuration.StatekeepingRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -41,7 +42,7 @@ public class Goal {
 	 * @return
 	 * @throws InvalidConfigurationException 
 	 */
-	public static Goal fromMap(Quest quest, Map<String, Object> map) throws InvalidConfigurationException {
+	public static Goal fromConfig(Quest quest, ConfigurationSection config) throws InvalidConfigurationException {
 		/* goal construction configuration involves:
 		 * Goal name, description
 		 * The requirements that are in it
@@ -51,14 +52,14 @@ public class Goal {
 		 * up the req
 		 */
 		
-		if (!map.containsKey("type") || !map.get("type").equals("goalcnf")) {
+		if (!config.contains("type") || !config.getString("type").equals("goalcnf")) {
 			throw new InvalidConfigurationException();
 		}
 		
 		String name, description;
 		
-		name = (String) map.get("name");
-		description = (String) map.get("description");
+		name = config.getString("name");
+		description = config.getString("description");
 		
 
 		Goal goal = new Goal(quest, name, description);
@@ -80,15 +81,31 @@ public class Goal {
 //			goal.addRequirement(r);
 //		}
 		
-		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> reqs = (List<Map<String, Object>>) map.get("requirements");
+//		@SuppressWarnings("unchecked")
+//		List<ConfigurationSection> reqs = (List<ConfigurationSection>) config.get("requirements");
 		
-		for (Map<String, Object> req : reqs) {
-			String type = req.keySet().iterator().next();
-			@SuppressWarnings("unchecked")
-			Map<String, Object> cmap = (Map<String, Object>) req.get(type);
-			YamlConfiguration conf = new YamlConfiguration();
-			conf.createSection(type, cmap);
+		List<ConfigurationSection> reqs = new LinkedList<ConfigurationSection>();
+		for (String requirementKey : config.getConfigurationSection("requirements").getKeys(false)) {
+			reqs.add(config.getConfigurationSection("requirements")
+					.getConfigurationSection(requirementKey));
+		}
+		
+		for (ConfigurationSection req : reqs) {
+			String type = req.getKeys(false).iterator().next();
+			
+			YamlConfiguration conf = (YamlConfiguration) req.getConfigurationSection(type);
+			
+//			System.out.println(req.get(type).getClass() + " | " + req.get(type));
+			
+//			@SuppressWarnings("unchecked")
+//			Map<String, Object> cmap = (Map<String, Object>) req.get(type);
+//			YamlConfiguration conf = new YamlConfiguration();
+//			
+//			for (String key : cmap.keySet()) {
+//				conf.set(key, cmap.get(key));
+//			}
+			
+//			conf.createSection(type, cmap);
 			
 			Requirement r = QuestManagerPlugin.questManagerPlugin.getRequirementManager()
 					.instanceRequirement(type, goal, conf);
@@ -104,6 +121,81 @@ public class Goal {
 		return goal;
 		
 	}
+	
+	
+	
+//	public static Goal fromMap(Quest quest, Map<String, Object> map) throws InvalidConfigurationException {
+//		/* goal construction configuration involves:
+//		 * Goal name, description
+//		 * The requirements that are in it
+//		 * 
+//		 * The req's are in a list, with each element being a con section with the
+//		 * key being the type of req and the value being the config section for setting
+//		 * up the req
+//		 */
+//		
+//		if (!map.containsKey("type") || !map.get("type").equals("goalcnf")) {
+//			throw new InvalidConfigurationException();
+//		}
+//		
+//		String name, description;
+//		
+//		name = (String) map.get("name");
+//		description = (String) map.get("description");
+//		
+//
+//		Goal goal = new Goal(quest, name, description);
+//		
+////		@SuppressWarnings("unchecked")
+////		List<YamlConfiguration> reqs = (List<YamlConfiguration>) map.get("requirements");
+////		if (reqs == null || reqs.isEmpty()) {
+////			return goal;
+////		}
+////		
+////		for (YamlConfiguration req : reqs) {
+////			String type = req.getKeys(false).iterator().next();
+////			YamlConfiguration conf = (YamlConfiguration) req.getConfigurationSection(type);
+////			
+////			Requirement r = RequirementType.valueOf(type).instance();
+////			
+////			r.fromConfig(conf);
+////			
+////			goal.addRequirement(r);
+////		}
+//		
+//		@SuppressWarnings("unchecked")
+//		List<Map<String, Object>> reqs = (List<Map<String, Object>>) map.get("requirements");
+//		
+//		for (Map<String, Object> req : reqs) {
+//			String type = req.keySet().iterator().next();
+//			
+//			System.out.println(req.get(type).getClass() + " | " + req.get(type));
+//			
+//			@SuppressWarnings("unchecked")
+//			Map<String, Object> cmap = (Map<String, Object>) req.get(type);
+//			YamlConfiguration conf = new YamlConfiguration();
+//			
+//			for (String key : cmap.keySet()) {
+//				conf.set(key, cmap.get(key));
+//			}
+//			
+////			conf.createSection(type, cmap);
+//			
+//			Requirement r = QuestManagerPlugin.questManagerPlugin.getRequirementManager()
+//					.instanceRequirement(type, goal, conf);
+//			
+//			if (r == null) {
+//				QuestManagerPlugin.questManagerPlugin.getLogger()
+//					.warning("    Invalid requirement type for goal: " + goal.name);
+//			}
+//			
+//			goal.addRequirement(r);
+//		}
+//		
+//		return goal;
+//		
+//	}
+	
 	
 	public Goal(Quest quest, String name, String description) {
 		this.quest = quest;

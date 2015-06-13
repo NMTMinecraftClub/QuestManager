@@ -1,5 +1,6 @@
 package nmt.minecraft.QuestManager.Configuration;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
@@ -15,6 +16,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @author Skyler
  *
  */
-public class RequirementState extends YamlConfiguration {
+public class RequirementState {
 	
+	private ConfigurationSection config;
+	
+	public RequirementState(ConfigurationSection config2) {
+		this.config = config2;
+	}
+	
+	public ConfigurationSection getConfig() {
+		return config;
+	}
 }

@@ -112,7 +112,7 @@ public class PossessRequirement extends Requirement implements Listener {
 		//  count: [int]
 		
 		if (!config.contains("type") || !config.getString("type").equals("pr")) {
-			throw new InvalidConfigurationException();
+			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'pr' but got " + config.getString("type", "null"));
 		}
 		
 		this.itemType = Material.valueOf(
