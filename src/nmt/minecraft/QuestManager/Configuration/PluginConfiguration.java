@@ -85,6 +85,15 @@ public class PluginConfiguration {
 	}
 	
 	/**
+	 * Indicates whether or not the config indicates invalid configuration files, states, or
+	 * active logs should be kept or removed.
+	 * @return
+	 */
+	public boolean getKeepOnError() {
+		return config.getBoolean("conservativemode", true);
+	}
+	
+	/**
 	 * Gets the stored save data path information
 	 * @return
 	 */
@@ -106,6 +115,7 @@ public class PluginConfiguration {
 		YamlConfiguration config = new YamlConfiguration();
 		
 		config.set("version", QuestManagerPlugin.version);
+		config.set("conservativemode", true);
 		ConfigurationSection managers = config.createSection("managers");
 		
 		List<String> questNames = new ArrayList<String>(4);
