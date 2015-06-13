@@ -17,6 +17,11 @@ public class LocationState implements ConfigurationSerializable {
 	
 	Location location;
 	
+	/**
+	 * Stores fields and their config keys
+	 * @author Skyler
+	 *
+	 */
 	private enum fields {
 		X("x"),
 		Y("y"),
@@ -31,15 +36,26 @@ public class LocationState implements ConfigurationSerializable {
 			this.key = key;
 		}
 		
+		/**
+		 * Returns the configuration key mapped to this field
+		 * @return
+		 */
 		public String getKey() {
 			return this.key;
 		}
 	}
 	
+	/**
+	 * Creates a LocationState with the information from the passed location.
+	 * @param location
+	 */
 	public LocationState(Location location) {
 		this.location = location;
 	}
 	
+	/**
+	 * Serializes the wrapped location to a format that's able to be saved to a configuration file.
+	 */
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> config = new HashMap<String, Object>(6);
@@ -52,6 +68,11 @@ public class LocationState implements ConfigurationSerializable {
 		return null;
 	}
 	
+	/**
+	 * Uses the passed configuration map to instantiate a new location (and wrapper).
+	 * @param configMap
+	 * @return
+	 */
 	public static LocationState valueOf(Map<String, Object> configMap) {
 		World world = Bukkit.getWorld((String) configMap.get(fields.WORLD.getKey()));
 		
@@ -76,6 +97,14 @@ public class LocationState implements ConfigurationSerializable {
 						z,
 						yaw,
 						pitch));
+	}
+	
+	/**
+	 * Return the location wrapped by this class
+	 * @return
+	 */
+	public Location getLocation() {
+		return location;
 	}
 
 }
