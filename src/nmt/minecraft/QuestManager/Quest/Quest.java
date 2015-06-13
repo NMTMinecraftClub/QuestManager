@@ -134,7 +134,7 @@ public class Quest implements Listener {
 			
 			if (pant instanceof Party) {
 				players.add(((Party) pant).getLeader());
-				for (QuestPlayer p : pant.getParticipants()) {
+				for (QuestPlayer p : ((Party) pant).getMembers()) {
 					players.add(p);
 				}
 			} else {
@@ -386,7 +386,7 @@ public class Quest implements Listener {
 				members.add(it.next());
 			}
 			
-			part = new Party(leader, members);
+			part = new Party("quest_created_temp_quest[" + name + "]", leader, members);
 		}
 		return part;
 	}
