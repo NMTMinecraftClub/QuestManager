@@ -1,6 +1,5 @@
 package nmt.minecraft.QuestManager.Quest;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -11,7 +10,6 @@ import nmt.minecraft.QuestManager.Configuration.GoalState;
 import nmt.minecraft.QuestManager.Configuration.RequirementState;
 import nmt.minecraft.QuestManager.Configuration.StatekeepingRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
-import nmt.minecraft.QuestManager.Quest.Requirements.RequirementType;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -87,6 +85,7 @@ public class Goal {
 		
 		for (Map<String, Object> req : reqs) {
 			String type = req.keySet().iterator().next();
+			@SuppressWarnings("unchecked")
 			Map<String, Object> cmap = (Map<String, Object>) req.get(type);
 			YamlConfiguration conf = new YamlConfiguration();
 			conf.createSection(type, cmap);
@@ -94,7 +93,10 @@ public class Goal {
 			Requirement r = QuestManagerPlugin.questManagerPlugin.getRequirementManager()
 					.instanceRequirement(type, conf);
 			
-				
+			if (r == null) {
+				QuestManagerPlugin.questManagerPlugin.getLogger()
+					.warning("Unable to find registered requirement factory ");
+			}
 			
 			goal.addRequirement(r);
 		}
