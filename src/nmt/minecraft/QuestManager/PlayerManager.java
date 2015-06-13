@@ -1,6 +1,7 @@
 package nmt.minecraft.QuestManager;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,10 +32,14 @@ public class PlayerManager {
 	 */
 	public PlayerManager(YamlConfiguration config) {
 		
+		players = new HashMap<UUID, QuestPlayer>();
+		parties = new HashMap<GUID, Party>();
+		
 		QuestManagerPlugin.questManagerPlugin.getLogger().info("Loading player database...");
 		
 		ConfigurationSection pSex = config.getConfigurationSection("players");
 		
+		if (!pSex.getKeys(false).isEmpty())
 		for (String key : pSex.getKeys(false)) {
 			players.put(
 					UUID.fromString(key), (QuestPlayer) pSex.get(key));
@@ -42,6 +47,7 @@ public class PlayerManager {
 		
 		ConfigurationSection gSex = config.getConfigurationSection("parties");
 		
+		if (!gSex.getKeys(false).isEmpty())
 		for (String key : gSex.getKeys(false)) {
 			parties.put(
 					GUID.valueOf(key), (Party) gSex.get(key));

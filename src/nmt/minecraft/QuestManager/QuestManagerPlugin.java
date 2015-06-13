@@ -1,6 +1,8 @@
 package nmt.minecraft.QuestManager;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,6 +15,8 @@ import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -32,6 +36,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private RequirementManager reqManager;
 	
+	private PlayerManager playerManager;
+	
 	private List<QuestManager> managers;
 	
 	private PluginConfiguration config;
@@ -41,6 +47,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	private File questDirectory;
 	
 	private final static String configFileName = "QuestManagerConfig.yml";
+	
+	private final static String playerConfigFileName = "players.yml";
 	
 	public static final double version = 1.00;
 	
@@ -53,7 +61,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		File configFile = new File(getDataFolder(), configFileName);
 		
 		config = new PluginConfiguration(configFile);		
-		
+				
 		//perform directory checks
 		saveDirectory = new File(getDataFolder(), config.getSavePath());
 		if (!saveDirectory.exists()) {
@@ -87,6 +95,37 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		managers = new LinkedList<QuestManager>();
 		
+		//preload Player data
+				File playerFile = new File(getDataFolder(), playerConfigFileName);
+				if (!playerFile.exists()) {
+					try {
+						YamlConfiguration tmp = new YamlConfiguration();
+						tmp.createSection("players");
+						tmp.createSection("parties");
+						tmp.save(playerFile);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+				//get Player data & manager
+				YamlConfiguration playerConfig = new YamlConfiguration();
+				try {
+					playerConfig.load(playerFile);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvalidConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				playerManager = new PlayerManager(playerConfig);
+		
+		
 		//parse config
 		for (String managerName : config.getQuestManagerNames()) {
 			File sDir = new File(saveDirectory, managerName);
@@ -109,6 +148,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		
+		//save user database
+		playerManager.save(new File(getDataFolder(), playerConfigFileName));
 		stopAllQuests();
 	}
 	
@@ -170,6 +211,10 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	public PluginConfiguration getPluginConfiguration() {
 		return this.config;
+	}
+	
+	public PlayerManager getPlayerManager() {
+		return playerManager;
 	}
 	
 }
