@@ -5,6 +5,7 @@ import java.util.List;
 
 import nmt.minecraft.QuestManager.QuestManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 
@@ -133,6 +134,18 @@ public class QuestConfiguration {
 		for (ConfigurationSection section : goalList) {
 			Goal goal = Goal.fromConfig(quest, section);
 			quest.addGoal(goal);
+		}
+		
+		//get list of NPCs and get them created
+		if (config.contains(QuestConfigurationField.NPCS.getKey())) {
+			ConfigurationSection npcSection = config.getConfigurationSection(
+					QuestConfigurationField.NPCS.getKey());
+			
+			if (!npcSection.getKeys(false).isEmpty()) {
+				for (String key : npcSection.getKeys(false)) {
+					quest.addNPC((NPC) npcSection.get(key));
+				}
+			}
 		}
 		
 		return quest;

@@ -13,6 +13,7 @@ import nmt.minecraft.QuestManager.Quest.Goal;
  * <li>DESCRIPTION | description | "No Description"</li>
  * <li>GOALS | goals | <i>Empty List</i></li>
  * <li>SAVESTATE | savestate | false</li>
+ * <li>NPCS | npcs | <i>Empty List</i></li>
  * </ul>
  * </p>
  * @author Skyler
@@ -23,7 +24,8 @@ public enum QuestConfigurationField {
 	NAME("name", "Generated Quest"),
 	DESCRIPTION("description", "No Description"),
 	GOALS("goals", new LinkedList<Goal>()),
-	SAVESTATE("savestate", false);
+	SAVESTATE("savestate", false),
+	NPCS("npcs", new LinkedList<Goal>());
 	
 	private Object def;
 	

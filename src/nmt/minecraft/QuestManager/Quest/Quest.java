@@ -341,6 +341,10 @@ public class Quest implements Listener {
 		goals.add(goal);
 	}
 	
+	public void addNPC(NPC npc) {
+		npcs.add(npc);
+	}
+	
 	/**
 	 * Returns a (possibly multilined) description of the quest that will be made
 	 * visible to players to aid in the quest selection process.<br />
