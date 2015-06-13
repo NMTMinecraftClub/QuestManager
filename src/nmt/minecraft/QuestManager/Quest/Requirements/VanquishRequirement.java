@@ -164,5 +164,9 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		
 	}
 	
+	public void stop() {
+		foe.remove();
+	}
+	
 	
 }

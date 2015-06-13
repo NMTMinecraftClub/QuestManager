@@ -14,4 +14,10 @@ public interface StatekeepingRequirement {
 	
 	public void loadState(RequirementState state) throws InvalidConfigurationException;
 	
+	/**
+	 * Perform a stop to the requirement. This usually entails getting rid of entities, etc
+	 * whose information is stored in the state information.
+	 */
+	public void stop();
+	
 }

@@ -135,6 +135,18 @@ public class Quest implements Listener {
 		for (Goal goal : goals) {
 			goal.loadState(states.next());
 		}
+		
+		Participant pant = state.getParticipant();
+		if (pant == null) {
+			return;
+		}
+		
+		if (pant instanceof Party) {
+			players.add(((Party) pant).getLeader());
+			for (QuestPlayer p : pant.getParticipants()) {
+				players.add(p);
+			}
+		}
 	}
 	
 	
@@ -198,6 +210,7 @@ public class Quest implements Listener {
 		if (!goals.isEmpty()) {	
 			for (Goal goal : goals) {
 				state.addGoalState(goal.getState());
+				goal.stop();
 			}
 		}
 		
@@ -355,8 +368,10 @@ public class Quest implements Listener {
 	
 	public Participant getParticipants() {
 		Participant part = null;
-		if (players.size() < 2) {
+		if (players.size() == 1) {
 			part = players.iterator().next();
+		} if (players.size() == 0) {
+			return null;
 		} else {
 			QuestPlayer leader;
 			List<QuestPlayer> members = new LinkedList<QuestPlayer>();

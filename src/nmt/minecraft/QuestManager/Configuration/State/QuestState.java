@@ -32,8 +32,8 @@ public class QuestState {
 
 	public void load(YamlConfiguration config) throws InvalidConfigurationException {
 		
-		if (!config.contains("saveTime") || !config.contains("participant") || !config.contains("name") || !config.contains("goals")) {
-			throw new InvalidConfigurationException("Some keys were missing in a quest state!"
+		if (!config.contains("saveTime") || !config.contains("participants") || !config.contains("name") || !config.contains("goals")) {
+			throw new InvalidConfigurationException("Some keys were missing in a quest state! "
 					+ (config.contains("name") ? config.getString("name") : ""));
 		}
 		

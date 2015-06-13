@@ -182,6 +182,17 @@ public class Goal {
 		
 		return true;
 	}
+	
+	/**
+	 * Perform cleanup before exiting/reloading
+	 */
+	public void stop() {
+		for (Requirement req : requirements) {
+			if (req instanceof StatekeepingRequirement) {
+				((StatekeepingRequirement) req).stop();
+			}
+		}
+	}
 		
 	
 }

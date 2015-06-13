@@ -6,6 +6,8 @@ import java.util.List;
 
 import nmt.minecraft.QuestManager.Configuration.PluginConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.Player.Party;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
@@ -80,6 +82,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	public void onEnable() {
 		//register our Location util!
 		LocationState.registerWithAliases();
+		QuestPlayer.registerWithAliases();
+		Party.registerWithAliases();
 		
 		managers = new LinkedList<QuestManager>();
 		

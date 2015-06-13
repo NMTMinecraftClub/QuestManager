@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+
 /**
  * A group of players who work together on 
  * @author Skyler
@@ -19,6 +21,42 @@ public class Party implements Participant {
 	private QuestPlayer leader;
 	
 	private String name;
+	
+	/**
+	 * Registers this class as configuration serializable with all defined 
+	 * {@link aliases aliases}
+	 */
+	public static void registerWithAliases() {
+		for (aliases alias : aliases.values()) {
+			ConfigurationSerialization.registerClass(Party.class, alias.getAlias());
+		}
+	}
+	
+	/**
+	 * Registers this class as configuration serializable with only the default alias
+	 */
+	public static void registerWithoutAliases() {
+		ConfigurationSerialization.registerClass(Party.class);
+	}
+	
+
+	private enum aliases {
+		FULL("nmt.minecraft.QuestManager.Player.Party"),
+		DEFAULT(Party.class.getName()),
+		SIMPLE("Party"),
+		INFORMAL("P"),
+		QUALIFIED_INFORMAL("QPP");
+		
+		private String alias;
+		
+		private aliases(String alias) {
+			this.alias = alias;
+		}
+		
+		public String getAlias() {
+			return alias;
+		}
+	}
 	
 	public Party() {
 		name = "";

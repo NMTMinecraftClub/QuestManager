@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 /**
  * Player wrapper to store questing information and make saving player quest status
@@ -32,6 +34,42 @@ public class QuestPlayer implements Participant {
 	private int fame;
 	
 	private String title;
+	
+	/**
+	 * Registers this class as configuration serializable with all defined 
+	 * {@link aliases aliases}
+	 */
+	public static void registerWithAliases() {
+		for (aliases alias : aliases.values()) {
+			ConfigurationSerialization.registerClass(QuestPlayer.class, alias.getAlias());
+		}
+	}
+	
+	/**
+	 * Registers this class as configuration serializable with only the default alias
+	 */
+	public static void registerWithoutAliases() {
+		ConfigurationSerialization.registerClass(QuestPlayer.class);
+	}
+	
+
+	private enum aliases {
+		FULL("nmt.minecraft.QuestManager.Player.QuestPlayer"),
+		DEFAULT(QuestPlayer.class.getName()),
+		SHORT("QuestPlayer"),
+		INFORMAL("QP"),
+		QUALIFIED_INFORMAL("QMQP");
+		
+		private String alias;
+		
+		private aliases(String alias) {
+			this.alias = alias;
+		}
+		
+		public String getAlias() {
+			return alias;
+		}
+	}
 	
 	/**
 	 * Constructs a QuestPlayer from the given configuration.<br />
@@ -181,7 +219,10 @@ public class QuestPlayer implements Participant {
 	 * @return A new quest player or null on error
 	 */
 	public static QuestPlayer valueOf(Map<String, Object> map) {
-		if (map == null || !map.containsKey("id")) {
+		if (map == null || !map.containsKey("id") || !map.containsKey("fame") 
+				 || !map.containsKey("title")) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid Quest Player! "
+					+ (map.containsKey("id") ? ": " + map.get("id") : ""));
 			return null;
 		}
 		
