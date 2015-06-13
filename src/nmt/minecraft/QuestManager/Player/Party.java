@@ -9,7 +9,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -32,6 +36,10 @@ public class Party implements Participant {
 	private String name;
 	
 	private Team tLeader, tMembers;
+	
+	private Objective hover;
+	
+	private Objective board;
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -76,31 +84,69 @@ public class Party implements Participant {
 		partyBoard = Bukkit.getScoreboardManager().getNewScoreboard();
 		tLeader = partyBoard.registerNewTeam("Leader");
 		tMembers = partyBoard.registerNewTeam("members");
+		
+		tLeader.setPrefix(ChatColor.BOLD.toString());
+		
+		hover = partyBoard.registerNewObjective("hover", "health");
+		hover.setDisplaySlot(DisplaySlot.BELOW_NAME);
+		hover.setDisplayName(" / 20");
+		
+		board = partyBoard.registerNewObjective("board", "health");
+		board.setDisplaySlot(DisplaySlot.SIDEBAR);
+		
 	}
 	
 	public Party(QuestPlayer leader) {
-		name = "";
-		members = new LinkedList<QuestPlayer>();
+		this();
 		this.leader = leader;
 		tLeader.addPlayer(leader.getPlayer());
+		updateScoreboard();
 	}
 	
 	public Party(String name, QuestPlayer leader) {
+		this(leader);
 		this.name = name;
-		members = new LinkedList<QuestPlayer>();
-		this.leader = leader;
-		tLeader.addPlayer(leader.getPlayer());
+		updateScoreboard();
 	}
 	
 	public Party(String name, QuestPlayer leader, Collection<QuestPlayer> players) {
-		this.name = "";
-		this.members = new LinkedList<QuestPlayer>(players);
-		this.leader = leader;
-		tLeader.addPlayer(leader.getPlayer());
+		this(name, leader);
+		members.addAll(players);
+		
 		for (QuestPlayer p : players) {
-			members.add(p);
+			tMembers.addPlayer(p.getPlayer());
 		}
 		
+		updateScoreboard();
+		
+	}
+	
+	public void updateScoreboard() {
+		if (leader == null) {
+			return;
+		}
+		
+		if (leader.getPlayer().isOnline()) {
+			((Player) leader.getPlayer()).setScoreboard(partyBoard);
+		}
+		if (!members.isEmpty())
+		for (QuestPlayer member : members) {
+			if (member.getPlayer().isOnline()) {
+				((Player) member.getPlayer()).setScoreboard(partyBoard);
+			}
+		}
+		
+		//now that everyone's registered, let's update health
+		
+		if (leader.getPlayer().isOnline()) {
+			((Player) leader.getPlayer()).setHealth(leader.getPlayer().getPlayer().getHealth());
+		}
+		if (!members.isEmpty())
+		for (QuestPlayer member : members) {
+			if (member.getPlayer().isOnline()) {
+				((Player) member.getPlayer()).setHealth(member.getPlayer().getPlayer().getHealth());
+			}
+		}
 	}
 	
 	public QuestPlayer getLeader() {
