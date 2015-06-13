@@ -6,6 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import nmt.minecraft.QuestManager.Configuration.PluginConfiguration;
+import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -45,6 +49,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 	@Override
 	public void onLoad() {
 		QuestManagerPlugin.questManagerPlugin = this;
+		reqManager = new RequirementManager();
 		
 		//load up config
 		File configFile = new File(getDataFolder(), configFileName);
@@ -63,12 +68,21 @@ public class QuestManagerPlugin extends JavaPlugin {
 		}
 		
 		
+		//register our own requirements
+		reqManager.registerFactory("ARRIVE", 
+				new ArriveRequirement.ArriveFactory());
+		reqManager.registerFactory("POSITION", 
+				new PositionRequirement.PositionFactory());
+		reqManager.registerFactory("POSSESS", 
+				new PossessRequirement.PossessFactory());
+		reqManager.registerFactory("VANQUISH", 
+				new VanquishRequirement.VanquishFactory());
+		
 	}
 	
 	@Override
 	public void onEnable() {
 		managers = new LinkedList<QuestManager>();
-		reqManager = new RequirementManager();
 		
 		YamlConfiguration c = new YamlConfiguration(),
 				x = new YamlConfiguration(),

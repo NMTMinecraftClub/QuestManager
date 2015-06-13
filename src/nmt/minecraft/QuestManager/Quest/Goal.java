@@ -91,11 +91,11 @@ public class Goal {
 			conf.createSection(type, cmap);
 			
 			Requirement r = QuestManagerPlugin.questManagerPlugin.getRequirementManager()
-					.instanceRequirement(type, conf);
+					.instanceRequirement(type, goal, conf);
 			
 			if (r == null) {
 				QuestManagerPlugin.questManagerPlugin.getLogger()
-					.warning("Unable to find registered requirement factory ");
+					.warning("    Invalid requirement type for goal: " + goal.name);
 			}
 			
 			goal.addRequirement(r);
