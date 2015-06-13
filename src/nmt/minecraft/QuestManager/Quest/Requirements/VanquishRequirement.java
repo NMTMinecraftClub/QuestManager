@@ -129,6 +129,11 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'vr' but got " + myState.get("type", "null"));
 		}
 		
+		//get rid of any entities we already have
+		if (foe != null && !foe.isDead()) {
+			foe.remove();			
+		}
+		
 		
 		ConfigurationSection foeState =  myState.getConfigurationSection("foe");
 		Location loc = ((LocationState) foeState.get("location")).getLocation();

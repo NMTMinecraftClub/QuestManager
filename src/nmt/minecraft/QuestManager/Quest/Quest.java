@@ -203,17 +203,17 @@ public class Quest implements Listener {
 		//get config location!
 		File saveLoc = new File(manager.getSaveLocation(), name + "_" + ID + ".yml");
 		
-		QuestState state = new QuestState();
-		
-		state.setName(name);
-		
-		if (!goals.isEmpty()) {	
-			for (Goal goal : goals) {
-				state.addGoalState(goal.getState());
-				goal.stop();
-			}
-		}
-		
+		QuestState state = getState();
+//		
+//		state.setName(name);
+//		
+//		if (!goals.isEmpty()) {	
+//			for (Goal goal : goals) {
+//				state.addGoalState(goal.getState());
+//				goal.stop();
+//			}
+//		}
+//		
 		QuestManagerPlugin.questManagerPlugin.getLogger().info("Saving quest state: " + 
 				saveLoc.getAbsolutePath());
 		try {

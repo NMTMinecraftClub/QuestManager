@@ -47,7 +47,7 @@ public class QuestState {
 			goalState.add(gs);
 		}
 		
-		this.participant = (Participant) config.get("participant");
+		this.participant = (Participant) config.get("participants");
 		
 	}
 	
@@ -64,6 +64,7 @@ public class QuestState {
 		}
 		
 		//config.set("goals", goalList);
+		config.set("participants", participant);
 		
 		config.save(file);
 	}
