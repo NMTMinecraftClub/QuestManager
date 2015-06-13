@@ -1,4 +1,4 @@
-name: Quest Manager
+name: QuestManager
 main: nmt.minecraft.QuestManager.QuestManagerPlugin
 version: 1.0
 softdepend: 
