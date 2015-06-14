@@ -6,6 +6,7 @@ import java.util.Map;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 /**
@@ -86,10 +87,10 @@ public class BioptionMessage extends Message {
 		BioptionMessage msg = new BioptionMessage();
 		
 		//load body
-		if (oBody instanceof String) {
-			msg.body = new FancyMessage((String) oBody);
-		} else {
+		if (oBody instanceof FancyMessage) {
 			msg.body = (FancyMessage) oBody;
+		} else {
+			msg.body = new FancyMessage((String) oBody);
 		}
 		
 		//load option labels
@@ -124,10 +125,14 @@ public class BioptionMessage extends Message {
 
 	@Override
 	public FancyMessage getFormattedMessage() {
-		return body.then("\n----------\n   -")
+		return body.then("\n----------\n   ")
 				.then(option1Label).command(ChatGuiHandler.cmdBase + " " + OPTION1)
+					.color(ChatColor.DARK_GREEN)
+					.style(ChatColor.ITALIC)
 				.then("   -   ")
 				.then(option2Label).command(ChatGuiHandler.cmdBase + " " + OPTION2)
+					.color(ChatColor.DARK_GREEN)
+					.style(ChatColor.ITALIC)
 				;
 	}
 	

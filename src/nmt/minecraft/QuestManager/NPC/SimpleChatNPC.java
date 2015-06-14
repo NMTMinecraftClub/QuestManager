@@ -122,6 +122,7 @@ public class SimpleChatNPC extends NPC {
 		EntityType type = EntityType.valueOf((String) map.get("type"));
 		
 		npc.entity = loc.getWorld().spawnEntity(loc, type);
+		npc.name = (String) map.get("name");
 		npc.entity.setCustomName((String) map.get("name"));
 
 		if (npc.entity instanceof LivingEntity) {
@@ -138,8 +139,11 @@ public class SimpleChatNPC extends NPC {
 		Object msgObj = map.get("message");
 		if (msgObj instanceof FancyMessage) {
 			npc.chat = (FancyMessage) map.get("message");
-		} else {
+		} else if (msgObj instanceof String){
 			npc.chat = new FancyMessage((String) msgObj);
+		} else {
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning(
+					"Invalid message type for Simple Chat NPC: " + npc.name);
 		}
 		
 		return npc;
