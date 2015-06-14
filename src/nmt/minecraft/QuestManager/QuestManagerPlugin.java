@@ -15,6 +15,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
+import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -40,6 +41,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	private PlayerManager playerManager;
 	
 	private List<QuestManager> managers;
+	
+	private ChatGuiHandler guiHandler;
 	
 	private PluginConfiguration config;
 	
@@ -96,6 +99,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		MuteNPC.registerWithAliases();
 		
 		managers = new LinkedList<QuestManager>();
+		guiHandler = new ChatGuiHandler(this);
 		
 		//preload Player data
 				File playerFile = new File(getDataFolder(), playerConfigFileName);
@@ -217,6 +221,10 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	public PlayerManager getPlayerManager() {
 		return playerManager;
+	}
+	
+	public ChatGuiHandler getGuiHandler() {
+		return guiHandler;
 	}
 	
 }

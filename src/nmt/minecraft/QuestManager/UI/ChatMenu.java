@@ -26,7 +26,7 @@ public class ChatMenu {
 		this.message = msg;
 		
 		if (ChatMenu.handler == null) {
-			handler = QuestManagerPlugin.questManagerPlugin.getChatHandler();
+			handler = QuestManagerPlugin.questManagerPlugin.getGuiHandler();
 		}
 	}
 	
