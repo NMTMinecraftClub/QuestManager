@@ -414,7 +414,6 @@ public class Quest implements Listener {
 		if (players.size() == 1) {
 			part = players.iterator().next();
 		} else if (players.size() == 0) {
-			System.out.println("size: 0");
 			return null;
 		} else {
 			QuestPlayer leader;
