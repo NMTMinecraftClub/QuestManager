@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Skyler
  *
  */
-public class ChatGuiHandler implements CommandExecutor {
+public class ChatGuiHandler implements CommandExecutor, UITickable {
 	
 	public final static CharSequence idReplace = "=ID=";
 	
@@ -104,6 +104,9 @@ public class ChatGuiHandler implements CommandExecutor {
 		if (ChatGuiHandler.rand == null) {
 			ChatGuiHandler.rand = new Random();
 		}
+		
+		//schedule ourselves for ticking
+		UIScheduler.getScheduler().schedule(this, 10.0f);
 	}
 
 	@Override
@@ -194,7 +197,7 @@ public class ChatGuiHandler implements CommandExecutor {
 	 * Calling this method in a manner inconsistent with a timeout timer results in 
 	 * undefined behavior, and is not recommended.
 	 */
-	protected void tick() {
+	public void tick() {
 		
 		if (menus.isEmpty()) {
 			return;
