@@ -13,6 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 
 /**
@@ -99,8 +100,6 @@ public class MuteNPC extends NPC {
 			equipment.setItemInHand(econ.getHeld());
 			
 		}
-				
-		
 		
 		return npc;
 	}
@@ -130,7 +129,15 @@ public class MuteNPC extends NPC {
 	}
 	
 	private MuteNPC() {
-		
+		super();
 	}
+
+	@Override
+	protected void interact(Player player) {
+		//we don't do anything on interact
+		;		
+	}
+	
+	
 	
 }
