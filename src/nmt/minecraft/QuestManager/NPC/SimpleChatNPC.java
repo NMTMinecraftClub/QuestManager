@@ -8,6 +8,7 @@ import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -140,7 +141,7 @@ public class SimpleChatNPC extends NPC {
 
 	@Override
 	protected void interact(Player player) {
-		ChatMenu messageChat = new ChatMenu(chat);
+		ChatMenu messageChat = new SimpleChatMenu(chat);
 		messageChat.show(player);
 	}
 
