@@ -22,7 +22,7 @@ public final class ArrayWrapper<E> {
 	 * Creates an array wrapper with some elements.
 	 * @param elements The elements of the array.
 	 */
-	public ArrayWrapper(E... elements){
+	public ArrayWrapper(@SuppressWarnings("unchecked") E... elements){
 		setArray(elements);
 	}
 	
