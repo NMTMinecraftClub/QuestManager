@@ -6,7 +6,6 @@ import java.util.Map;
 
 import com.google.gson.stream.JsonWriter;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -19,10 +18,6 @@ import com.google.common.collect.ImmutableMap;
  */
 public abstract class TextualComponent implements Cloneable {
 
-	static{
-		ConfigurationSerialization.registerClass(TextualComponent.ArbitraryTextTypeComponent.class);
-		ConfigurationSerialization.registerClass(TextualComponent.ComplexTextTypeComponent.class);
-	}
 	
 	@Override
 	public String toString() {

@@ -31,7 +31,6 @@ import org.bukkit.Statistic;
 import org.bukkit.Statistic.Type;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -48,9 +47,6 @@ import org.bukkit.inventory.ItemStack;
  */
 public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<MessagePart>, ConfigurationSerializable {
 
-	static{
-		ConfigurationSerialization.registerClass(FancyMessage.class);
-	}
 
 	private List<MessagePart> messageParts;
 	private String jsonString;

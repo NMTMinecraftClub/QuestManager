@@ -8,7 +8,6 @@ import com.google.gson.stream.JsonWriter;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
@@ -148,10 +147,6 @@ public final class MessagePart implements JsonRepresentedObject, ConfigurationSe
 		part.insertionData = (String)serialized.get("insertion");
 		part.translationReplacements = (ArrayList<JsonRepresentedObject>)serialized.get("translationReplacements");
 		return part;
-	}
-
-	static{
-		ConfigurationSerialization.registerClass(MessagePart.class);
 	}
 
 }
