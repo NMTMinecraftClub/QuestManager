@@ -12,7 +12,7 @@ import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
  * register it with the handler, give it a unique ID and then do specific things based on argument
  * to command received!
  */
-public class ChatMenu {
+public abstract class ChatMenu {
 	
 	/*
 	 * =========================
@@ -55,9 +55,7 @@ public class ChatMenu {
 	}
 	
 	
-	protected boolean input(Player player, String arg) {
-		return false; //TODO
-	}
+	protected abstract boolean input(Player player, String arg);
 	
 	public FancyMessage getMessage() {
 		return message;

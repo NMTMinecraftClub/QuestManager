@@ -561,6 +561,22 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 		dirty = true;
 		return this;
 	}
+	
+	/**
+	 * Terminate construction of the current editing component, and begin construction of a new message component.
+	 * After a successful call to this method, all setter methods will refer to a new message component, created as a result of the call to this method.
+	 * @param otherMessage Another message to bring over the content of
+	 * @return This builder instance.
+	 */
+	public FancyMessage then(FancyMessage otherMessage) {
+		if (!latest().hasText()) {
+			throw new IllegalStateException("previous message part has no text");
+		}
+		
+		messageParts.addAll(otherMessage.messageParts);
+		dirty = true;
+		return this;
+	}
 
 	@Override
 	public void writeJson(JsonWriter writer) throws IOException{
