@@ -125,7 +125,9 @@ public class BioptionMessage extends Message {
 
 	@Override
 	public FancyMessage getFormattedMessage() {
-		return body.then("\n----------\n   ")
+		return new FancyMessage("--------------------------------------------\n")
+				.style(ChatColor.BOLD)
+			.then(body).then("\n\n   ")
 				.then(option1Label).command(ChatGuiHandler.cmdBase + " " + OPTION1)
 					.color(ChatColor.DARK_GREEN)
 					.style(ChatColor.ITALIC)
@@ -133,6 +135,8 @@ public class BioptionMessage extends Message {
 				.then(option2Label).command(ChatGuiHandler.cmdBase + " " + OPTION2)
 					.color(ChatColor.DARK_GREEN)
 					.style(ChatColor.ITALIC)
+				.then("--------------------------------------------")
+					.style(ChatColor.BOLD)
 				;
 	}
 	

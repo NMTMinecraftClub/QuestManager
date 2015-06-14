@@ -182,10 +182,10 @@ public class ChatGuiHandler implements CommandExecutor, UITickable {
 		menus.put(player.getUniqueId(), 
 				new MenuRecord(menu, id));
 		
-		FancyMessage preformat = menu.getMessage();
+		FancyMessage preformat = new FancyMessage("").then(menu.getMessage());
 		String raw = preformat.toJSONString();
-		raw.replace(cmdBase, Commands.MENU.getCommand() + " " + id + " ");
-		raw.replace(idReplace, "" + id);
+		raw = raw.replace(cmdBase, "/" + Commands.MENU.getCommand() + " " + id + " ");
+		raw = raw.replace(idReplace, "" + id);
 		FancyMessage postformat = FancyMessage.deserialize(raw);
 		
 		postformat.send(player);
