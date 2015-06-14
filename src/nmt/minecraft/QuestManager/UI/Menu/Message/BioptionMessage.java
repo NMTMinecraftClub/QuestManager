@@ -54,6 +54,10 @@ public class BioptionMessage extends Message {
 	
 	private FancyMessage body;
 	
+	private FancyMessage option1Label;
+	
+	private FancyMessage option2Label;
+	
 	private FancyMessage option1Msg;
 	
 	private FancyMessage option2Msg;
@@ -63,6 +67,8 @@ public class BioptionMessage extends Message {
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		map.put("body", body);
+		map.put("option1Label", option1Label);
+		map.put("option2Label", option2Label);
 		map.put("option1", option1Msg);
 		map.put("option2", option2Msg);
 		
@@ -74,6 +80,8 @@ public class BioptionMessage extends Message {
 		Object oBody = map.get("body");
 		Object oOption1 = map.get("option1");
 		Object oOption2 = map.get("option2");
+		Object oOption1Label = map.get("option1Label");
+		Object oOption2Label = map.get("option2Label");
 		
 		BioptionMessage msg = new BioptionMessage();
 		
@@ -84,18 +92,32 @@ public class BioptionMessage extends Message {
 			msg.body = (FancyMessage) oBody;
 		}
 		
-		//load options
+		//load option labels
+		if (oOption1Label instanceof String) {
+			msg.option1Label = new FancyMessage((String) oOption1Label);
+		} else {
+			msg.option1Label = (FancyMessage) oOption1Label;
+		}
+
+		if (oOption2Label instanceof String) {
+			msg.option2Label = new FancyMessage((String) oOption2Label);
+		} else {
+			msg.option2Label = (FancyMessage) oOption2Label;
+		}
+		
+		//load option responses
 		if (oOption1 instanceof String) {
 			msg.option1Msg = new FancyMessage((String) oOption1);
 		} else {
 			msg.option1Msg = (FancyMessage) oOption1;
 		}
-
+		
 		if (oOption2 instanceof String) {
 			msg.option2Msg = new FancyMessage((String) oOption2);
 		} else {
 			msg.option2Msg = (FancyMessage) oOption2;
 		}
+
 		
 		return msg;
 	}
@@ -103,10 +125,18 @@ public class BioptionMessage extends Message {
 	@Override
 	public FancyMessage getFormattedMessage() {
 		return body.then("\n----------\n   -")
-				.then(option1Msg).command(ChatGuiHandler.cmdBase + " " + OPTION1)
+				.then(option1Label).command(ChatGuiHandler.cmdBase + " " + OPTION1)
 				.then("   -   ")
-				.then(option2Msg).command(ChatGuiHandler.cmdBase + " " + OPTION2)
+				.then(option2Label).command(ChatGuiHandler.cmdBase + " " + OPTION2)
 				;
+	}
+	
+	public FancyMessage getResponse1() {
+		return option1Msg;
+	}
+	
+	public FancyMessage getResponse2() {
+		return option2Msg;
 	}
 
 }

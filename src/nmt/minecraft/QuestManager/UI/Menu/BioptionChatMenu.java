@@ -13,10 +13,23 @@ public class BioptionChatMenu extends ChatMenu {
 	
 	private MenuAction opt2;
 	
+	private BioptionMessage messageCache;
+	
+	/**
+	 * Creates (but does not show!) a menu with two options. Menu message, option labels, and 
+	 * responses to each option are loaded from the passed 
+	 * {@link nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage BioptionMessage}. <br />
+	 * The provided MenuActions allow for more control over the action of the menu buttons. If
+	 * there is no desired action for a corresponding action, <i>null</i> should be passed.
+	 * @param msg The fully-encoded message used for menu text
+	 * @param opt1 Action enacted when option 1 is clicked by the user
+	 * @param opt2 Action enacted when option 2 is clicked by the user
+	 */
 	public BioptionChatMenu(BioptionMessage msg, MenuAction opt1, MenuAction opt2) {
 		super(msg.getFormattedMessage());
 		this.opt1 = opt1;
 		this.opt2 = opt2;
+		messageCache = msg;
 	}
 	
 	private BioptionChatMenu(FancyMessage msg) {
@@ -29,10 +42,27 @@ public class BioptionChatMenu extends ChatMenu {
 		//do different things based on our argument. We are only bioption, so we only have
 		//two things to do. 
 		if (arg.equals(BioptionMessage.OPTION1)) {
-			opt1.onAction();
+			
+			if (opt1 != null) {
+				opt1.onAction();
+			}
+			
+			if (messageCache.getResponse1() != null) {
+				SimpleChatMenu menu = new SimpleChatMenu(messageCache.getResponse1());
+				menu.show(player);
+			}
+			
 			return true;
 		} else if (arg.equals(BioptionMessage.OPTION2)) {
-			opt2.onAction();
+			if (opt2 != null) {
+				opt2.onAction();
+			}
+			
+			if (messageCache.getResponse2() != null) {
+				SimpleChatMenu menu = new SimpleChatMenu(messageCache.getResponse2());
+				menu.show(player);
+			}
+			
 			return true;
 		} else {
 			player.sendMessage("Something went wrong! [Invalid Biopt Argument!]");
