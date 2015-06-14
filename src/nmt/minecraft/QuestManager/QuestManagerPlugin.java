@@ -9,7 +9,9 @@ import java.util.List;
 
 import nmt.minecraft.QuestManager.Configuration.PluginConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.Fanciful.MessagePart;
 import nmt.minecraft.QuestManager.NPC.MuteNPC;
+import nmt.minecraft.QuestManager.NPC.SimpleChatNPC;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
@@ -21,6 +23,7 @@ import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -99,9 +102,12 @@ public class QuestManagerPlugin extends JavaPlugin {
 		QuestPlayer.registerWithAliases();
 		Party.registerWithAliases();
 		MuteNPC.registerWithAliases();
+		SimpleChatNPC.registerWithAliases();
+		ConfigurationSerialization.registerClass(MessagePart.class);
 		
 		managers = new LinkedList<QuestManager>();
 		guiHandler = new ChatGuiHandler(this);
+		
 		
 		//preload Player data
 				File playerFile = new File(getDataFolder(), playerConfigFileName);

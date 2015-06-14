@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 
-import mkremins.fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

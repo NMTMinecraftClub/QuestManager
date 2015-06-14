@@ -3,10 +3,10 @@ package nmt.minecraft.QuestManager.NPC;
 import java.util.HashMap;
 import java.util.Map;
 
-import mkremins.fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 
 import org.bukkit.Location;
@@ -67,11 +67,7 @@ public class SimpleChatNPC extends NPC {
 	private SimpleChatNPC() {
 		super();
 	}
-	
-	public SimpleChatNPC(FancyMessage chat) {
-		this.chat = chat;
-	}
-	
+		
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>(4);

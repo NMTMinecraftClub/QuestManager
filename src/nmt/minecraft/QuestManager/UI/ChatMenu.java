@@ -3,7 +3,7 @@ package nmt.minecraft.QuestManager.UI;
 import org.bukkit.entity.Player;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import mkremins.fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 
 /**
  * A menu represented in chat buttons and links
