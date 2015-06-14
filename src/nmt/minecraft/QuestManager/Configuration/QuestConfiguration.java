@@ -79,24 +79,6 @@ public class QuestConfiguration {
 		return config.getString(QuestConfigurationField.DESCRIPTION.getKey(), (String) QuestConfigurationField.DESCRIPTION.getDefault());
 	}
 	
-//	/**
-//	 * Returns a set containing all the names of the included goals.
-//	 * @return A set of the names, or <i>null</i> on error
-//	 */
-//	public Set<String> getGoalNames() {
-//		
-//		if (!config.contains(QuestConfigurationField.GOALS.getKey())) {
-//			return null;
-//		}
-//		
-//		Set<String> names;
-//		ConfigurationSection goals = config.getConfigurationSection(
-//				QuestConfigurationField.GOALS.getKey());
-//		
-//		names = goals.getKeys(false);
-//		
-//		return names;
-//	}
 	
 	/**
 	 * Gets whether or not the embedded quest has {@link nmt.minecraft.QuestManager.Quest.Quest#keepState save-state} enabled
@@ -128,13 +110,24 @@ public class QuestConfiguration {
 		for (String key : questSection.getKeys(false)) {
 			goalList.add(questSection.getConfigurationSection(key));
 		}
+		
+		//load up starting NPC information
+		NPC startingNPC = null;
+		if (!config.contains(QuestConfigurationField.START.getKey())) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().info(
+					  "Quest has no starting npc specified: " + getName());
+		} else {
+			startingNPC = (NPC) config.get(QuestConfigurationField.START.getKey());
+		}
 			
-		Quest quest = new Quest(manager, getName(), getDescription(), getSaveState());
+		Quest quest = new Quest(manager, getName(), getDescription(), getSaveState(), startingNPC);
 		
 		for (ConfigurationSection section : goalList) {
 			Goal goal = Goal.fromConfig(quest, section);
 			quest.addGoal(goal);
 		}
+		
+		
 		
 		//get list of NPCs and get them created
 		if (config.contains(QuestConfigurationField.NPCS.getKey())) {

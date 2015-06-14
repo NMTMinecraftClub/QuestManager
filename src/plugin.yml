@@ -3,3 +3,6 @@ main: nmt.minecraft.QuestManager.QuestManagerPlugin
 version: 1.0
 softdepend: 
 commands:
+    qmchatmenu:
+        usage: This command is not meant to be called directly.
+        description: Internal interface command for quest menus - chat

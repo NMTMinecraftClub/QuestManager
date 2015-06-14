@@ -89,6 +89,8 @@ public class Quest implements Listener {
 	
 	private Set<NPC> npcs;
 	
+	private NPC startingNPC;
+	
 	/**
 	 * Whether or not this quest should be triggered on and then never evaluated again,
 	 * or if it can go between completed and not completed depending on its requirements.<br />
@@ -100,7 +102,8 @@ public class Quest implements Listener {
 	 */
 	private boolean keepState;
 	
-	public Quest(QuestManager manager, String name, String description, boolean keepState) {
+	public Quest(QuestManager manager, String name, String description, boolean keepState,
+			NPC startingNPC) {
 		this.name = name;
 		this.description = description;
 		this.manager = manager;
@@ -114,6 +117,7 @@ public class Quest implements Listener {
 		this.keepState = keepState;
 		
 		players = new HashSet<QuestPlayer>();
+		this.startingNPC = startingNPC;
 		
 		this.ID = (int) (Math.random() * Integer.MAX_VALUE);
 	}
@@ -245,6 +249,9 @@ public class Quest implements Listener {
 			npc.getEntity().remove();
 		}
 		
+		if (startingNPC != null) {
+			startingNPC.getEntity().remove();
+		}
 		
 	}
 	
@@ -269,6 +276,10 @@ public class Quest implements Listener {
 		if (!npcs.isEmpty()) 
 		for (NPC npc : npcs) {
 			npc.getEntity().remove();
+		}
+		
+		if (startingNPC != null) {
+			startingNPC.getEntity().remove();
 		}
 				
 		//stop goals
