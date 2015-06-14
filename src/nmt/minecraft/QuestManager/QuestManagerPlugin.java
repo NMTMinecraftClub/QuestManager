@@ -17,6 +17,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -153,6 +154,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
+		
+		//unregister our scheduler
+		Bukkit.getScheduler().cancelTasks(this);
 		
 		//save user database
 		playerManager.save(new File(getDataFolder(), playerConfigFileName));
