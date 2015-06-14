@@ -1,0 +1,148 @@
+package nmt.minecraft.QuestManager.NPC;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
+import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
+
+import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
+
+/**
+ * Provides a simple two-option menu when interacted with. This NPC also supports simple response
+ * menus in response to each option.<br />
+ * This NPC does <b>not</b> support performing actions based on the response.
+ * @author Skyler
+ *
+ */
+public class SimpleBioptionNPC extends NPC {
+
+	/**
+	 * Registers this class as configuration serializable with all defined 
+	 * {@link aliases aliases}
+	 */
+	public static void registerWithAliases() {
+		for (aliases alias : aliases.values()) {
+			ConfigurationSerialization.registerClass(SimpleBioptionNPC.class, alias.getAlias());
+		}
+	}
+	
+	/**
+	 * Registers this class as configuration serializable with only the default alias
+	 */
+	public static void registerWithoutAliases() {
+		ConfigurationSerialization.registerClass(SimpleBioptionNPC.class);
+	}
+	
+
+	private enum aliases {
+		FULL("nmt.minecraft.QuestManager.NPC.SimpleBioptionNPCC"),
+		DEFAULT(SimpleBioptionNPC.class.getName()),
+		SHORT("SimpleBioptionNPC"),
+		INFORMAL("SBINPC");
+		
+		private String alias;
+		
+		private aliases(String alias) {
+			this.alias = alias;
+		}
+		
+		public String getAlias() {
+			return alias;
+		}
+	}
+	
+	private BioptionMessage chat;
+	
+	private SimpleBioptionNPC() {
+		super();
+	}
+		
+	@Override
+	public Map<String, Object> serialize() {
+		Map<String, Object> map = new HashMap<String, Object>(4);
+		
+		map.put("name", name);
+		map.put("type", entity.getType());
+		map.put("location", new LocationState(entity.getLocation()));
+		
+		EquipmentConfiguration econ;
+		
+		if (entity instanceof LivingEntity) {
+			econ = new EquipmentConfiguration(
+					((LivingEntity) entity).getEquipment()
+					);
+		} else {
+			econ = new EquipmentConfiguration();
+		}
+		
+		map.put("equipment", econ);
+		
+		map.put("message", chat);
+	
+		
+		return map;
+	}
+	
+	public static SimpleBioptionNPC valueOf(Map<String, Object> map) {
+		if (map == null || !map.containsKey("name") || !map.containsKey("type") 
+				 || !map.containsKey("location") || !map.containsKey("equipment")
+				  || !map.containsKey("message")) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid NPC info! "
+					+ (map.containsKey("name") ? ": " + map.get("name") : ""));
+			return null;
+		}
+		
+		SimpleBioptionNPC npc = new SimpleBioptionNPC();
+		
+		EquipmentConfiguration econ = new EquipmentConfiguration();
+		try {
+			YamlConfiguration tmp = new YamlConfiguration();
+			tmp.createSection("key",  (Map<?, ?>) map.get("equipment"));
+			econ.load(tmp.getConfigurationSection("key"));
+		} catch (InvalidConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		LocationState ls = (LocationState) map.get("location");
+		Location loc = ls.getLocation();
+		
+		EntityType type = EntityType.valueOf((String) map.get("type"));
+		
+		npc.entity = loc.getWorld().spawnEntity(loc, type);
+		npc.entity.setCustomName((String) map.get("name"));
+
+		if (npc.entity instanceof LivingEntity) {
+			EntityEquipment equipment = ((LivingEntity) npc.entity).getEquipment();
+			equipment.setHelmet(econ.getHead());
+			equipment.setChestplate(econ.getChest());
+			equipment.setLeggings(econ.getLegs());
+			equipment.setBoots(econ.getBoots());
+			equipment.setItemInHand(econ.getHeld());
+			
+		}
+		
+		npc.chat = (BioptionMessage) map.get("message");
+		
+		return npc;
+	}
+
+	@Override
+	protected void interact(Player player) {
+		ChatMenu messageChat = new BioptionChatMenu(chat, null, null);
+		messageChat.show(player);
+	}
+
+}
