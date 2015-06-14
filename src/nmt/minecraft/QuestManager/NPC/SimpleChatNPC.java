@@ -134,7 +134,13 @@ public class SimpleChatNPC extends NPC {
 			
 		}
 		
-		npc.chat = (FancyMessage) map.get("message");
+		//UPDATE: We wanna also accept regular strings, too :P
+		Object msgObj = map.get("message");
+		if (msgObj instanceof String) {
+			npc.chat = new FancyMessage((String) msgObj);
+		} else {
+			npc.chat = (FancyMessage) map.get("message");
+		}
 		
 		return npc;
 	}
