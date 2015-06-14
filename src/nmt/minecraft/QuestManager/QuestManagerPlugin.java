@@ -9,6 +9,7 @@ import java.util.List;
 import nmt.minecraft.QuestManager.Configuration.PluginConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.NPC.MuteNPC;
+import nmt.minecraft.QuestManager.NPC.SimpleChatNPC;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
@@ -98,6 +99,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		QuestPlayer.registerWithAliases();
 		Party.registerWithAliases();
 		MuteNPC.registerWithAliases();
+		SimpleChatNPC.registerWithAliases();
 		
 		managers = new LinkedList<QuestManager>();
 		guiHandler = new ChatGuiHandler(this);
