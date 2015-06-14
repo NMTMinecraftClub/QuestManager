@@ -13,6 +13,7 @@ import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Fanciful.MessagePart;
 import nmt.minecraft.QuestManager.Fanciful.TextualComponent;
 import nmt.minecraft.QuestManager.NPC.MuteNPC;
+import nmt.minecraft.QuestManager.NPC.SimpleBioptionNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleChatNPC;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
@@ -21,6 +22,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
+import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -105,6 +107,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 		Party.registerWithAliases();
 		MuteNPC.registerWithAliases();
 		SimpleChatNPC.registerWithAliases();
+		SimpleBioptionNPC.registerWithAliases();
+		BioptionMessage.registerWithAliases();
 		ConfigurationSerialization.registerClass(MessagePart.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ArbitraryTextTypeComponent.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ComplexTextTypeComponent.class);
