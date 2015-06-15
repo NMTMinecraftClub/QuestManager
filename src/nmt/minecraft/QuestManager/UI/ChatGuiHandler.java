@@ -128,7 +128,7 @@ public class ChatGuiHandler implements CommandExecutor, UITickable {
 		if (cmd.getName().equalsIgnoreCase(Commands.MENU.getCommand())) {
 			if (args.length != 2) {
 				sender.sendMessage("Something went wrong! [Invalid Option Length!]");
-				return true;
+				return false;
 			}
 			return menuCommand(sender, args);
 		}
@@ -151,7 +151,12 @@ public class ChatGuiHandler implements CommandExecutor, UITickable {
 			return true;
 		}
 		
-		int menuID = Integer.parseInt(args[0]);
+		int menuID;
+		try {
+			menuID = Integer.parseInt(args[0]);
+		} catch (NumberFormatException e) {
+			return false;
+		}
 		String arg = args[1];
 		
 		Player player = (Player) sender;
