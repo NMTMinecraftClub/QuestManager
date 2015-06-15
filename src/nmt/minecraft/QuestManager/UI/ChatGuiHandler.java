@@ -8,7 +8,10 @@ import java.util.Random;
 import java.util.UUID;
 
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.UI.Menu.RespondableMenu;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -193,8 +196,6 @@ public class ChatGuiHandler implements CommandExecutor, UITickable {
 		
 		int id = rand.nextInt();
 		
-		menus.put(player.getUniqueId(), 
-				new MenuRecord(menu, id));
 		
 		FancyMessage preformat = new FancyMessage("").then(menu.getMessage());
 		String raw = preformat.toJSONString();
@@ -203,6 +204,11 @@ public class ChatGuiHandler implements CommandExecutor, UITickable {
 		FancyMessage postformat = FancyMessage.deserialize(raw);
 		
 		postformat.send(player);
+		
+		if (menu instanceof RespondableMenu) {
+			menus.put(player.getUniqueId(), 
+				new MenuRecord(menu, id));
+		}
 		
 	}
 	
@@ -225,6 +231,8 @@ public class ChatGuiHandler implements CommandExecutor, UITickable {
 			//check if they've already been ticked
 			if (entry.getValue().isTicked()) {
 				menus.remove(entry.getKey());
+				Bukkit.getPlayer(entry.getKey()).sendMessage(
+						ChatColor.GRAY + "Your menu has expired.");
 			} else {
 				entry.getValue().tick();
 			}

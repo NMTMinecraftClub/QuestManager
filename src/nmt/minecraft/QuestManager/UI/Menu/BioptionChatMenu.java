@@ -7,7 +7,7 @@ import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
 
 import org.bukkit.entity.Player;
 
-public class BioptionChatMenu extends ChatMenu {
+public class BioptionChatMenu extends ChatMenu implements RespondableMenu {
 	
 	private MenuAction opt1;
 	
