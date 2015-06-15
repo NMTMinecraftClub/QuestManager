@@ -116,7 +116,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 
 		
 		managers = new LinkedList<QuestManager>();
-		guiHandler = new ChatGuiHandler(this);
+		guiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		
 		
 		//preload Player data

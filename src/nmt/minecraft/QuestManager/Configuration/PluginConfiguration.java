@@ -99,6 +99,15 @@ public class PluginConfiguration {
 	}
 	
 	/**
+	 * Indicates whether or not menus should print out extra messages about expired menus.<br />
+	 * This can be used as a security feature to avoid players from spamming old menus!
+	 * @return
+	 */
+	public boolean getMenuVerbose() {
+		return config.getBoolean("verbosemenus");
+	}
+	
+	/**
 	 * Gets the stored save data path information
 	 * @return
 	 */
@@ -121,13 +130,10 @@ public class PluginConfiguration {
 		
 		config.set("version", QuestManagerPlugin.version);
 		config.set("conservativemode", true);
+		config.set("verbosemenus", false);
 		ConfigurationSection managers = config.createSection("managers");
 		
-		List<String> questNames = new ArrayList<String>(4);
-		questNames.add("Treasure Hunt");
-		questNames.add("Regicide");
-		questNames.add("An Unlikely Guest");
-		questNames.add("Trial By Fire");
+		List<String> questNames = new ArrayList<String>(1);
 		managers.set("manager_1", questNames);
 		config.set("quests", "quests/");
 		config.set("saves", "savedata/");

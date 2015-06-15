@@ -95,7 +95,17 @@ public class ChatGuiHandler implements CommandExecutor, UITickable {
 	
 	private static Random rand;
 	
-	public ChatGuiHandler(JavaPlugin plugin) {
+	/**
+	 * Should we send messages about expired messages?
+	 */
+	private boolean verboseMode;
+	
+	/**
+	 * Creates a new GUI Handler for the provided plugin.
+	 * @param plugin 
+	 * @param verboseMode Whether or not to send messages to players about expires menus
+	 */
+	public ChatGuiHandler(JavaPlugin plugin, boolean verboseMode) {
 		for (Commands command : Commands.values()) {
 			plugin.getCommand(command.getCommand()).setExecutor(this);
 		}
@@ -144,14 +154,18 @@ public class ChatGuiHandler implements CommandExecutor, UITickable {
 		Player player = (Player) sender;
 		
 		if (!menus.containsKey(player.getUniqueId())) {
-			sender.sendMessage("This menu has expired!");
+			if (verboseMode) {
+				sender.sendMessage("This menu has expired!");
+			}
 			return true;
 		}
 		
 		MenuRecord record = menus.get(player.getUniqueId());
 		
 		if (record.getKey() != menuID) {
-			sender.sendMessage("This menu has expired!");
+			if (verboseMode)  {
+				sender.sendMessage("This menu has expired!");
+			}
 			return true;
 		}
 		
