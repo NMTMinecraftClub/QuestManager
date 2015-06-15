@@ -5,12 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -59,15 +57,6 @@ public class PluginConfiguration {
 		return config.getDouble("version", 0.0);
 	}
 	
-	/**
-	 * Gets and returns a set of all manager names in the configuration file
-	 * @return
-	 */
-	public Set<String> getQuestManagerNames() {
-		Set<String> names = config.getConfigurationSection("managers").getKeys(false);
-		
-		return names;
-	}
 	
 	/**
 	 * Returns a list of quest names that are listed under the provided manager.
@@ -75,10 +64,9 @@ public class PluginConfiguration {
 	 * @return A set of all quest names under the specified manager, or <i>null</i> if the
 	 * manager is not in the configuration file.
 	 */
-	public List<String> getQuests(String managerName) {
-		ConfigurationSection managers = config.getConfigurationSection("managers");
+	public List<String> getQuests() {
 		
-		return managers.getStringList(managerName);
+		return config.getStringList("quests");
 	}
 	
 	/**
@@ -86,7 +74,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public String getQuestPath() {
-		return config.getString("quests");
+		return config.getString("questdir");
 	}
 	
 	/**
@@ -112,7 +100,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public String getSavePath() {
-		return config.getString("saves");
+		return config.getString("savedir");
 	}
 	
 	/**
@@ -131,12 +119,12 @@ public class PluginConfiguration {
 		config.set("version", QuestManagerPlugin.version);
 		config.set("conservativemode", true);
 		config.set("verbosemenus", false);
-		ConfigurationSection managers = config.createSection("managers");
+		//ConfigurationSection managers = config.createSection("managers");
 		
 		List<String> questNames = new ArrayList<String>(1);
-		managers.set("manager_1", questNames);
-		config.set("quests", "quests/");
-		config.set("saves", "savedata/");
+		config.set("quests", questNames);
+		config.set("questdir", "quests/");
+		config.set("savedir", "savedata/");
 		
 		try {
 			config.save(configFile);

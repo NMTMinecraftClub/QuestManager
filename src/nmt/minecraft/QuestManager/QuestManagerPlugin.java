@@ -4,8 +4,6 @@ package nmt.minecraft.QuestManager;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 import nmt.minecraft.QuestManager.Configuration.PluginConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
@@ -49,7 +47,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private PlayerManager playerManager;
 	
-	private List<QuestManager> managers;
+	private QuestManager manager;
 	
 	private ChatGuiHandler guiHandler;
 	
@@ -114,8 +112,6 @@ public class QuestManagerPlugin extends JavaPlugin {
 		ConfigurationSerialization.registerClass(TextualComponent.ComplexTextTypeComponent.class);
 		ConfigurationSerialization.registerClass(FancyMessage.class);
 
-		
-		managers = new LinkedList<QuestManager>();
 		guiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		
 		
@@ -150,21 +146,12 @@ public class QuestManagerPlugin extends JavaPlugin {
 				playerManager = new PlayerManager(playerConfig);
 		
 		
-		//parse config
-		for (String managerName : config.getQuestManagerNames()) {
-			File sDir = new File(saveDirectory, managerName);
-			if (!sDir.exists()) {
-				sDir.mkdirs();
-			}
-			QuestManager manager = new QuestManager(
-					managerName,
-					questDirectory, 
-					sDir,
-					config.getQuests(managerName));
-			
-			registerManager(manager);
+		//parse config & instantiate manager
+		manager = new QuestManager(
+				questDirectory, 
+				saveDirectory,
+				config.getQuests());
 					
-		}
 		
 		
 	}
@@ -180,22 +167,6 @@ public class QuestManagerPlugin extends JavaPlugin {
 		stopAllQuests();
 	}
 	
-	/**
-	 * Adds the requested manager to the list of active managers.<br />
-	 * @param manager
-	 */
-	public void registerManager(QuestManager manager) {
-		managers.add(manager);
-	}
-	
-	/**
-	 * Attempts to remove the passed manager.<br />
-	 * @param manager
-	 * @return
-	 */
-	public boolean unregisterManager(QuestManager manager) {
-		return managers.remove(manager);
-	}
 	
 	/**
 	 * Attempts to softly stop all running quest managers and quests.<br />
@@ -204,13 +175,11 @@ public class QuestManagerPlugin extends JavaPlugin {
 	 * immediately).
 	 */
 	public void stopAllQuests() {
-		if (managers == null || managers.isEmpty()) {
+		if (manager == null) {
 			return;
 		}
 	
-		for (QuestManager man : managers) {
-			man.stopQuests();
-		}
+		manager.stopQuests();
 	}
 	
 	/**
@@ -222,13 +191,11 @@ public class QuestManagerPlugin extends JavaPlugin {
 	 */
 	public void haltAllQuests() {
 		
-		if (managers == null || managers.isEmpty()) {
+		if (manager == null) {
 			return;
 		}
-	
-		for (QuestManager man : managers) {
-			man.haltQuests();
-		}
+		
+		manager.haltQuests();
 		
 	}
 	

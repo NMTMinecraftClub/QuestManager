@@ -22,8 +22,6 @@ public class QuestManager {
 	
 	private File saveDirectory;
 	
-	private String name;
-	
 	private Scoreboard scoreboard;
 	
 	/**
@@ -31,7 +29,7 @@ public class QuestManager {
 	 * the manager configuration section ready. The config passed is expected to have
 	 * one key (the name of the manager) and the value be a list of strings (name of quests)
 	 */
-	public QuestManager(String name, File questDirectory, File saveDirectory, 
+	public QuestManager(File questDirectory, File saveDirectory, 
 			List<String> questNames) {
 		
 		runningQuests = new LinkedList<Quest>();
@@ -88,7 +86,7 @@ public class QuestManager {
 		
 		//check if there is any state information for this manager
 		if (saveDirectory.listFiles().length != 0) {
-			QuestManagerPlugin.questManagerPlugin.getLogger().info(name + " fetching state "
+			QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager fetching state "
 					+ "information...");	
 			
 			
@@ -148,7 +146,7 @@ public class QuestManager {
 						
 			}
 
-			QuestManagerPlugin.questManagerPlugin.getLogger().info(name + " finished!");	
+			QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager finished!");	
 			
 		}
 	}
@@ -202,10 +200,7 @@ public class QuestManager {
 	public File getSaveLocation() {
 		return saveDirectory;
 	}
-	
-	public String getName() {
-		return this.name;
-	}
+
 	
 	public Scoreboard getScoreboard() {
 		return this.scoreboard;
