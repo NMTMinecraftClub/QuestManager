@@ -2,11 +2,14 @@ package nmt.minecraft.QuestManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
+import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.Quest.Quest;
 
 import org.bukkit.Bukkit;
@@ -24,6 +27,8 @@ public class QuestManager {
 	
 	private Scoreboard scoreboard;
 	
+	private Set<NPC> startingNPCs;
+	
 	/**
 	 * Constructs a manager with the given directory information and a config file with
 	 * the manager configuration section ready. The config passed is expected to have
@@ -34,6 +39,7 @@ public class QuestManager {
 		
 		runningQuests = new LinkedList<Quest>();
 		questTemplates = new LinkedList<QuestConfiguration>();
+		startingNPCs = new HashSet<NPC>();
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 		
 		this.saveDirectory = saveDirectory;
@@ -72,6 +78,12 @@ public class QuestManager {
 			
 			
 			questTemplates.add(questTemplate);
+			
+			//now instantiate starting NPC associated ot this quest
+			NPC npc = questTemplate.GetStartingNPCInstance();
+			if (npc != null) {
+				startingNPCs.add(npc);
+			}
 			
 			
 //			try {
@@ -182,6 +194,13 @@ public class QuestManager {
 			}
 			
 			QuestManagerPlugin.questManagerPlugin.getLogger().info("done!");
+		}
+		
+		//remove starting NPCs
+		if (!startingNPCs.isEmpty()) {
+			for (NPC npc : startingNPCs) {
+				npc.getEntity().remove();
+			}
 		}
 	}
 	

@@ -90,6 +90,25 @@ public class QuestConfiguration {
 	}
 	
 	/**
+	 * Reads and instantiates a new starting npc for this quest.<br />
+	 * It's common practice to only call this method a single time, as you only need one copy
+	 * of 'earl' who people talk to to give the quest.
+	 * @return The new NPC instance
+	 */
+	public NPC GetStartingNPCInstance() {
+		//load up starting NPC information
+		NPC startingNPC = null;
+		if (!config.contains(QuestConfigurationField.START.getKey())) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().info(
+					  "Quest has no starting npc specified: " + getName());
+		} else {
+			startingNPC = (NPC) config.get(QuestConfigurationField.START.getKey());
+		}
+		
+		return startingNPC;
+	}
+	
+	/**
 	 * Returns the complete {@link nmt.minecraft.QuestManager.Quest.Quest Quest} this configuration represents.<br />
 	 * Subsequent calls to this method return new instances of the represented quest. It is
 	 * up to the caller to keep track of returned quests and optimize performance when simply
@@ -110,17 +129,8 @@ public class QuestConfiguration {
 		for (String key : questSection.getKeys(false)) {
 			goalList.add(questSection.getConfigurationSection(key));
 		}
-		
-		//load up starting NPC information
-		NPC startingNPC = null;
-		if (!config.contains(QuestConfigurationField.START.getKey())) {
-			QuestManagerPlugin.questManagerPlugin.getLogger().info(
-					  "Quest has no starting npc specified: " + getName());
-		} else {
-			startingNPC = (NPC) config.get(QuestConfigurationField.START.getKey());
-		}
 			
-		Quest quest = new Quest(manager, getName(), getDescription(), getSaveState(), startingNPC);
+		Quest quest = new Quest(manager, getName(), getDescription(), getSaveState());
 		
 		for (ConfigurationSection section : goalList) {
 			Goal goal = Goal.fromConfig(quest, section);
