@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import nmt.minecraft.QuestManager.QuestManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.State.GoalState;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
@@ -71,8 +70,6 @@ public class Quest implements Listener {
 	
 	private int ID;
 	
-	private QuestManager manager;
-	
 	private String name;
 	
 	private String description;
@@ -100,10 +97,9 @@ public class Quest implements Listener {
 	 */
 	private boolean keepState;
 	
-	public Quest(QuestManager manager, String name, String description, boolean keepState) {
+	public Quest(String name, String description, boolean keepState) {
 		this.name = name;
 		this.description = description;
-		this.manager = manager;
 		
 		this.running = false;
 		this.goals = new LinkedList<Goal>();
@@ -154,11 +150,7 @@ public class Quest implements Listener {
 		
 		
 	}
-	
-	public QuestManager getManager() {
-		return manager;
-	}
-	
+
 	public QuestState getState() {
 		//we need to definitely save goal state information (and requirement state). We also
 		//and... that's kind of it actually
@@ -210,7 +202,8 @@ public class Quest implements Listener {
 	public void stop() {
 		
 		//get config location!
-		File saveLoc = new File(manager.getSaveLocation(), name + "_" + ID + ".yml");
+		File saveLoc = new File(QuestManagerPlugin.questManagerPlugin.getManager()
+				.getSaveLocation(), name + "_" + ID + ".yml");
 		
 		QuestState state = getState();
 			

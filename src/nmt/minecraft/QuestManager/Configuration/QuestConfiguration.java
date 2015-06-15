@@ -3,9 +3,9 @@ package nmt.minecraft.QuestManager.Configuration;
 import java.util.LinkedList;
 import java.util.List;
 
-import nmt.minecraft.QuestManager.QuestManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.NPC.NPC;
+import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 
@@ -97,12 +97,13 @@ public class QuestConfiguration {
 	 */
 	public NPC GetStartingNPCInstance() {
 		//load up starting NPC information
-		NPC startingNPC = null;
+		SimpleQuestStartNPC startingNPC = null;
 		if (!config.contains(QuestConfigurationField.START.getKey())) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().info(
 					  "Quest has no starting npc specified: " + getName());
 		} else {
-			startingNPC = (NPC) config.get(QuestConfigurationField.START.getKey());
+			startingNPC = (SimpleQuestStartNPC) config.get(QuestConfigurationField.START.getKey());
+			startingNPC.setQuestTemplate(this);
 		}
 		
 		return startingNPC;
@@ -116,7 +117,7 @@ public class QuestConfiguration {
 	 * @return
 	 * @throws InvalidConfigurationException 
 	 */
-	public Quest instanceQuest(QuestManager manager) throws InvalidConfigurationException {
+	public Quest instanceQuest() throws InvalidConfigurationException {
 				
 		if (!config.contains(QuestConfigurationField.GOALS.getKey())) {
 			return null;
@@ -130,7 +131,7 @@ public class QuestConfiguration {
 			goalList.add(questSection.getConfigurationSection(key));
 		}
 			
-		Quest quest = new Quest(manager, getName(), getDescription(), getSaveState());
+		Quest quest = new Quest(getName(), getDescription(), getSaveState());
 		
 		for (ConfigurationSection section : goalList) {
 			Goal goal = Goal.fromConfig(quest, section);

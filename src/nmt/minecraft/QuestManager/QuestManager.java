@@ -110,7 +110,7 @@ public class QuestManager {
 				QuestConfiguration template = getQuestTemplate(questName);
 				Quest quest;
 				try {
-					quest = template.instanceQuest(this);
+					quest = template.instanceQuest();
 					
 				} catch (InvalidConfigurationException e) {
 					e.printStackTrace();

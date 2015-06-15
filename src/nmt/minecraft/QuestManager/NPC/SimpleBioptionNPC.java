@@ -64,7 +64,7 @@ public class SimpleBioptionNPC extends NPC {
 		}
 	}
 	
-	private BioptionMessage chat;
+	protected BioptionMessage chat;
 	
 	protected SimpleBioptionNPC() {
 		super();

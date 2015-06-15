@@ -1,6 +1,5 @@
 package nmt.minecraft.QuestManager.UI.Menu.Action;
 
-import nmt.minecraft.QuestManager.QuestManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
 import nmt.minecraft.QuestManager.Quest.Quest;
@@ -12,13 +11,10 @@ public class QuestStartAction implements MenuAction {
 
 	private QuestConfiguration template;
 	
-	private QuestManager manager;
-	
 	private Player player;
 	
-	public QuestStartAction(QuestConfiguration questTemplate, QuestManager manager, Player player) {
+	public QuestStartAction(QuestConfiguration questTemplate, Player player) {
 		this.template = questTemplate;
-		this.manager = manager;
 		this.player = player;
 	}
 	
@@ -28,7 +24,7 @@ public class QuestStartAction implements MenuAction {
 		//Instantiate the template
 		Quest quest;
 		try {
-			quest = template.instanceQuest(manager);
+			quest = template.instanceQuest();
 		} catch (InvalidConfigurationException e) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning(
 					"Could not instance quest for player " + player.getName());
@@ -37,7 +33,9 @@ public class QuestStartAction implements MenuAction {
 			return;
 		}
 		
-		quest.
+		player.sendMessage("omgeeee");
+		quest.addPlayer(
+				QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player));
 		
 	}
 

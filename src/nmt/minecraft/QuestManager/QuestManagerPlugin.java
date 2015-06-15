@@ -215,4 +215,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 		return guiHandler;
 	}
 	
+	public QuestManager getManager() {
+		return manager;
+	}
+	
 }
