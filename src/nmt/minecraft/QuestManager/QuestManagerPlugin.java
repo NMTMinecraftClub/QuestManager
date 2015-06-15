@@ -13,6 +13,7 @@ import nmt.minecraft.QuestManager.Fanciful.TextualComponent;
 import nmt.minecraft.QuestManager.NPC.MuteNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleBioptionNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleChatNPC;
+import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
@@ -106,6 +107,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		MuteNPC.registerWithAliases();
 		SimpleChatNPC.registerWithAliases();
 		SimpleBioptionNPC.registerWithAliases();
+		SimpleQuestStartNPC.registerWithAliases();
 		BioptionMessage.registerWithAliases();
 		ConfigurationSerialization.registerClass(MessagePart.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ArbitraryTextTypeComponent.class);
