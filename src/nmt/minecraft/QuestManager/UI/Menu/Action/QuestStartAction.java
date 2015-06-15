@@ -36,6 +36,7 @@ public class QuestStartAction implements MenuAction {
 		player.sendMessage("omgeeee");
 		quest.addPlayer(
 				QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player));
+		QuestManagerPlugin.questManagerPlugin.getManager().registerQuest(quest);
 		
 	}
 
