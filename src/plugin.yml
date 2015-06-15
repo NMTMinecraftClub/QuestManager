@@ -1,0 +1,8 @@
+name: QuestManager
+main: nmt.minecraft.QuestManager.QuestManagerPlugin
+version: 1.0
+softdepend: [Fanciful]
+commands:
+    qmchatmenu:
+        usage: This command is not meant to be called directly.
+        description: Internal interface command for quest menus - chat
