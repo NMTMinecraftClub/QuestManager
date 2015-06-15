@@ -10,6 +10,7 @@ import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -151,7 +152,16 @@ public class SimpleChatNPC extends NPC {
 
 	@Override
 	protected void interact(Player player) {
-		ChatMenu messageChat = new SimpleChatMenu(chat);
+		ChatMenu messageChat = new SimpleChatMenu(
+				new FancyMessage(name)
+					.color(ChatColor.DARK_GRAY)
+					.style(ChatColor.BOLD)
+					//TODO if we could do a COMPASS thing here, that would be so sick!
+					//like make it execute /aetaeyaey 316667757 ID
+					//which points a players compass to this entity
+				.then(":\n")
+				.then(chat)				
+				);
 		messageChat.show(player);
 	}
 

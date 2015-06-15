@@ -11,6 +11,8 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
  */
 public abstract class Message implements ConfigurationSerializable {
 	
+	public abstract void setSourceLabel(FancyMessage label);
+	
 	public abstract FancyMessage getFormattedMessage();
 	
 }

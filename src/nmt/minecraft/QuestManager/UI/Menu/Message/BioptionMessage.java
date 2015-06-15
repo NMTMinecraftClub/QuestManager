@@ -53,6 +53,8 @@ public class BioptionMessage extends Message {
 		}
 	}
 	
+	private FancyMessage sourceLabel;
+	
 	private FancyMessage body;
 	
 	private FancyMessage option1Label;
@@ -127,6 +129,11 @@ public class BioptionMessage extends Message {
 	public FancyMessage getFormattedMessage() {
 		return new FancyMessage("--------------------------------------------\n")
 				.style(ChatColor.BOLD)
+			.then(sourceLabel == null ? 
+						new FancyMessage("Unknown")	: sourceLabel)
+					.color(ChatColor.DARK_GRAY)
+					.style(ChatColor.BOLD)
+			.then(":\n")
 			.then(body).then("\n\n   ")
 				.then(option1Label).command(ChatGuiHandler.cmdBase + " " + OPTION1)
 					.color(ChatColor.DARK_GREEN)
@@ -141,11 +148,28 @@ public class BioptionMessage extends Message {
 	}
 	
 	public FancyMessage getResponse1() {
-		return option1Msg;
+		return new FancyMessage("")
+		.then(sourceLabel == null ? 
+				new FancyMessage("Unknown")	: sourceLabel)
+			.color(ChatColor.DARK_GRAY)
+			.style(ChatColor.BOLD)
+		.then(":\n")
+		.then(option1Msg);
 	}
 	
 	public FancyMessage getResponse2() {
-		return option2Msg;
+		return new FancyMessage("")
+		.then(sourceLabel == null ? 
+				new FancyMessage("Unknown")	: sourceLabel)
+			.color(ChatColor.DARK_GRAY)
+			.style(ChatColor.BOLD)
+		.then(":\n")
+		.then(option2Msg);
+	}
+	
+	@Override
+	public void setSourceLabel(FancyMessage label) {
+		this.sourceLabel = label;
 	}
 
 }

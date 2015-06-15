@@ -6,6 +6,7 @@ import java.util.Map;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
@@ -121,6 +122,8 @@ public class SimpleBioptionNPC extends NPC {
 		
 		EntityType type = EntityType.valueOf((String) map.get("type"));
 		
+		npc.name = (String) map.get("name");
+		
 		npc.entity = loc.getWorld().spawnEntity(loc, type);
 		npc.entity.setCustomName((String) map.get("name"));
 
@@ -135,6 +138,14 @@ public class SimpleBioptionNPC extends NPC {
 		}
 		
 		npc.chat = (BioptionMessage) map.get("message");
+		
+		//provide our npc's name, unless we don't have one!
+		if (npc.name != null && !npc.name.equals("")) {
+			npc.chat.setSourceLabel(
+					new FancyMessage(npc.name)
+					);
+			
+		}
 		
 		return npc;
 	}
