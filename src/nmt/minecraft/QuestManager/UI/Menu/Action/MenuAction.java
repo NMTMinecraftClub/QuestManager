@@ -1,4 +1,4 @@
-package nmt.minecraft.QuestManager.UI;
+package nmt.minecraft.QuestManager.UI.Menu.Action;
 
 /**
  * Specifies an action for the menu to perform on click.

@@ -2,7 +2,7 @@ package nmt.minecraft.QuestManager.UI.Menu;
 
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
-import nmt.minecraft.QuestManager.UI.MenuAction;
+import nmt.minecraft.QuestManager.UI.Menu.Action.MenuAction;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
 
 import org.bukkit.entity.Player;

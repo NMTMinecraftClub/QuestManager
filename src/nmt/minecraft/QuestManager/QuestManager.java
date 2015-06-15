@@ -217,7 +217,7 @@ public class QuestManager {
 	 * @param questName 
 	 * @return the Quest Configuration used as a template, or null if it wasn't found
 	 */
-	private QuestConfiguration getQuestTemplate(String questName) {
+	public QuestConfiguration getQuestTemplate(String questName) {
 		if (questTemplates.isEmpty()) {
 			return null;
 		}
