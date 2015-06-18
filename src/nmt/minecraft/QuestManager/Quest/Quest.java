@@ -136,9 +136,11 @@ public class Quest implements Listener {
 				players.add(((Party) pant).getLeader());
 				for (QuestPlayer p : ((Party) pant).getMembers()) {
 					players.add(p);
+					p.addQuest(this);
 				}
 			} else {
 				players.add((QuestPlayer) pant);
+				((QuestPlayer) pant).addQuest(this);
 			}
 		}
 		
