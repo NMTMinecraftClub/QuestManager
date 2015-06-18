@@ -168,7 +168,13 @@ public class QuestPlayer implements Participant {
 		bookMeta.setTitle("Quest Log");
 		bookMeta.setAuthor(play.getName());
 		
+		book.setItemMeta(bookMeta);
+		
 		inv.addItem(book);
+		
+		play.sendMessage(ChatColor.GRAY + "A " + ChatColor.DARK_GREEN 
+				+ "Quest Log" + ChatColor.GRAY + " has been added to your inventory."
+				 + ChatColor.RESET);
 		
 	}
 	
@@ -226,6 +232,9 @@ public class QuestPlayer implements Participant {
 		
 		
 		book.setItemMeta(bookMeta);
+		play.sendMessage(ChatColor.GRAY + "Your "
+				+ ChatColor.DARK_GREEN + "Quest Log" + ChatColor.GRAY + " has been"
+				+ " updated!" + ChatColor.RESET);
 	}
 	
 	public List<Quest> getCurrentQuests() {
