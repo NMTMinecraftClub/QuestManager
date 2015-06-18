@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
@@ -19,6 +20,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -185,6 +187,8 @@ public class QuestPlayer implements Participant {
 			
 			book.setItemMeta(bookMeta);
 			
+			book.addUnsafeEnchantment(Enchantment.LUCK, 5);
+			
 			inv.addItem(book);
 			
 			play.sendMessage(ChatColor.GRAY + "A " + ChatColor.DARK_GREEN 
@@ -230,21 +234,44 @@ public class QuestPlayer implements Participant {
 		bookMeta.setPages(new LinkedList<String>());
 		
 		//generate the first page
-		bookMeta.addPage("   Quest Log\n  " 
-				+ ChatColor.DARK_BLUE + play.getName()
+		bookMeta.addPage("      Quest Log\n  " 
 				+ ChatColor.RESET + "\n\n"
-						+ "  This book details your "
-				+ ChatColor.ITALIC + "current" + ChatColor.RESET
-				+ " quest progress & history.");
+						+ "  This book details your current quest progress & history.");
 		
 		//generate the stats page
-		bookMeta.addPage("  " + player.getName() + " - "
+		bookMeta.addPage(ChatColor.DARK_PURPLE + " " + player.getName() + " - "
 				+ ChatColor.DARK_RED + title
-				+ ChatColor.GOLD + "\n-----\n  Fame: " + fame
-				+ ChatColor.DARK_GREEN + "\nCurrent Quests: " + currentQuests.size()
-				+ ChatColor.DARK_BLUE + "\nCompleted Quests: " + completedQuests.size()
+				+ "\n-----\n  " + ChatColor.GOLD + "Fame: " + fame
+				+ ChatColor.DARK_GREEN + "\n\n  Current Quests: " + currentQuests.size()
+				+ ChatColor.DARK_BLUE + "\n\n  Completed Quests: " + completedQuests.size()
 				+ ChatColor.RESET);	
 		
+		
+		//now do quest info
+		//Quest Name
+		//Quest Description
+			//Goal Description? :S
+		
+		
+		for (Quest quest : currentQuests) {
+			
+			String page = "";
+			
+			page += ChatColor.GOLD + quest.getName() + "\n";
+			
+			page += ChatColor.DARK_BLUE + quest.getDescription() + "\n";
+			
+			page += ChatColor.RESET + "Objectives:\n";
+			
+			page += ChatColor.DARK_GRAY;
+			
+			for (Goal goal : quest.getGoals()) {
+				page += " -" + goal.getDescription() + "\n";
+			}
+			
+			bookMeta.addPage(page);
+			
+		}
 		
 		
 		
