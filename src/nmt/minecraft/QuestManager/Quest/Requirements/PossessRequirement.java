@@ -10,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryEvent;
@@ -94,7 +93,7 @@ public class PossessRequirement extends Requirement implements Listener {
 		
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().isOnline())
-			if (((Player) player.getPlayer()).getInventory().contains(new ItemStack(itemType, itemCount))) {
+			if (player.getPlayer().getPlayer().getInventory().contains(new ItemStack(itemType, itemCount))) {
 				this.state = true;
 				return;
 			}
