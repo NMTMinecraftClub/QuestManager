@@ -53,6 +53,19 @@ public class SimpleMessage extends Message {
 	
 	private FancyMessage label;
 	
+	private SimpleMessage() {
+		super();
+	}
+	
+	
+	public SimpleMessage(FancyMessage msg) {
+		this.message = msg;
+	}
+	
+	public SimpleMessage(String msg) {
+		this.message = new FancyMessage(msg);
+	}
+	
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>();
