@@ -3,15 +3,6 @@ package nmt.minecraft.QuestManager.NPC;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Location;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.EntityEquipment;
-
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
@@ -20,7 +11,17 @@ import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Action.QuestStartAction;
+import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
+
+import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 
 /**
  * NPC that starts a quest :D<br />
@@ -95,7 +96,8 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 	public static SimpleQuestStartNPC valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("name") || !map.containsKey("type") 
 				 || !map.containsKey("location") || !map.containsKey("equipment")
-				  || !map.containsKey("message")) {
+				  || !map.containsKey("firstmessage") || !map.containsKey("duringmessage")
+				  || !map.containsKey("postmessage")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid NPC info! "
 					+ (map.containsKey("name") ? ": " + map.get("name") : ""));
 			return null;
@@ -133,7 +135,10 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 			
 		}
 		
-		npc.chat = (BioptionMessage) map.get("message");
+		npc.chat = (BioptionMessage) map.get("firstmessage");
+		npc.duringMessage = (Message) map.get("duringmessage");
+		npc.duringMessage = (Message) map.get("postmessage");
+		
 		
 		//provide our npc's name, unless we don't have one!
 		if (npc.name != null && !npc.name.equals("")) {
@@ -147,6 +152,10 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 	}
 	
 	private QuestConfiguration quest;
+	
+	private Message duringMessage;
+	
+	private Message afterMessage;
 	
 	public void setQuestTemplate(QuestConfiguration questTemplate) {
 		this.quest = questTemplate;
