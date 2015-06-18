@@ -138,7 +138,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		
 		npc.chat = (BioptionMessage) map.get("firstmessage");
 		npc.duringMessage = (Message) map.get("duringmessage");
-		npc.duringMessage = (Message) map.get("postmessage");
+		npc.afterMessage = (Message) map.get("postmessage");
 		
 		
 		//provide our npc's name, unless we don't have one!
