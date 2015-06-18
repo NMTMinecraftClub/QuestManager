@@ -97,7 +97,6 @@ public class ArriveRequirement extends Requirement implements Listener {
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
 		update();
-		updateQuest();
 	}
 	
 	/**
@@ -114,6 +113,7 @@ public class ArriveRequirement extends Requirement implements Listener {
 			if (player.getPlayer().isOnline())
 			if (((Player) player.getPlayer()).getLocation().distance(destination) <= targetRange) {
 				state = true;
+				updateQuest();
 				
 				//unregister listener, cause we'll never switch to unsatisfied
 				HandlerList.unregisterAll(this);
