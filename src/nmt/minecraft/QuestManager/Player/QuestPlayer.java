@@ -277,6 +277,10 @@ public class QuestPlayer implements Participant {
 		qp.title = (String) map.get("title");
 		qp.completedQuests = (List<String>) map.get("completedquests");
 		
+		if (qp.completedQuests == null) {
+			qp.completedQuests = new LinkedList<String>();
+		}
+		
 		
 		return qp;
 	}
