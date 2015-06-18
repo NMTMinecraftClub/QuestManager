@@ -12,7 +12,6 @@ import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -156,7 +155,7 @@ public class SimpleChatNPC extends NPC {
 
 	@Override
 	protected void interact(Player player) {
-		ChatMenu messageChat = new SimpleChatMenu(chat);
+		ChatMenu messageChat = new SimpleChatMenu(chat.getFormattedMessage());
 		messageChat.show(player);
 	}
 
