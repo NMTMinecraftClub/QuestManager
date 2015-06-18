@@ -8,11 +8,12 @@ import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Action.QuestStartAction;
-import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
+import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -163,8 +164,24 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 	
 	@Override
 	protected void interact(Player player) {
-		ChatMenu messageChat = new BioptionChatMenu(chat, 
-				new QuestStartAction(quest, player), null);
+		
+		//do different things depending on if the player has or is doing the quest
+		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
+				player.getUniqueId());
+		
+		ChatMenu messageChat;
+		
+		if (qp.hasCompleted(quest.getName())) {
+			//already completed it
+			messageChat = ChatMenu.getDefaultMenu(afterMessage);
+		} else if (qp.isInQuest(quest.getName())) {
+			//is currently in it
+			messageChat = ChatMenu.getDefaultMenu(duringMessage);
+		} else {
+			messageChat = new BioptionChatMenu(chat, 
+					new QuestStartAction(quest, player), null);			
+		}
+
 		messageChat.show(player);
 	}
 	
