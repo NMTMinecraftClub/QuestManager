@@ -11,6 +11,7 @@ import java.util.UUID;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
+import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -178,6 +179,7 @@ public class QuestPlayer implements Participant {
 	
 	public void addQuest(Quest quest) {
 		currentQuests.add(quest);
+		history.addHistoryEvent(new HistoryEvent("Accepted the quest \"" + quest.getName() +"\""));
 	}
 	
 	public boolean removeQuest(Quest quest) {
@@ -187,6 +189,9 @@ public class QuestPlayer implements Participant {
 	public void completeQuest(Quest quest) {
 		completedQuests.add(quest.getName());
 		currentQuests.remove(quest);
+		
+		history.addHistoryEvent(
+				new HistoryEvent("Completed the quest \"" + quest.getName() + "\""));
 	}
 	
 	public OfflinePlayer getPlayer() {
