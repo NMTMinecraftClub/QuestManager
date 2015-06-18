@@ -22,6 +22,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
+import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -108,6 +109,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		SimpleChatNPC.registerWithAliases();
 		SimpleBioptionNPC.registerWithAliases();
 		SimpleQuestStartNPC.registerWithAliases();
+		SimpleMessage.registerWithAliases();
 		BioptionMessage.registerWithAliases();
 		ConfigurationSerialization.registerClass(MessagePart.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ArbitraryTextTypeComponent.class);
