@@ -154,6 +154,28 @@ public class QuestPlayer implements Participant {
 		return completedQuests.contains(name);
 	}
 	
+	/**
+	 * Checks and returns whether or not the player is in this TYPE of quest.<br />
+	 * To see whether this player is in this particular instance of the quest, use
+	 * the quest's {@link nmt.minecraft.QuestManager.Quest.Quest#getPlayers() getPlayers()}
+	 * method and traditional lookup techniques instead.
+	 * @param quest
+	 * @return
+	 */
+	public boolean isInQuest(Quest quest) {
+		return isInQuest(quest.getName());
+	}
+	
+	public boolean isInQuest(String questName) {
+		for (Quest quest : currentQuests) {
+			if (quest.getName().equals(questName)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public void addQuest(Quest quest) {
 		currentQuests.add(quest);
 	}
