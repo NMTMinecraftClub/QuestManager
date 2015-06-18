@@ -48,6 +48,7 @@ public class QuestStartAction implements MenuAction {
 
 		quest.addPlayer(
 				QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player));
+		QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player).addQuest(quest);
 		QuestManagerPlugin.questManagerPlugin.getManager().registerQuest(quest);
 		
 	}
