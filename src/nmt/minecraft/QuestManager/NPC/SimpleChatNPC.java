@@ -9,6 +9,8 @@ import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
+import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -64,7 +66,7 @@ public class SimpleChatNPC extends NPC {
 		}
 	}
 	
-	private FancyMessage chat;
+	private SimpleMessage chat;
 	
 	private SimpleChatNPC() {
 		super();
@@ -138,10 +140,12 @@ public class SimpleChatNPC extends NPC {
 		
 		//UPDATE: We wanna also accept regular strings, too :P
 		Object msgObj = map.get("message");
-		if (msgObj instanceof FancyMessage) {
-			npc.chat = (FancyMessage) map.get("message");
+		if (msgObj instanceof Message) {
+			npc.chat = (SimpleMessage) map.get("message");
+		} else if (msgObj instanceof FancyMessage) { 
+			npc.chat = new SimpleMessage((FancyMessage) msgObj);
 		} else if (msgObj instanceof String){
-			npc.chat = new FancyMessage((String) msgObj);
+			npc.chat = new SimpleMessage((String) msgObj);
 		} else {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning(
 					"Invalid message type for Simple Chat NPC: " + npc.name);
@@ -152,16 +156,7 @@ public class SimpleChatNPC extends NPC {
 
 	@Override
 	protected void interact(Player player) {
-		ChatMenu messageChat = new SimpleChatMenu(
-				new FancyMessage(name)
-					.color(ChatColor.DARK_GRAY)
-					.style(ChatColor.BOLD)
-					//TODO if we could do a COMPASS thing here, that would be so sick!
-					//like make it execute /aetaeyaey 316667757 ID
-					//which points a players compass to this entity
-				.then(":\n")
-				.then(chat)				
-				);
+		ChatMenu messageChat = new SimpleChatMenu(chat);
 		messageChat.show(player);
 	}
 
