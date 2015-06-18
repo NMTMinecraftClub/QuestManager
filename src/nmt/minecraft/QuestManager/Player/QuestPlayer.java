@@ -29,7 +29,9 @@ public class QuestPlayer implements Participant {
 	
 	private History history;
 	
-	private List<Quest> quests;
+	private List<Quest> currentQuests;
+	
+	private List<String> completedQuests;
 	
 	private int fame;
 	
@@ -91,7 +93,7 @@ public class QuestPlayer implements Participant {
 //		/*
 //		 * config.set("Player", player.getUniqueId().toString());
 //		config.set("History", history.toConfig());
-//		config.set("Quests", quests);
+//		config.set("Quests", currentQuests);
 //		 */
 //		
 //		qp = new QuestPlayer();
@@ -100,11 +102,11 @@ public class QuestPlayer implements Participant {
 //		OfflinePlayer player = Bukkit.getOfflinePlayer(id);
 //		History history = History.fromConfig((YamlConfiguration) config.getConfigurationSection("History"));
 //		@SuppressWarnings("unchecked")
-//		List<Quest> quests = (List<Quest>) config.getList("Quests");
+//		List<Quest> currentQuests = (List<Quest>) config.getList("Quests");
 //		
 //		qp.player = player;
 //		qp.history = history;
-//		qp.quests = quests;
+//		qp.quests = currentQuests;
 //		
 //		return qp;
 //		
@@ -125,7 +127,7 @@ public class QuestPlayer implements Participant {
 	public QuestPlayer(OfflinePlayer player) {
 		this();
 		this.player = player;
-		this.quests = new LinkedList<Quest>();
+		this.currentQuests = new LinkedList<Quest>();
 		this.history = new History();
 		
 		
@@ -136,16 +138,33 @@ public class QuestPlayer implements Participant {
 		return history;
 	}
 	
-	public List<Quest> getQuests() {
-		return quests;
+	public List<Quest> getCurrentQuests() {
+		return currentQuests;
+	}
+	
+	public List<String> getCompletedQuests() {
+		return completedQuests;
+	}
+	
+	public boolean hasCompleted(Quest quest) {
+		return this.hasCompleted(quest.getName());
+	}
+	
+	public boolean hasCompleted(String name) {
+		return completedQuests.contains(name);
 	}
 	
 	public void addQuest(Quest quest) {
-		quests.add(quest);
+		currentQuests.add(quest);
 	}
 	
 	public boolean removeQuest(Quest quest) {
-		return quests.remove(quest);
+		return currentQuests.remove(quest);
+	}
+	
+	public void completeQuest(Quest quest) {
+		completedQuests.add(quest.getName());
+		currentQuests.remove(quest);
 	}
 	
 	public OfflinePlayer getPlayer() {
@@ -188,7 +207,7 @@ public class QuestPlayer implements Participant {
 //		
 //		config.set("Player", player.getUniqueId().toString());
 //		config.set("History", history.toConfig());
-//		config.set("Quests", quests);
+//		config.set("Quests", currentQuests);
 //		
 //		return config;
 //	}
