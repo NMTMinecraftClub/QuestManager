@@ -252,25 +252,32 @@ public class QuestPlayer implements Participant {
 		//Quest Description
 			//Goal Description? :S
 		
-		
-		for (Quest quest : currentQuests) {
-			
-			String page = "";
-			
-			page += ChatColor.GOLD + quest.getName() + "\n";
-			
-			page += ChatColor.DARK_BLUE + quest.getDescription() + "\n";
-			
-			page += ChatColor.RESET + "Objectives:\n";
-			
-			page += ChatColor.DARK_GRAY;
-			
-			for (Goal goal : quest.getGoals()) {
-				page += " -" + goal.getDescription() + "\n";
+		if (currentQuests.isEmpty()) {
+			bookMeta.addPage("\nYou do not have any active quests!");
+		} else {
+			for (Quest quest : currentQuests) {
+				
+				String page = "";
+				
+				page += ChatColor.GOLD + quest.getName() + "\n";
+				
+				page += ChatColor.DARK_BLUE + quest.getDescription() + "\n";
+				
+				page += ChatColor.RESET + "Objectives:\n";
+				
+				page += ChatColor.DARK_GRAY;
+				
+				for (Goal goal : quest.getGoals()) {
+					if (goal.isComplete()) {
+						page += ChatColor.GREEN + " =" + goal.getDescription() + "\n"; 
+					} else {
+						page += ChatColor.DARK_RED + " -" + goal.getDescription() + "\n";
+					}
+				}
+				
+				bookMeta.addPage(page);
+				
 			}
-			
-			bookMeta.addPage(page);
-			
 		}
 		
 		
