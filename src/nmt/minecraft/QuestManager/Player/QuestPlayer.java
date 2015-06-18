@@ -162,20 +162,37 @@ public class QuestPlayer implements Participant {
 			return;
 		}
 		
-		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-		BookMeta bookMeta = (BookMeta) book.getItemMeta();
+		ItemStack book = null;
 		
-		bookMeta.setTitle("Quest Log");
-		bookMeta.setAuthor(play.getName());
+		for (ItemStack item : inv.all(Material.WRITTEN_BOOK).values()) {
+			if (item.hasItemMeta()) {
+				BookMeta meta = (BookMeta) item.getItemMeta();
+				if (meta.getTitle().equals("Quest Log")
+						&& meta.getAuthor().equals(play.getName())) {
+					book = item;
+					break;
+				}
+			}
+		}
 		
-		book.setItemMeta(bookMeta);
+		if (book == null) {
 		
-		inv.addItem(book);
+			book = new ItemStack(Material.WRITTEN_BOOK);
+			BookMeta bookMeta = (BookMeta) book.getItemMeta();
+			
+			bookMeta.setTitle("Quest Log");
+			bookMeta.setAuthor(play.getName());
+			
+			book.setItemMeta(bookMeta);
+			
+			inv.addItem(book);
+			
+			play.sendMessage(ChatColor.GRAY + "A " + ChatColor.DARK_GREEN 
+					+ "Quest Log" + ChatColor.GRAY + " has been added to your inventory."
+					 + ChatColor.RESET);
+		}
 		
-		play.sendMessage(ChatColor.GRAY + "A " + ChatColor.DARK_GREEN 
-				+ "Quest Log" + ChatColor.GRAY + " has been added to your inventory."
-				 + ChatColor.RESET);
-		
+		updateQuestBook();
 	}
 	
 	/**
