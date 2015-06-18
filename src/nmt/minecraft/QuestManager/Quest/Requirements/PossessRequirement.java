@@ -93,7 +93,7 @@ public class PossessRequirement extends Requirement implements Listener {
 		
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().isOnline())
-			if (player.getPlayer().getPlayer().getInventory().contains(new ItemStack(itemType, itemCount))) {
+			if (player.getPlayer().getPlayer().getInventory().containsAtLeast(new ItemStack(itemType), itemCount)) {
 				this.state = true;
 				return;
 			}

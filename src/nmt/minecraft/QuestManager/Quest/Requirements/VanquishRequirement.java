@@ -97,7 +97,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 			return;
 		}
 		
-		state = !foe.isDead();
+		state = foe.isDead();
 	}
 
 	@Override
@@ -154,6 +154,8 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		equipment.setLeggings(econ.getLegs());
 		equipment.setBoots(econ.getBoots());
 		equipment.setItemInHand(econ.getHeld());
+		
+		update();
 	}
 
 	@Override
