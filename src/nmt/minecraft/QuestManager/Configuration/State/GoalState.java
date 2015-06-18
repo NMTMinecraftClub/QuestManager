@@ -35,6 +35,7 @@ public class GoalState {
 		
 		requirementStates = new LinkedList<RequirementState>();
 		
+		if (config.contains("requirementStates"))
 		for (String reqKey : config.getConfigurationSection("requirementStates").getKeys(false)) {
 			requirementStates.add(
 					new RequirementState(
