@@ -154,7 +154,7 @@ public class QuestPlayer implements Participant {
 			return;
 		}
 		
-		Player play = (Player) player;
+		Player play = player.getPlayer();
 		Inventory inv = play.getInventory();
 		
 		if (inv.firstEmpty() == -1) {
@@ -181,7 +181,7 @@ public class QuestPlayer implements Participant {
 			return;
 		}
 		
-		Player play = (Player) player;
+		Player play = player.getPlayer();
 		Inventory inv = play.getInventory();
 		ItemStack book = null;
 		
