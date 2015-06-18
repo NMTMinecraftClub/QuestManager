@@ -1,9 +1,13 @@
 package nmt.minecraft.QuestManager.UI;
 
-import org.bukkit.entity.Player;
-
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
+import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
+
+import org.bukkit.entity.Player;
 
 /**
  * A menu represented in chat buttons and links
@@ -59,6 +63,35 @@ public abstract class ChatMenu {
 	
 	public FancyMessage getMessage() {
 		return message;
+	}
+	
+	/**
+	 * Defines the menu that goes with most standard message types.<br />
+	 * If you do not register your own message types here, they will always default
+	 * to simple message menus when using this command!
+	 * <p>
+	 * It's important to note that any menus created from this command are not allowed to be
+	 * provided menu actions. For example, the {@link BioptionChatMenu} that would be instantiated
+	 * from a {@link BioptionMessage} would have its menu options as null, meaning no action
+	 * would be executed when the options were clicked.
+	 * </p>
+	 * @param message
+	 * @return
+	 */
+	public static ChatMenu getDefaultMenu(Message message) {
+		
+		if (message instanceof BioptionMessage) {
+			return new BioptionChatMenu((BioptionMessage) message, null, null);
+		}
+
+		
+		
+		
+		
+		
+		//if message instanceof SimpleMessage (or DEFAULT)
+		return new SimpleChatMenu(message.getFormattedMessage());
+		
 	}
 	
 }
