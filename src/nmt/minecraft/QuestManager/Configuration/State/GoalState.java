@@ -27,7 +27,7 @@ public class GoalState {
 
 	public void load(ConfigurationSection config) throws InvalidConfigurationException {
 		if (!config.contains("type") || !config.getString("type").equals("goalstate") 
-				|| !config.contains("name") || !config.contains("requirementStates")) {
+				|| !config.contains("name")) {
 			throw new InvalidConfigurationException();
 		}
 		
