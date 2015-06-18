@@ -25,9 +25,13 @@ import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
 import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -201,6 +205,22 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		manager.haltQuests();
 		
+	}
+	
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (cmd.getName().equals("questlog")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage("Only players can use this command!");
+				return true;
+			}
+			
+			QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
+			
+			qp.addQuestBook();
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public RequirementManager getRequirementManager() {

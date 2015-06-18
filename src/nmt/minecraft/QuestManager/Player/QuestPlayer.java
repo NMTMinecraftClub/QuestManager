@@ -14,9 +14,15 @@ import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 /**
  * Player wrapper to store questing information and make saving player quest status
@@ -137,6 +143,89 @@ public class QuestPlayer implements Participant {
 	
 	public History getHistory() {
 		return history;
+	}
+	
+	/**
+	 * Adds a quest book to the players inventory, if there is space.<br />
+	 * This method will produce a fully updated quest book in the players inventory.
+	 */
+	public void addQuestBook() {
+		if (!player.isOnline()) {
+			return;
+		}
+		
+		Player play = (Player) player;
+		Inventory inv = play.getInventory();
+		
+		if (inv.firstEmpty() == -1) {
+			//no room!
+			return;
+		}
+		
+		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+		BookMeta bookMeta = (BookMeta) book.getItemMeta();
+		
+		bookMeta.setTitle("Quest Log");
+		bookMeta.setAuthor(play.getName());
+		
+		inv.addItem(book);
+		
+	}
+	
+	/**
+	 * Updates the players quest book, if they have it in their inventory.<br />
+	 * If the user does not have abook already or has discarded it, this method will do nothing.
+	 */
+	public void updateQuestBook() {
+		if (!player.isOnline()) {
+			return;
+		}
+		
+		Player play = (Player) player;
+		Inventory inv = play.getInventory();
+		ItemStack book = null;
+		
+		for (ItemStack item : inv.all(Material.WRITTEN_BOOK).values()) {
+			if (item.hasItemMeta()) {
+				BookMeta meta = (BookMeta) item.getItemMeta();
+				if (meta.getTitle().equals("Quest Log")
+						&& meta.getAuthor().equals(play.getName())) {
+					book = item;
+					break;
+				}
+			}
+		}
+		
+		if (book == null) {
+			//they don't have a quest log
+			return;
+		}
+		
+		
+		
+		BookMeta bookMeta = (BookMeta) book.getItemMeta();
+		bookMeta.setPages(new LinkedList<String>());
+		
+		//generate the first page
+		bookMeta.addPage("   Quest Log\n  " 
+				+ ChatColor.DARK_BLUE + play.getName()
+				+ ChatColor.RESET + "\n\n"
+						+ "  This book details your "
+				+ ChatColor.ITALIC + "current" + ChatColor.RESET
+				+ " quest progress & history.");
+		
+		//generate the stats page
+		bookMeta.addPage("  " + player.getName() + " - "
+				+ ChatColor.DARK_RED + title
+				+ ChatColor.GOLD + "\n-----\n  Fame: " + fame
+				+ ChatColor.DARK_GREEN + "\nCurrent Quests: " + currentQuests.size()
+				+ ChatColor.DARK_BLUE + "\nCompleted Quests: " + completedQuests.size()
+				+ ChatColor.RESET);	
+		
+		
+		
+		
+		book.setItemMeta(bookMeta);
 	}
 	
 	public List<Quest> getCurrentQuests() {
