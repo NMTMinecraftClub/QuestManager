@@ -228,6 +228,7 @@ public class QuestPlayer implements Participant {
 		map.put("title", title);
 		map.put("fame", fame);
 		map.put("id", player.getUniqueId().toString());
+		map.put("completedquests", completedQuests);
 		
 		return map;
 	}
@@ -237,9 +238,10 @@ public class QuestPlayer implements Participant {
 	 * @param map The configuration map to initialize the player on.
 	 * @return A new quest player or null on error
 	 */
+	@SuppressWarnings("unchecked")
 	public static QuestPlayer valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("id") || !map.containsKey("fame") 
-				 || !map.containsKey("title")) {
+				 || !map.containsKey("title") || !map.containsKey("completedquests")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid Quest Player! "
 					+ (map.containsKey("id") ? ": " + map.get("id") : ""));
 			return null;
@@ -251,6 +253,7 @@ public class QuestPlayer implements Participant {
 		
 		qp.fame = (int) map.get("fame");
 		qp.title = (String) map.get("title");
+		qp.completedQuests = (List<String>) map.get("completedquests");
 		
 		
 		return qp;
