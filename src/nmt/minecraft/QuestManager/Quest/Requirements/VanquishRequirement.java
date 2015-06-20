@@ -76,7 +76,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	@EventHandler
 	public void onVanquish(EntityDeathEvent e) {
 		
-		if (e.getEntity().equals(foe)) {
+		if (!state && foe.isDead()) {
 			state = true;
 			
 			//unregister listen, as we'll never need to check again
