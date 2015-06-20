@@ -301,6 +301,8 @@ public class Quest implements Listener {
 			goal.sync();
 		}
 		
+		player.updateQuestBook();
+		
 		//TODO starting location, etc?
 	}
 	
