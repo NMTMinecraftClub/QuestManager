@@ -47,6 +47,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	
 	private VanquishRequirement(Goal goal) {
 		super(goal);
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	public VanquishRequirement(Goal goal, LivingEntity foe) {
@@ -58,7 +59,6 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		this.foe = foe;
 		state = false;
 		
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
