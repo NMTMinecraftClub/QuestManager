@@ -368,14 +368,11 @@ public class Quest implements Listener {
 	
 	@EventHandler
 	public void onRequirementUpdate(RequirementUpdateEvent e) {
-		System.out.print("1 - ");
 		if (e.getRequirement() == null || e.getRequirement().getGoal().getQuest().equals(this)) {
-			System.out.print("2 - ");
 			if (keepState && ready) {
 				return;
 			}
 			
-			System.out.print("3!");
 			
 			update();
 
