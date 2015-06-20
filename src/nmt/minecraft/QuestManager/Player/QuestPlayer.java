@@ -329,6 +329,7 @@ public class QuestPlayer implements Participant {
 	public void addQuest(Quest quest) {
 		currentQuests.add(quest);
 		history.addHistoryEvent(new HistoryEvent("Accepted the quest \"" + quest.getName() +"\""));
+		updateQuestBook();
 	}
 	
 	public boolean removeQuest(Quest quest) {
