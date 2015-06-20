@@ -12,7 +12,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -26,6 +27,7 @@ public class PossessRequirement extends Requirement implements Listener {
 		
 		public PossessRequirement fromConfig(Goal goal, ConfigurationSection config) {
 			PossessRequirement req = new PossessRequirement(goal);
+			req.participants = goal.getQuest().getParticipants();
 			try {
 				req.fromConfig(config);
 			} catch (InvalidConfigurationException e) {
@@ -41,6 +43,7 @@ public class PossessRequirement extends Requirement implements Listener {
 	
 	private PossessRequirement(Goal goal) {
 		super(goal);
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	public PossessRequirement(Participant participants, Goal goal, Material itemType) {
@@ -58,7 +61,6 @@ public class PossessRequirement extends Requirement implements Listener {
 		this.itemCount = itemCount;
 		this.participants = participants;
 		
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
@@ -76,7 +78,13 @@ public class PossessRequirement extends Requirement implements Listener {
 	}
 	
 	@EventHandler
-	public void onInventoryChange(InventoryEvent e) {
+	public void onInventoryChange(PlayerPickupItemEvent e) {
+		update();
+		updateQuest();
+	}
+	
+	@EventHandler
+	public void onInventoryChange(PlayerDropItemEvent e) {
 		update();
 		updateQuest();
 	}

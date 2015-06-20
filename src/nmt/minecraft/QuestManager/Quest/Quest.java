@@ -21,6 +21,7 @@ import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.RequirementUpdateEvent;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -112,6 +113,8 @@ public class Quest implements Listener {
 		players = new HashSet<QuestPlayer>();
 		
 		this.ID = (int) (Math.random() * Integer.MAX_VALUE);
+		
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	/**
@@ -360,9 +363,22 @@ public class Quest implements Listener {
 	
 	@EventHandler
 	public void onRequirementUpdate(RequirementUpdateEvent e) {
+		System.out.print("1 - ");
 		if (e.getRequirement() == null || e.getRequirement().getGoal().getQuest().equals(this)) {
+			System.out.print("2 - ");
+			if (keepState && ready) {
+				return;
+			}
+			
+			System.out.print("3!");
+			
 			update();
+
+			for (QuestPlayer p : players) {
+				p.updateQuestBook();
+			}
 		}
+		System.out.println();
 	}
 	
 	/**
