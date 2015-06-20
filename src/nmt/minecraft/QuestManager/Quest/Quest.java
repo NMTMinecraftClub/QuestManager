@@ -296,6 +296,11 @@ public class Quest implements Listener {
 	public void addPlayer(QuestPlayer player) {
 		players.add(player);
 		
+		if (!goals.isEmpty())
+		for (Goal goal : goals) {
+			goal.sync();
+		}
+		
 		//TODO starting location, etc?
 	}
 	
