@@ -56,7 +56,8 @@ public class ArriveRequirement extends Requirement implements Listener {
 	 * @param goal
 	 */
 	private ArriveRequirement(Goal goal) {
-		super(goal);		
+		super(goal);	
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	public ArriveRequirement(Goal goal, Participant participants, Location location, double range) {
@@ -70,7 +71,6 @@ public class ArriveRequirement extends Requirement implements Listener {
 		this.destination = location;
 		this.targetRange = range;
 		
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
