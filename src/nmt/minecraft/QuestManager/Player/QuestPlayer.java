@@ -16,7 +16,10 @@ import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Instrument;
 import org.bukkit.Material;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -286,6 +289,8 @@ public class QuestPlayer implements Participant {
 		play.sendMessage(ChatColor.GRAY + "Your "
 				+ ChatColor.DARK_GREEN + "Quest Log" + ChatColor.GRAY + " has been"
 				+ " updated!" + ChatColor.RESET);
+		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
+		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
 	}
 	
 	public List<Quest> getCurrentQuests() {
