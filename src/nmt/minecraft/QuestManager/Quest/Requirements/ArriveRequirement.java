@@ -96,7 +96,16 @@ public class ArriveRequirement extends Requirement implements Listener {
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
-		update();
+		if (participants == null) {
+			return;
+		}
+		
+		for (QuestPlayer qp : participants.getParticipants()) {
+			if (qp.getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {	
+				update();
+				return;
+			}
+		}
 	}
 	
 	/**
