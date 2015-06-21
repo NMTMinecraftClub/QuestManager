@@ -90,7 +90,7 @@ public class PossessRequirement extends Requirement implements Listener {
 					int count = e.getItem().getItemStack().getAmount();
 					e.getPlayer().getInventory().addItem(e.getItem().getItemStack());
 					update();
-//					
+					
 					int pos = e.getPlayer().getInventory().first(itemType);
 					ItemStack item = e.getPlayer().getInventory().getItem(pos);
 					item.setAmount(item.getAmount() - count);
@@ -112,7 +112,16 @@ public class PossessRequirement extends Requirement implements Listener {
 			
 			for (QuestPlayer qp : participants.getParticipants()) {
 				if (qp.getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
+					//adjust for that stupid 'hasn't happened yet' error
+					int count = e.getItemDrop().getItemStack().getAmount();
+					e.getPlayer().getInventory().addItem(e.getItemDrop().getItemStack());
 					update();
+					
+					int pos = e.getPlayer().getInventory().first(itemType);
+					ItemStack item = e.getPlayer().getInventory().getItem(pos);
+					item.setAmount(item.getAmount() - count);
+					e.getPlayer().getInventory().setItem(pos, item);
+					
 					return;
 				}
 			}
