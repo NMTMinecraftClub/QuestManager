@@ -51,6 +51,7 @@ public class PositionRequirement extends Requirement implements Listener {
 	
 	private PositionRequirement(Goal goal) {
 		super(goal);
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	public PositionRequirement(Goal goal, Participant participants, Location destination, double range) {
@@ -64,7 +65,6 @@ public class PositionRequirement extends Requirement implements Listener {
 		this.targetRange = range;
 		this.state = false;
 		
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
@@ -90,8 +90,17 @@ public class PositionRequirement extends Requirement implements Listener {
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
-		update();
-		updateQuest();
+		if (participants == null) {
+			return;
+		}
+		
+		for (QuestPlayer qp : participants.getParticipants()) {
+			if (qp.getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {	
+				update();
+				updateQuest();
+				return;
+			}
+		}
 	}
 	
 	/**

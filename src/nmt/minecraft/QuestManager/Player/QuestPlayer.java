@@ -9,13 +9,25 @@ import java.util.Map;
 import java.util.UUID;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
+import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Instrument;
+import org.bukkit.Material;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 /**
  * Player wrapper to store questing information and make saving player quest status
@@ -29,7 +41,9 @@ public class QuestPlayer implements Participant {
 	
 	private History history;
 	
-	private List<Quest> quests;
+	private List<Quest> currentQuests;
+	
+	private List<String> completedQuests;
 	
 	private int fame;
 	
@@ -91,7 +105,7 @@ public class QuestPlayer implements Participant {
 //		/*
 //		 * config.set("Player", player.getUniqueId().toString());
 //		config.set("History", history.toConfig());
-//		config.set("Quests", quests);
+//		config.set("Quests", currentQuests);
 //		 */
 //		
 //		qp = new QuestPlayer();
@@ -100,11 +114,11 @@ public class QuestPlayer implements Participant {
 //		OfflinePlayer player = Bukkit.getOfflinePlayer(id);
 //		History history = History.fromConfig((YamlConfiguration) config.getConfigurationSection("History"));
 //		@SuppressWarnings("unchecked")
-//		List<Quest> quests = (List<Quest>) config.getList("Quests");
+//		List<Quest> currentQuests = (List<Quest>) config.getList("Quests");
 //		
 //		qp.player = player;
 //		qp.history = history;
-//		qp.quests = quests;
+//		qp.quests = currentQuests;
 //		
 //		return qp;
 //		
@@ -125,7 +139,7 @@ public class QuestPlayer implements Participant {
 	public QuestPlayer(OfflinePlayer player) {
 		this();
 		this.player = player;
-		this.quests = new LinkedList<Quest>();
+		this.currentQuests = new LinkedList<Quest>();
 		this.history = new History();
 		
 		
@@ -136,16 +150,203 @@ public class QuestPlayer implements Participant {
 		return history;
 	}
 	
-	public List<Quest> getQuests() {
-		return quests;
+	/**
+	 * Adds a quest book to the players inventory, if there is space.<br />
+	 * This method will produce a fully updated quest book in the players inventory.
+	 */
+	public void addQuestBook() {
+		if (!player.isOnline()) {
+			return;
+		}
+		
+		Player play = player.getPlayer();
+		Inventory inv = play.getInventory();
+		
+		if (inv.firstEmpty() == -1) {
+			//no room!
+			return;
+		}
+		
+		ItemStack book = null;
+		
+		for (ItemStack item : inv.all(Material.WRITTEN_BOOK).values()) {
+			if (item.hasItemMeta()) {
+				BookMeta meta = (BookMeta) item.getItemMeta();
+				if (meta.getTitle().equals("Quest Log")
+						&& meta.getAuthor().equals(play.getName())) {
+					book = item;
+					break;
+				}
+			}
+		}
+		
+		if (book == null) {
+		
+			book = new ItemStack(Material.WRITTEN_BOOK);
+			BookMeta bookMeta = (BookMeta) book.getItemMeta();
+			
+			bookMeta.setTitle("Quest Log");
+			bookMeta.setAuthor(play.getName());
+			
+			book.setItemMeta(bookMeta);
+			
+			book.addUnsafeEnchantment(Enchantment.LUCK, 5);
+			
+			inv.addItem(book);
+			
+			play.sendMessage(ChatColor.GRAY + "A " + ChatColor.DARK_GREEN 
+					+ "Quest Log" + ChatColor.GRAY + " has been added to your inventory."
+					 + ChatColor.RESET);
+		}
+		
+		updateQuestBook();
+	}
+	
+	/**
+	 * Updates the players quest book, if they have it in their inventory.<br />
+	 * If the user does not have abook already or has discarded it, this method will do nothing.
+	 */
+	public void updateQuestBook() {
+		if (!player.isOnline()) {
+			return;
+		}
+		
+		Player play = player.getPlayer();
+		Inventory inv = play.getInventory();
+		ItemStack book = null;
+		
+		for (ItemStack item : inv.all(Material.WRITTEN_BOOK).values()) {
+			if (item.hasItemMeta()) {
+				BookMeta meta = (BookMeta) item.getItemMeta();
+				if (meta.getTitle().equals("Quest Log")
+						&& meta.getAuthor().equals(play.getName())) {
+					book = item;
+					break;
+				}
+			}
+		}
+		
+		if (book == null) {
+			//they don't have a quest log
+			return;
+		}
+		
+		
+		
+		BookMeta bookMeta = (BookMeta) book.getItemMeta();
+		bookMeta.setPages(new LinkedList<String>());
+		
+		//generate the first page
+		bookMeta.addPage("      Quest Log\n  " 
+				+ ChatColor.RESET + "\n\n"
+						+ "  This book details your current quest progress & history.");
+		
+		//generate the stats page
+		bookMeta.addPage(ChatColor.DARK_PURPLE + " " + player.getName() + " - "
+				+ ChatColor.DARK_RED + title
+				+ "\n-----\n  " + ChatColor.GOLD + "Fame: " + fame
+				+ ChatColor.DARK_GREEN + "\n\n  Current Quests: " + currentQuests.size()
+				+ ChatColor.DARK_BLUE + "\n\n  Completed Quests: " + completedQuests.size()
+				+ ChatColor.RESET);	
+		
+		
+		//now do quest info
+		//Quest Name
+		//Quest Description
+			//Goal Description? :S
+		
+		if (currentQuests.isEmpty()) {
+			bookMeta.addPage("\nYou do not have any active quests!");
+		} else {
+			for (Quest quest : currentQuests) {
+				
+				String page = "";
+				
+				page += ChatColor.GOLD + quest.getName() + "\n";
+				
+				page += ChatColor.DARK_BLUE + quest.getDescription() + "\n";
+				
+				page += ChatColor.RESET + "Objectives:\n";
+				
+				page += ChatColor.DARK_GRAY;
+				
+				for (Goal goal : quest.getGoals()) {
+					if (goal.isComplete()) {
+						page += ChatColor.GREEN + " =" + goal.getDescription() + "\n"; 
+					} else {
+						page += ChatColor.DARK_RED + " -" + goal.getDescription() + "\n";
+					}
+				}
+				
+				bookMeta.addPage(page);
+				
+			}
+		}
+		
+		
+		
+		book.setItemMeta(bookMeta);
+		play.sendMessage(ChatColor.GRAY + "Your "
+				+ ChatColor.DARK_GREEN + "Quest Log" + ChatColor.GRAY + " has been"
+				+ " updated!" + ChatColor.RESET);
+		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
+		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
+	}
+	
+	public List<Quest> getCurrentQuests() {
+		return currentQuests;
+	}
+	
+	public List<String> getCompletedQuests() {
+		return completedQuests;
+	}
+	
+	public boolean hasCompleted(Quest quest) {
+		return this.hasCompleted(quest.getName());
+	}
+	
+	public boolean hasCompleted(String name) {
+		return completedQuests.contains(name);
+	}
+	
+	/**
+	 * Checks and returns whether or not the player is in this TYPE of quest.<br />
+	 * To see whether this player is in this particular instance of the quest, use
+	 * the quest's {@link nmt.minecraft.QuestManager.Quest.Quest#getPlayers() getPlayers()}
+	 * method and traditional lookup techniques instead.
+	 * @param quest
+	 * @return
+	 */
+	public boolean isInQuest(Quest quest) {
+		return isInQuest(quest.getName());
+	}
+	
+	public boolean isInQuest(String questName) {
+		for (Quest quest : currentQuests) {
+			if (quest.getName().equals(questName)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public void addQuest(Quest quest) {
-		quests.add(quest);
+		currentQuests.add(quest);
+		history.addHistoryEvent(new HistoryEvent("Accepted the quest \"" + quest.getName() +"\""));
+		updateQuestBook();
 	}
 	
 	public boolean removeQuest(Quest quest) {
-		return quests.remove(quest);
+		return currentQuests.remove(quest);
+	}
+	
+	public void completeQuest(Quest quest) {
+		completedQuests.add(quest.getName());
+		currentQuests.remove(quest);
+		
+		history.addHistoryEvent(
+				new HistoryEvent("Completed the quest \"" + quest.getName() + "\""));
 	}
 	
 	public OfflinePlayer getPlayer() {
@@ -188,7 +389,7 @@ public class QuestPlayer implements Participant {
 //		
 //		config.set("Player", player.getUniqueId().toString());
 //		config.set("History", history.toConfig());
-//		config.set("Quests", quests);
+//		config.set("Quests", currentQuests);
 //		
 //		return config;
 //	}
@@ -209,6 +410,7 @@ public class QuestPlayer implements Participant {
 		map.put("title", title);
 		map.put("fame", fame);
 		map.put("id", player.getUniqueId().toString());
+		map.put("completedquests", completedQuests);
 		
 		return map;
 	}
@@ -218,9 +420,10 @@ public class QuestPlayer implements Participant {
 	 * @param map The configuration map to initialize the player on.
 	 * @return A new quest player or null on error
 	 */
+	@SuppressWarnings("unchecked")
 	public static QuestPlayer valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("id") || !map.containsKey("fame") 
-				 || !map.containsKey("title")) {
+				 || !map.containsKey("title") || !map.containsKey("completedquests")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid Quest Player! "
 					+ (map.containsKey("id") ? ": " + map.get("id") : ""));
 			return null;
@@ -232,6 +435,11 @@ public class QuestPlayer implements Participant {
 		
 		qp.fame = (int) map.get("fame");
 		qp.title = (String) map.get("title");
+		qp.completedQuests = (List<String>) map.get("completedquests");
+		
+		if (qp.completedQuests == null) {
+			qp.completedQuests = new LinkedList<String>();
+		}
 		
 		
 		return qp;

@@ -184,6 +184,14 @@ public class Goal {
 		return true;
 	}
 	
+	public void sync() {
+		if (!requirements.isEmpty()) {
+			for (Requirement r : requirements) {
+				r.sync();
+			}
+		}
+	}
+	
 	/**
 	 * Perform cleanup before exiting/reloading
 	 */

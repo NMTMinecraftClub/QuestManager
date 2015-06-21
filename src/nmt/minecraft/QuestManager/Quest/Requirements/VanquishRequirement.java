@@ -47,6 +47,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	
 	private VanquishRequirement(Goal goal) {
 		super(goal);
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	public VanquishRequirement(Goal goal, LivingEntity foe) {
@@ -58,7 +59,6 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		this.foe = foe;
 		state = false;
 		
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	@EventHandler
 	public void onVanquish(EntityDeathEvent e) {
 		
-		if (e.getEntity().equals(foe)) {
+		if (!state && foe.isDead()) {
 			state = true;
 			
 			//unregister listen, as we'll never need to check again
@@ -97,7 +97,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 			return;
 		}
 		
-		state = !foe.isDead();
+		state = foe.isDead();
 	}
 
 	@Override
@@ -154,6 +154,8 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		equipment.setLeggings(econ.getLegs());
 		equipment.setBoots(econ.getBoots());
 		equipment.setItemInHand(econ.getHeld());
+		
+		update();
 	}
 
 	@Override

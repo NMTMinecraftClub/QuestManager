@@ -21,6 +21,7 @@ import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.RequirementUpdateEvent;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -112,6 +113,8 @@ public class Quest implements Listener {
 		players = new HashSet<QuestPlayer>();
 		
 		this.ID = (int) (Math.random() * Integer.MAX_VALUE);
+		
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	/**
@@ -136,9 +139,11 @@ public class Quest implements Listener {
 				players.add(((Party) pant).getLeader());
 				for (QuestPlayer p : ((Party) pant).getMembers()) {
 					players.add(p);
+					p.addQuest(this);
 				}
 			} else {
 				players.add((QuestPlayer) pant);
+				((QuestPlayer) pant).addQuest(this);
 			}
 		}
 		
@@ -291,6 +296,11 @@ public class Quest implements Listener {
 	public void addPlayer(QuestPlayer player) {
 		players.add(player);
 		
+		if (!goals.isEmpty())
+		for (Goal goal : goals) {
+			goal.sync();
+		}
+		
 		//TODO starting location, etc?
 	}
 	
@@ -359,8 +369,18 @@ public class Quest implements Listener {
 	@EventHandler
 	public void onRequirementUpdate(RequirementUpdateEvent e) {
 		if (e.getRequirement() == null || e.getRequirement().getGoal().getQuest().equals(this)) {
+			if (keepState && ready) {
+				return;
+			}
+			
+			
 			update();
+
+			for (QuestPlayer p : players) {
+				p.updateQuestBook();
+			}
 		}
+		System.out.println();
 	}
 	
 	/**

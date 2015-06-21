@@ -3,6 +3,9 @@ main: nmt.minecraft.QuestManager.QuestManagerPlugin
 version: 1.0
 softdepend: [Fanciful]
 commands:
+    questlog:
+        usage: /questlog
+        description: Gives or updates the player's quest log
     qmchatmenu:
         usage: This command is not meant to be called directly.
         description: Internal interface command for quest menus - chat

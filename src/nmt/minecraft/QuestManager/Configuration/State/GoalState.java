@@ -27,7 +27,7 @@ public class GoalState {
 
 	public void load(ConfigurationSection config) throws InvalidConfigurationException {
 		if (!config.contains("type") || !config.getString("type").equals("goalstate") 
-				|| !config.contains("name") || !config.contains("requirementStates")) {
+				|| !config.contains("name")) {
 			throw new InvalidConfigurationException();
 		}
 		
@@ -35,6 +35,7 @@ public class GoalState {
 		
 		requirementStates = new LinkedList<RequirementState>();
 		
+		if (config.contains("requirementStates"))
 		for (String reqKey : config.getConfigurationSection("requirementStates").getKeys(false)) {
 			requirementStates.add(
 					new RequirementState(

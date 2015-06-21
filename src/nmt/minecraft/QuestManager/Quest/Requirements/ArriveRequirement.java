@@ -56,7 +56,8 @@ public class ArriveRequirement extends Requirement implements Listener {
 	 * @param goal
 	 */
 	private ArriveRequirement(Goal goal) {
-		super(goal);		
+		super(goal);	
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	public ArriveRequirement(Goal goal, Participant participants, Location location, double range) {
@@ -70,7 +71,6 @@ public class ArriveRequirement extends Requirement implements Listener {
 		this.destination = location;
 		this.targetRange = range;
 		
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
@@ -96,8 +96,16 @@ public class ArriveRequirement extends Requirement implements Listener {
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
-		update();
-		updateQuest();
+		if (participants == null) {
+			return;
+		}
+		
+		for (QuestPlayer qp : participants.getParticipants()) {
+			if (qp.getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {	
+				update();
+				return;
+			}
+		}
 	}
 	
 	/**
@@ -114,6 +122,7 @@ public class ArriveRequirement extends Requirement implements Listener {
 			if (player.getPlayer().isOnline())
 			if (((Player) player.getPlayer()).getLocation().distance(destination) <= targetRange) {
 				state = true;
+				updateQuest();
 				
 				//unregister listener, cause we'll never switch to unsatisfied
 				HandlerList.unregisterAll(this);

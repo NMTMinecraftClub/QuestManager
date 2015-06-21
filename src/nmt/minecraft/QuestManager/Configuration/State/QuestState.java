@@ -64,6 +64,7 @@ public class QuestState {
 		int i = 1;
 		for (GoalState conf : goalState) {
 			config.set("goals." + i, conf.asConfig());
+			i++;
 		}
 		
 		//config.set("goals", goalList);

@@ -10,10 +10,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -27,6 +27,7 @@ public class PossessRequirement extends Requirement implements Listener {
 		
 		public PossessRequirement fromConfig(Goal goal, ConfigurationSection config) {
 			PossessRequirement req = new PossessRequirement(goal);
+			req.participants = goal.getQuest().getParticipants();
 			try {
 				req.fromConfig(config);
 			} catch (InvalidConfigurationException e) {
@@ -42,6 +43,7 @@ public class PossessRequirement extends Requirement implements Listener {
 	
 	private PossessRequirement(Goal goal) {
 		super(goal);
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	public PossessRequirement(Participant participants, Goal goal, Material itemType) {
@@ -59,7 +61,6 @@ public class PossessRequirement extends Requirement implements Listener {
 		this.itemCount = itemCount;
 		this.participants = participants;
 		
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
@@ -77,9 +78,55 @@ public class PossessRequirement extends Requirement implements Listener {
 	}
 	
 	@EventHandler
-	public void onInventoryChange(InventoryEvent e) {
-		update();
-		updateQuest();
+	public void onInventoryChange(PlayerPickupItemEvent e) {
+		if (this.participants == null) {
+			return;
+		}
+		if (!e.isCancelled() && e.getItem().getItemStack().getType() == itemType) {
+			
+			for (QuestPlayer qp : participants.getParticipants()) {
+				if (qp.getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
+					//adjust for that stupid 'hasn't happened yet' error
+					int count = e.getItem().getItemStack().getAmount();
+					e.getPlayer().getInventory().addItem(e.getItem().getItemStack());
+					update();
+					
+					int pos = e.getPlayer().getInventory().first(itemType);
+					ItemStack item = e.getPlayer().getInventory().getItem(pos);
+					item.setAmount(item.getAmount() - count);
+					e.getPlayer().getInventory().setItem(pos, item);
+					
+					return;
+				}
+			}
+			
+		}
+	}
+	
+	@EventHandler
+	public void onInventoryChange(PlayerDropItemEvent e) {
+		if (this.participants == null) {
+			return;
+		}
+		if (!e.isCancelled() && e.getItemDrop().getItemStack().getType() == itemType) {
+			
+			for (QuestPlayer qp : participants.getParticipants()) {
+				if (qp.getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
+					//adjust for that stupid 'hasn't happened yet' error
+					int count = e.getItemDrop().getItemStack().getAmount();
+					e.getPlayer().getInventory().addItem(e.getItemDrop().getItemStack());
+					update();
+					
+					int pos = e.getPlayer().getInventory().first(itemType);
+					ItemStack item = e.getPlayer().getInventory().getItem(pos);
+					item.setAmount(item.getAmount() - count);
+					e.getPlayer().getInventory().setItem(pos, item);
+					
+					return;
+				}
+			}
+			
+		}
 	}
 	
 	/**
@@ -94,8 +141,12 @@ public class PossessRequirement extends Requirement implements Listener {
 		
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().isOnline())
-			if (((Player) player.getPlayer()).getInventory().contains(new ItemStack(itemType, itemCount))) {
-				this.state = true;
+			if (player.getPlayer().getPlayer().getInventory().containsAtLeast(new ItemStack(itemType), itemCount)) {
+				if (!state) {
+					//if we just achieved it, update the quest!
+					this.state = true;
+					updateQuest();
+				}
 				return;
 			}
 		}
