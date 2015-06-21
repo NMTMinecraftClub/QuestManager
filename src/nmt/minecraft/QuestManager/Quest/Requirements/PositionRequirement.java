@@ -90,8 +90,17 @@ public class PositionRequirement extends Requirement implements Listener {
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
-		update();
-		updateQuest();
+		if (participants == null) {
+			return;
+		}
+		
+		for (QuestPlayer qp : participants.getParticipants()) {
+			if (qp.getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {	
+				update();
+				updateQuest();
+				return;
+			}
+		}
 	}
 	
 	/**
