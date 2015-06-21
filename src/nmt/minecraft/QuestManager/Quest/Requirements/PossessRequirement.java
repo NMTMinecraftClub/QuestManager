@@ -87,10 +87,15 @@ public class PossessRequirement extends Requirement implements Listener {
 			for (QuestPlayer qp : participants.getParticipants()) {
 				if (qp.getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
 					//adjust for that stupid 'hasn't happened yet' error
+					int count = e.getItem().getItemStack().getAmount();
 					e.getPlayer().getInventory().addItem(e.getItem().getItemStack());
 					update();
-					updateQuest();
-					e.getPlayer().getInventory().remove(e.getItem().getItemStack());
+//					
+					int pos = e.getPlayer().getInventory().first(itemType);
+					ItemStack item = e.getPlayer().getInventory().getItem(pos);
+					item.setAmount(item.getAmount() - count);
+					e.getPlayer().getInventory().setItem(pos, item);
+					
 					return;
 				}
 			}
@@ -107,11 +112,7 @@ public class PossessRequirement extends Requirement implements Listener {
 			
 			for (QuestPlayer qp : participants.getParticipants()) {
 				if (qp.getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
-					//adjust for that stupid 'hasn't happened yet' error
-					e.getPlayer().getInventory().addItem(e.getItemDrop().getItemStack());
 					update();
-					updateQuest();
-					e.getPlayer().getInventory().remove(e.getItemDrop().getItemStack());
 					return;
 				}
 			}
@@ -132,7 +133,11 @@ public class PossessRequirement extends Requirement implements Listener {
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().isOnline())
 			if (player.getPlayer().getPlayer().getInventory().containsAtLeast(new ItemStack(itemType), itemCount)) {
-				this.state = true;
+				if (!state) {
+					//if we just achieved it, update the quest!
+					this.state = true;
+					updateQuest();
+				}
 				return;
 			}
 		}
