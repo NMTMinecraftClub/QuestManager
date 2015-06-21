@@ -79,14 +79,44 @@ public class PossessRequirement extends Requirement implements Listener {
 	
 	@EventHandler
 	public void onInventoryChange(PlayerPickupItemEvent e) {
-		update();
-		updateQuest();
+		if (this.participants == null) {
+			return;
+		}
+		if (!e.isCancelled() && e.getItem().getItemStack().getType() == itemType) {
+			
+			for (QuestPlayer qp : participants.getParticipants()) {
+				if (qp.getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
+					//adjust for that stupid 'hasn't happened yet' error
+					e.getPlayer().getInventory().addItem(e.getItem().getItemStack());
+					update();
+					updateQuest();
+					e.getPlayer().getInventory().remove(e.getItem().getItemStack());
+					return;
+				}
+			}
+			
+		}
 	}
 	
 	@EventHandler
 	public void onInventoryChange(PlayerDropItemEvent e) {
-		update();
-		updateQuest();
+		if (this.participants == null) {
+			return;
+		}
+		if (!e.isCancelled() && e.getItemDrop().getItemStack().getType() == itemType) {
+			
+			for (QuestPlayer qp : participants.getParticipants()) {
+				if (qp.getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
+					//adjust for that stupid 'hasn't happened yet' error
+					e.getPlayer().getInventory().addItem(e.getItemDrop().getItemStack());
+					update();
+					updateQuest();
+					e.getPlayer().getInventory().remove(e.getItemDrop().getItemStack());
+					return;
+				}
+			}
+			
+		}
 	}
 	
 	/**
