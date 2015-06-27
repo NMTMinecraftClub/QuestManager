@@ -215,9 +215,9 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 				}
 				
 				//perform check against completion!!!!
-				if (qInst.isReady()) {
+				if (qInst.isReady()) {	
 					messageChat = ChatMenu.getDefaultMenu(finishMessage);
-					//TODO do finishing quest stuff here!!!
+					qInst.completeQuest(false);
 				}
 			}
 			if (messageChat == null) {
