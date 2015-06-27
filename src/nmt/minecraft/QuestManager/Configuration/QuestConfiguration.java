@@ -168,7 +168,7 @@ public class QuestConfiguration {
 		@SuppressWarnings("unchecked")
 		List<ItemStack> rewards = (List<ItemStack>) config.getList(QuestConfigurationField.REWARDS.getKey());
 		
-		if (!rewards.isEmpty())
+		if (rewards != null && !rewards.isEmpty())
 		for (ItemStack item : rewards) {
 			quest.addItemReward(item);
 		}
