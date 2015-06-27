@@ -110,8 +110,15 @@ public class QuestConfiguration {
 				
 				if (config.getString(QuestConfigurationField.END.getKey() + ".type",
 						(String) QuestConfigurationField.END.getDefault()).equals("same")) {
-					startingNPC.markAsEnd(
-							(Message) config.get(QuestConfigurationField.END.getKey() + ".value"));
+					
+					Message msg = (Message) config.get(QuestConfigurationField.END.getKey() + ".value");
+					
+					if (msg == null) {
+						QuestManagerPlugin.questManagerPlugin.getLogger().info(
+								  "Quest has no end action value specified: " + getName());
+					} else {
+						startingNPC.markAsEnd(msg);
+					}
 				} else {
 					//it's an NPC they're specifying?
 					
