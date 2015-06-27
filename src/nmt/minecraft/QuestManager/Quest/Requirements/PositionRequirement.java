@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -112,7 +111,7 @@ public class PositionRequirement extends Requirement implements Listener {
 		
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().isOnline())
-			if (((Player) player.getPlayer()).getLocation().distance(destination) <= targetRange) {
+			if ((player.getPlayer().getPlayer()).getLocation().distance(destination) <= targetRange) {
 				state = true;
 				return;
 			}
