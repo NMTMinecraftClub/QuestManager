@@ -27,7 +27,7 @@ public class QuestManager {
 	
 	private Scoreboard scoreboard;
 	
-	private Set<NPC> startingNPCs;
+	private Set<NPC> questNPCs;
 	
 	/**
 	 * Constructs a manager with the given directory information and a config file with
@@ -39,7 +39,7 @@ public class QuestManager {
 		
 		runningQuests = new LinkedList<Quest>();
 		questTemplates = new LinkedList<QuestConfiguration>();
-		startingNPCs = new HashSet<NPC>();
+		questNPCs = new HashSet<NPC>();
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 		
 		this.saveDirectory = saveDirectory;
@@ -87,10 +87,16 @@ public class QuestManager {
 			
 			questTemplates.add(questTemplate);
 			
+			//get quest static npcs
+			if (!questTemplate.getAuxNPCs().isEmpty())
+			for (NPC np : questTemplate.getAuxNPCs()) {
+				questNPCs.add(np);
+			}
+			
 			//now instantiate starting NPC associated ot this quest
 			NPC npc = questTemplate.GetStartingNPCInstance();
 			if (npc != null) {
-				startingNPCs.add(npc);
+				questNPCs.add(npc);
 			}
 			
 			
@@ -212,8 +218,8 @@ public class QuestManager {
 		}
 		
 		//remove starting NPCs
-		if (!startingNPCs.isEmpty()) {
-			for (NPC npc : startingNPCs) {
+		if (!questNPCs.isEmpty()) {
+			for (NPC npc : questNPCs) {
 				npc.getEntity().remove();
 			}
 		}

@@ -15,7 +15,6 @@ import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.State.GoalState;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
@@ -97,7 +96,7 @@ public class Quest implements Listener {
 	
 	private boolean ready;
 	
-	private Set<NPC> npcs;
+	//private Set<NPC> npcs;
 	
 	/**
 	 * Whether or not this quest should be triggered on and then never evaluated again,
@@ -116,7 +115,7 @@ public class Quest implements Listener {
 		
 		this.running = false;
 		this.goals = new LinkedList<Goal>();
-		this.npcs = new HashSet<NPC>();
+		//this.npcs = new HashSet<NPC>();
 		
 		this.history = new History();
 		ready = false;
@@ -320,10 +319,10 @@ public class Quest implements Listener {
 		}
 		
 		//remove NPCs
-		if (!npcs.isEmpty()) 
-		for (NPC npc : npcs) {
-			npc.getEntity().remove();
-		}
+//		if (!npcs.isEmpty()) 
+//		for (NPC npc : npcs) {
+//			npc.getEntity().remove();
+//		}
 		
 	}
 	
@@ -347,10 +346,10 @@ public class Quest implements Listener {
 		}
 		
 		//remove NPCs
-		if (!npcs.isEmpty()) 
-		for (NPC npc : npcs) {
-			npc.getEntity().remove();
-		}
+//		if (!npcs.isEmpty()) 
+//		for (NPC npc : npcs) {
+//			npc.getEntity().remove();
+//		}
 				
 		//stop goals
 		if (!goals.isEmpty()) {	
@@ -427,9 +426,9 @@ public class Quest implements Listener {
 		goals.add(goal);
 	}
 	
-	public void addNPC(NPC npc) {
-		npcs.add(npc);
-	}
+//	public void addNPC(NPC npc) {
+//		npcs.add(npc);
+//	}
 	
 	/**
 	 * Returns a (possibly multilined) description of the quest that will be made

@@ -218,6 +218,8 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 				if (qInst.isReady()) {	
 					messageChat = ChatMenu.getDefaultMenu(finishMessage);
 					qInst.completeQuest(false);
+				} else {
+					QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player).updateQuestBook();
 				}
 			}
 			if (messageChat == null) {

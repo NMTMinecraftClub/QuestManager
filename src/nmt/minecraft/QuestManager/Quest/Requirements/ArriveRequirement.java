@@ -1,6 +1,7 @@
 package nmt.minecraft.QuestManager.Quest.Requirements;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Goal;
@@ -10,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -120,7 +120,7 @@ public class ArriveRequirement extends Requirement implements Listener {
 		
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().isOnline())
-			if (((Player) player.getPlayer()).getLocation().distance(destination) <= targetRange) {
+			if ((player.getPlayer().getPlayer()).getLocation().distance(destination) <= targetRange) {
 				state = true;
 				updateQuest();
 				
@@ -146,7 +146,7 @@ public class ArriveRequirement extends Requirement implements Listener {
 		}
 			
 		this.targetRange = config.getDouble("range", 1.0);
-		this.destination = (Location) config.get("destination");
+		this.destination = ((LocationState) config.get("destination")).getLocation();
 		
 	}
 	

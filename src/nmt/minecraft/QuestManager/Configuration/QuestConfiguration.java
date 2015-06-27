@@ -1,5 +1,6 @@
 package nmt.minecraft.QuestManager.Configuration;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -91,6 +92,25 @@ public class QuestConfiguration {
 				(boolean) QuestConfigurationField.SAVESTATE.getDefault());
 	}
 	
+	public Collection<NPC> getAuxNPCs() {
+		
+		List<NPC> npcs = new LinkedList<NPC>();
+		
+		//get list of NPCs and get them created
+		if (config.contains(QuestConfigurationField.NPCS.getKey())) {
+			ConfigurationSection npcSection = config.getConfigurationSection(
+					QuestConfigurationField.NPCS.getKey());
+			
+			if (!npcSection.getKeys(false).isEmpty()) {
+				for (String key : npcSection.getKeys(false)) {
+					npcs.add((NPC) npcSection.get(key));
+				}
+			}
+		}
+		
+		return npcs;
+	}
+	
 	/**
 	 * Reads and instantiates a new starting npc for this quest.<br />
 	 * It's common practice to only call this method a single time, as you only need one copy
@@ -175,17 +195,7 @@ public class QuestConfiguration {
 		
 		
 		
-		//get list of NPCs and get them created
-		if (config.contains(QuestConfigurationField.NPCS.getKey())) {
-			ConfigurationSection npcSection = config.getConfigurationSection(
-					QuestConfigurationField.NPCS.getKey());
-			
-			if (!npcSection.getKeys(false).isEmpty()) {
-				for (String key : npcSection.getKeys(false)) {
-					quest.addNPC((NPC) npcSection.get(key));
-				}
-			}
-		}
+		
 		
 		return quest;
 	}
