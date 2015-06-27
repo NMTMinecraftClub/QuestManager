@@ -26,7 +26,8 @@ public enum QuestConfigurationField {
 	GOALS("goals", new LinkedList<Goal>()),
 	SAVESTATE("savestate", false),
 	NPCS("npcs", new LinkedList<Goal>()),
-	START("start", null);
+	START("start", null),
+	END("end", "same");
 	
 	private Object def;
 	

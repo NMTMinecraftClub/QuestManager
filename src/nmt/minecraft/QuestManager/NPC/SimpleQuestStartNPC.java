@@ -9,6 +9,7 @@ import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Action.QuestStartAction;
@@ -105,6 +106,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		}
 		
 		SimpleQuestStartNPC npc = new SimpleQuestStartNPC();
+		npc.isEnd = false;
 		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
@@ -154,12 +156,21 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 	
 	private QuestConfiguration quest;
 	
+	private boolean isEnd;
+	
 	private Message duringMessage;
 	
 	private Message afterMessage;
 	
+	private Message finishMessage;
+	
 	public void setQuestTemplate(QuestConfiguration questTemplate) {
 		this.quest = questTemplate;
+	}
+	
+	public void markAsEnd(Message finishMessage) {
+		this.finishMessage = finishMessage;
+		isEnd = true;
 	}
 	
 	@Override
@@ -169,14 +180,42 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
 				player.getUniqueId());
 		
-		ChatMenu messageChat;
+		ChatMenu messageChat = null;
 		
 		if (qp.hasCompleted(quest.getName())) {
 			//already completed it
 			messageChat = ChatMenu.getDefaultMenu(afterMessage);
 		} else if (qp.isInQuest(quest.getName())) {
 			//is currently in it
-			messageChat = ChatMenu.getDefaultMenu(duringMessage);
+			
+			//Is this the possible end?
+			
+			if (isEnd) {
+				//fetch instance of quest
+				Quest qInst = null;
+				for (Quest q : qp.getCurrentQuests()) {
+					if (q.getName().equals(quest.getName())) {
+						qInst = q;
+						break;
+					}
+				}
+				
+				if (qInst == null) {
+					//something went wrong!
+					QuestManagerPlugin.questManagerPlugin.getLogger().warning(
+							"Unable to find matching quest in SimpleQuestStartNPC!!!!!!!");
+					return;
+				}
+				
+				//perform check against completion!!!!
+				if (qInst.isReady()) {
+					messageChat = ChatMenu.getDefaultMenu(finishMessage);
+					//TODO do finishing quest stuff here!!!
+				}
+			}
+			if (messageChat == null) {
+				messageChat = ChatMenu.getDefaultMenu(duringMessage);
+			}
 		} else {
 			messageChat = new BioptionChatMenu(chat, 
 					new QuestStartAction(quest, player), null);			
