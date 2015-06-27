@@ -8,6 +8,7 @@ import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
+import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -104,6 +105,21 @@ public class QuestConfiguration {
 		} else {
 			startingNPC = (SimpleQuestStartNPC) config.get(QuestConfigurationField.START.getKey());
 			startingNPC.setQuestTemplate(this);
+			
+			if (config.contains(QuestConfigurationField.END.getKey())) {
+				
+				if (config.getString(QuestConfigurationField.END.getKey() + ".type",
+						(String) QuestConfigurationField.END.getDefault()).equals("same")) {
+					startingNPC.markAsEnd(
+							(Message) config.get(QuestConfigurationField.END.getKey() + ".value"));
+				} else {
+					//it's an NPC they're specifying?
+					
+				}
+			} else {
+				QuestManagerPlugin.questManagerPlugin.getLogger().info(
+						  "Quest has no end action specified: " + getName());
+			}
 		}
 		
 		return startingNPC;
