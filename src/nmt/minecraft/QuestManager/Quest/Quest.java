@@ -25,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Quest Interface!<br />
@@ -80,6 +81,12 @@ public class Quest implements Listener {
 	private Set<QuestPlayer> players;
 	
 	private List<Goal> goals;	
+	
+	private int fame;
+	
+	private int cash;
+	
+	private List<ItemStack> itemRewards;
 	
 	private History history;
 	
@@ -364,8 +371,53 @@ public class Quest implements Listener {
 	public History getHistory() {
 		return history;
 	}
+		
+	/**
+	 * @return the fame
+	 */
+	public int getFame() {
+		return fame;
+	}
+
+	/**
+	 * @param fame the fame to set
+	 */
+	public void setFame(int fame) {
+		this.fame = fame;
+	}
+
+	/**
+	 * @return the cash
+	 */
+	public int getCash() {
+		return cash;
+	}
+
+	/**
+	 * @param cash the cash to set
+	 */
+	public void setCash(int cash) {
+		this.cash = cash;
+	}
+
+	/**
+	 * @return the itemRewards
+	 */
+	public List<ItemStack> getItemRewards() {
+		return itemRewards;
+	}
+
+	/**
+	 * @param itemRewards the itemRewards to set
+	 */
+	public void setItemRewards(List<ItemStack> itemRewards) {
+		this.itemRewards = itemRewards;
+	}
 	
-	
+	public void addItemReward(ItemStack reward) {
+		itemRewards.add(reward);
+	}
+
 	@EventHandler
 	public void onRequirementUpdate(RequirementUpdateEvent e) {
 		if (e.getRequirement() == null || e.getRequirement().getGoal().getQuest().equals(this)) {
