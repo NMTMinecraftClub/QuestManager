@@ -97,7 +97,7 @@ public class PositionRequirement extends Requirement implements Listener {
 		for (QuestPlayer qp : participants.getParticipants()) {
 			if (qp.getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {	
 				update();
-				updateQuest();
+				//updateQuest();
 				return;
 			}
 		}
@@ -112,7 +112,10 @@ public class PositionRequirement extends Requirement implements Listener {
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().isOnline())
 			if ((player.getPlayer().getPlayer()).getLocation().distance(destination) <= targetRange) {
-				state = true;
+				if (!state) {
+					state = true;
+					updateQuest();
+				}
 				return;
 			}
 		}
