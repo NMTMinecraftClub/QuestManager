@@ -13,6 +13,7 @@ import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Wrapper for quest configuration
@@ -159,6 +160,17 @@ public class QuestConfiguration {
 		for (ConfigurationSection section : goalList) {
 			Goal goal = Goal.fromConfig(quest, section);
 			quest.addGoal(goal);
+		}
+		
+		//get fame and reward info
+		quest.setFame(config.getInt(QuestConfigurationField.FAME.getKey()));
+		
+		@SuppressWarnings("unchecked")
+		List<ItemStack> rewards = (List<ItemStack>) config.getList(QuestConfigurationField.REWARDS.getKey());
+		
+		if (!rewards.isEmpty())
+		for (ItemStack item : rewards) {
+			quest.addItemReward(item);
 		}
 		
 		
