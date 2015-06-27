@@ -183,6 +183,13 @@ public class QuestManager {
 		runningQuests.add(quest);
 	}
 	
+	public void removeQuest(Quest quest) {
+		if (quest == null) {
+			System.out.println("error!");
+		}
+		runningQuests.remove(quest);
+	}
+	
 	
 	/**
 	 * Passes a stop signal to all quest managers, requesting a soft stop.<br />

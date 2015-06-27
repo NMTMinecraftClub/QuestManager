@@ -226,8 +226,8 @@ public class Quest implements Listener {
 				Player player = qp.getPlayer().getPlayer();
 				
 				//item rewards
-				Map<Integer, ItemStack> returned = player.getInventory().addItem(
-						(ItemStack[]) getItemRewards().toArray());
+				ItemStack[] items = itemRewards.toArray(new ItemStack[0]);
+				Map<Integer, ItemStack> returned = player.getInventory().addItem(items);
 				
 				if (!returned.isEmpty()) {
 					//couldn't fit all of the items, so drop them on the ground
@@ -268,6 +268,10 @@ public class Quest implements Listener {
 						);
 			    
 			    menu.show(player);
+			    
+			    QuestManagerPlugin.questManagerPlugin.getManager().removeQuest(this);
+			    
+			    halt();
 			}
 		}
 		
