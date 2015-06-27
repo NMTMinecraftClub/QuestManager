@@ -30,6 +30,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
@@ -285,6 +286,8 @@ public class Quest implements Listener {
 	 */
 	public void stop() {
 		
+		HandlerList.unregisterAll(this);
+		
 		//get config location!
 		File saveLoc = new File(QuestManagerPlugin.questManagerPlugin.getManager()
 				.getSaveLocation(), name + "_" + ID + ".yml");
@@ -332,6 +335,8 @@ public class Quest implements Listener {
 	 */
 	public void halt() {
 
+		HandlerList.unregisterAll(this);
+		
 		if (players.isEmpty()) {
 			return;
 		}
@@ -353,6 +358,7 @@ public class Quest implements Listener {
 						goal.stop();
 			}
 		}
+		
 	}
 	
 	/**
