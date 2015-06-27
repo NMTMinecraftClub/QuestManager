@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import nmt.minecraft.QuestManager.Quest.Goal;
 
+import org.bukkit.inventory.ItemStack;
+
 /**
  * Holds key and default information for defined quest config fields.
  * <p>
@@ -14,6 +16,10 @@ import nmt.minecraft.QuestManager.Quest.Goal;
  * <li>GOALS | goals | <i>Empty List</i></li>
  * <li>SAVESTATE | savestate | false</li>
  * <li>NPCS | npcs | <i>Empty List</i></li>
+ * <li>START | start | <i>null</i> </li>
+ * <li> END | end | same </li>
+ * <li> FAME | fame | 100 </li>
+ * <li> REWARDS | rewards | <i>Empty List</i> </li>
  * </ul>
  * </p>
  * @author Skyler
@@ -26,7 +32,10 @@ public enum QuestConfigurationField {
 	GOALS("goals", new LinkedList<Goal>()),
 	SAVESTATE("savestate", false),
 	NPCS("npcs", new LinkedList<Goal>()),
-	START("start", null);
+	START("start", null),
+	END("end", "same"),
+	FAME("fame", 100),
+	REWARDS("rewards", new LinkedList<ItemStack>());
 	
 	private Object def;
 	

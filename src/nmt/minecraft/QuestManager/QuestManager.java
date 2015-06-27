@@ -44,6 +44,14 @@ public class QuestManager {
 		
 		this.saveDirectory = saveDirectory;
 		
+		if (questNames.isEmpty()) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().info(
+					"There were no quest templates to load!\n  "
+					+ "To add quests, place the proper configuration files in "
+					+ questDirectory.getAbsolutePath());
+			return;
+		}
+		
 		//lookup and load templates for each quest name given
 		for (String questName : questNames) {
 			File questConfigFile = new File(questDirectory, questName + ".yml");
@@ -173,6 +181,13 @@ public class QuestManager {
 			System.out.println("error!");
 		}
 		runningQuests.add(quest);
+	}
+	
+	public void removeQuest(Quest quest) {
+		if (quest == null) {
+			System.out.println("error!");
+		}
+		runningQuests.remove(quest);
 	}
 	
 	

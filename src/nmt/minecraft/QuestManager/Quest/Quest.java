@@ -8,11 +8,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.State.GoalState;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.Party;
@@ -20,11 +22,17 @@ import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.RequirementUpdateEvent;
+import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Quest Interface!<br />
@@ -81,6 +89,10 @@ public class Quest implements Listener {
 	
 	private List<Goal> goals;	
 	
+	private int fame;
+	
+	private List<ItemStack> itemRewards;
+	
 	private History history;
 	
 	private boolean ready;
@@ -111,6 +123,7 @@ public class Quest implements Listener {
 		this.keepState = keepState;
 		
 		players = new HashSet<QuestPlayer>();
+		itemRewards = new LinkedList<ItemStack>();
 		
 		this.ID = (int) (Math.random() * Integer.MAX_VALUE);
 		
@@ -199,12 +212,81 @@ public class Quest implements Listener {
 	}
 	
 	/**
+	 * Completes the quest, dispensing rewards to involved players.
+	 * @param force Should this method execute even if the quest has incomplete objectives?
+	 */
+	public void completeQuest(boolean force) {
+		
+		if (!force && !isReady()) {
+			return;
+		}
+		
+		//go through and give each of the players involved their rewards
+		for (QuestPlayer qp : getParticipants().getParticipants()) {
+			if (qp.getPlayer().isOnline()) {
+				Player player = qp.getPlayer().getPlayer();
+				
+				//item rewards
+				ItemStack[] items = itemRewards.toArray(new ItemStack[0]);
+				Map<Integer, ItemStack> returned = player.getInventory().addItem(items);
+				
+				if (!returned.isEmpty()) {
+					//couldn't fit all of the items, so drop them on the ground
+					player.sendMessage("Unable to fit all rewards! All rewards"
+							+ " that couldn't fit are at your feet.");
+					for (ItemStack item : returned.values()) {
+						player.getWorld().dropItem(
+								player.getEyeLocation(), item);
+					}
+				}
+				
+				//cash reward
+				//TODO how can we implement cash rewards without tying it to an economy?
+				
+				//fame reward
+				qp.addFame(fame);
+				
+				qp.completeQuest(this);
+				
+				qp.updateQuestBook();
+				
+			    ChatMenu menu = new SimpleChatMenu(
+						new FancyMessage("")
+						  .then("You've just completed the quest: ")
+						  	.color(ChatColor.DARK_PURPLE)
+						  	.style(ChatColor.BOLD)
+						  .then(name)
+						    .color(ChatColor.LIGHT_PURPLE)
+						  .then("\nYou received ")
+						    .color(ChatColor.DARK_PURPLE)
+						  .then(fame + " fame")
+						  	.color(ChatColor.GOLD)
+						  .then(itemRewards.isEmpty() ? "!" : 
+							  " and some item rewards!")
+							.color(ChatColor.DARK_PURPLE)
+								
+								
+						);
+			    
+			    menu.show(player);
+			    
+			    QuestManagerPlugin.questManagerPlugin.getManager().removeQuest(this);
+			    
+			    halt();
+			}
+		}
+		
+	}
+	
+	/**
 	 * Stops the quest softly, optionally performing state-saving procedures
 	 * and displaying messages to the involved players. Quests should also 
 	 * deliver players back to an area where they are free to roam and return
 	 * to homeworld portals (or the equivalent) when they stop.
 	 */
 	public void stop() {
+		
+		HandlerList.unregisterAll(this);
 		
 		//get config location!
 		File saveLoc = new File(QuestManagerPlugin.questManagerPlugin.getManager()
@@ -253,6 +335,8 @@ public class Quest implements Listener {
 	 */
 	public void halt() {
 
+		HandlerList.unregisterAll(this);
+		
 		if (players.isEmpty()) {
 			return;
 		}
@@ -274,6 +358,7 @@ public class Quest implements Listener {
 						goal.stop();
 			}
 		}
+		
 	}
 	
 	/**
@@ -364,8 +449,40 @@ public class Quest implements Listener {
 	public History getHistory() {
 		return history;
 	}
+		
+	/**
+	 * @return the fame
+	 */
+	public int getFame() {
+		return fame;
+	}
+
+	/**
+	 * @param fame the fame to set
+	 */
+	public void setFame(int fame) {
+		this.fame = fame;
+	}
+
+
+	/**
+	 * @return the itemRewards
+	 */
+	public List<ItemStack> getItemRewards() {
+		return itemRewards;
+	}
+
+	/**
+	 * @param itemRewards the itemRewards to set
+	 */
+	public void setItemRewards(List<ItemStack> itemRewards) {
+		this.itemRewards = itemRewards;
+	}
 	
-	
+	public void addItemReward(ItemStack reward) {
+		itemRewards.add(reward);
+	}
+
 	@EventHandler
 	public void onRequirementUpdate(RequirementUpdateEvent e) {
 		if (e.getRequirement() == null || e.getRequirement().getGoal().getQuest().equals(this)) {

@@ -142,8 +142,7 @@ public class SimpleBioptionNPC extends NPC {
 		//provide our npc's name, unless we don't have one!
 		if (npc.name != null && !npc.name.equals("")) {
 			npc.chat.setSourceLabel(
-					new FancyMessage(npc.name)
-					);
+					new FancyMessage(npc.name));
 			
 		}
 		

@@ -8,10 +8,12 @@ import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
+import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Wrapper for quest configuration
@@ -104,6 +106,28 @@ public class QuestConfiguration {
 		} else {
 			startingNPC = (SimpleQuestStartNPC) config.get(QuestConfigurationField.START.getKey());
 			startingNPC.setQuestTemplate(this);
+			
+			if (config.contains(QuestConfigurationField.END.getKey())) {
+				
+				if (config.getString(QuestConfigurationField.END.getKey() + ".type",
+						(String) QuestConfigurationField.END.getDefault()).equals("same")) {
+					
+					Message msg = (Message) config.get(QuestConfigurationField.END.getKey() + ".value");
+					
+					if (msg == null) {
+						QuestManagerPlugin.questManagerPlugin.getLogger().info(
+								  "Quest has no end action value specified: " + getName());
+					} else {
+						startingNPC.markAsEnd(msg);
+					}
+				} else {
+					//it's an NPC they're specifying?
+					
+				}
+			} else {
+				QuestManagerPlugin.questManagerPlugin.getLogger().info(
+						  "Quest has no end action specified: " + getName());
+			}
 		}
 		
 		return startingNPC;
@@ -136,6 +160,17 @@ public class QuestConfiguration {
 		for (ConfigurationSection section : goalList) {
 			Goal goal = Goal.fromConfig(quest, section);
 			quest.addGoal(goal);
+		}
+		
+		//get fame and reward info
+		quest.setFame(config.getInt(QuestConfigurationField.FAME.getKey()));
+		
+		@SuppressWarnings("unchecked")
+		List<ItemStack> rewards = (List<ItemStack>) config.getList(QuestConfigurationField.REWARDS.getKey());
+		
+		if (rewards != null && !rewards.isEmpty())
+		for (ItemStack item : rewards) {
+			quest.addItemReward(item);
 		}
 		
 		

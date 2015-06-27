@@ -150,6 +150,10 @@ public class SimpleChatNPC extends NPC {
 					"Invalid message type for Simple Chat NPC: " + npc.name);
 		}
 		
+		if (npc.chat != null || npc.name != null || !npc.name.trim().isEmpty()) {
+			npc.chat.setSourceLabel(new FancyMessage(npc.name));
+		}
+		
 		return npc;
 	}
 
