@@ -145,9 +145,10 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		
 		//provide our npc's name, unless we don't have one!
 		if (npc.name != null && !npc.name.equals("")) {
-			npc.chat.setSourceLabel(
-					new FancyMessage(npc.name)
-					);
+			FancyMessage label = new FancyMessage(npc.name);
+			npc.chat.setSourceLabel(label);
+			npc.duringMessage.setSourceLabel(label);
+			npc.afterMessage.setSourceLabel(label);
 			
 		}
 		
@@ -170,6 +171,12 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 	
 	public void markAsEnd(Message finishMessage) {
 		this.finishMessage = finishMessage;
+		
+		if (name != null && !name.equals("")) {
+			this.finishMessage.setSourceLabel(
+					new FancyMessage(name));
+		}
+		
 		isEnd = true;
 	}
 	
