@@ -236,7 +236,7 @@ public class Quest implements Listener {
 							+ " that couldn't fit are at your feet.");
 					for (ItemStack item : returned.values()) {
 						player.getWorld().dropItem(
-								player.getLocation(), item);
+								player.getEyeLocation(), item);
 					}
 				}
 				
