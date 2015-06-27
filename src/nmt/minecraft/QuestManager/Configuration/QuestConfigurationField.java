@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
  * <li>START | start | <i>null</i> </li>
  * <li> END | end | same </li>
  * <li> FAME | fame | 100 </li>
- * <li> MONEY | money | 0 </li>
  * <li> REWARDS | rewards | <i>Empty List</i> </li>
  * </ul>
  * </p>
@@ -36,7 +35,6 @@ public enum QuestConfigurationField {
 	START("start", null),
 	END("end", "same"),
 	FAME("fame", 100),
-	MONEY("money", 0),
 	REWARDS("rewards", new LinkedList<ItemStack>());
 	
 	private Object def;

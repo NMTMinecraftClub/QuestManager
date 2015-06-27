@@ -8,11 +8,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.State.GoalState;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.Party;
@@ -20,9 +22,13 @@ import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.RequirementUpdateEvent;
+import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -84,8 +90,6 @@ public class Quest implements Listener {
 	
 	private int fame;
 	
-	private int cash;
-	
 	private List<ItemStack> itemRewards;
 	
 	private History history;
@@ -118,6 +122,7 @@ public class Quest implements Listener {
 		this.keepState = keepState;
 		
 		players = new HashSet<QuestPlayer>();
+		itemRewards = new LinkedList<ItemStack>();
 		
 		this.ID = (int) (Math.random() * Integer.MAX_VALUE);
 		
@@ -203,6 +208,69 @@ public class Quest implements Listener {
 	public boolean isReady() {
 		update();
 		return ready;
+	}
+	
+	/**
+	 * Completes the quest, dispensing rewards to involved players.
+	 * @param force Should this method execute even if the quest has incomplete objectives?
+	 */
+	public void completeQuest(boolean force) {
+		
+		if (!force && !isReady()) {
+			return;
+		}
+		
+		//go through and give each of the players involved their rewards
+		for (QuestPlayer qp : getParticipants().getParticipants()) {
+			if (qp.getPlayer().isOnline()) {
+				Player player = qp.getPlayer().getPlayer();
+				
+				//item rewards
+				Map<Integer, ItemStack> returned = player.getInventory().addItem(
+						(ItemStack[]) getItemRewards().toArray());
+				
+				if (!returned.isEmpty()) {
+					//couldn't fit all of the items, so drop them on the ground
+					player.sendMessage("Unable to fit all rewards! All rewards"
+							+ " that couldn't fit are at your feet.");
+					for (ItemStack item : returned.values()) {
+						player.getWorld().dropItem(
+								player.getLocation(), item);
+					}
+				}
+				
+				//cash reward
+				//TODO how can we implement cash rewards without tying it to an economy?
+				
+				//fame reward
+				qp.addFame(fame);
+				
+				qp.completeQuest(this);
+				
+				qp.updateQuestBook();
+				
+			    ChatMenu menu = new SimpleChatMenu(
+						new FancyMessage("")
+						  .then("You've just completed the quest: ")
+						  	.color(ChatColor.DARK_GRAY)
+						  	.style(ChatColor.BOLD)
+						  .then(name)
+						    .color(ChatColor.DARK_PURPLE)
+						  .then("\nYou received ")
+						    .color(ChatColor.DARK_GRAY)
+						  .then(fame + " ")
+						  	.color(ChatColor.GOLD)
+						  .then(itemRewards.isEmpty() ? "!" : 
+							  "and some item rewards!")
+							.color(ChatColor.DARK_GRAY)
+								
+								
+						);
+			    
+			    menu.show(player);
+			}
+		}
+		
 	}
 	
 	/**
@@ -386,19 +454,6 @@ public class Quest implements Listener {
 		this.fame = fame;
 	}
 
-	/**
-	 * @return the cash
-	 */
-	public int getCash() {
-		return cash;
-	}
-
-	/**
-	 * @param cash the cash to set
-	 */
-	public void setCash(int cash) {
-		this.cash = cash;
-	}
 
 	/**
 	 * @return the itemRewards
