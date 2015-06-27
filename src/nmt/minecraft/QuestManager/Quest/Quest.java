@@ -253,17 +253,17 @@ public class Quest implements Listener {
 			    ChatMenu menu = new SimpleChatMenu(
 						new FancyMessage("")
 						  .then("You've just completed the quest: ")
-						  	.color(ChatColor.DARK_GRAY)
+						  	.color(ChatColor.DARK_PURPLE)
 						  	.style(ChatColor.BOLD)
 						  .then(name)
-						    .color(ChatColor.DARK_PURPLE)
+						    .color(ChatColor.LIGHT_PURPLE)
 						  .then("\nYou received ")
-						    .color(ChatColor.DARK_GRAY)
-						  .then(fame + " ")
+						    .color(ChatColor.DARK_PURPLE)
+						  .then(fame + " fame")
 						  	.color(ChatColor.GOLD)
 						  .then(itemRewards.isEmpty() ? "!" : 
-							  "and some item rewards!")
-							.color(ChatColor.DARK_GRAY)
+							  " and some item rewards!")
+							.color(ChatColor.DARK_PURPLE)
 								
 								
 						);
