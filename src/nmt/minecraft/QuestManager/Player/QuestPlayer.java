@@ -140,6 +140,7 @@ public class QuestPlayer implements Participant {
 		this();
 		this.player = player;
 		this.currentQuests = new LinkedList<Quest>();
+		this.completedQuests = new LinkedList<String>();
 		this.history = new History();
 		
 		
@@ -334,6 +335,7 @@ public class QuestPlayer implements Participant {
 	public void addQuest(Quest quest) {
 		currentQuests.add(quest);
 		history.addHistoryEvent(new HistoryEvent("Accepted the quest \"" + quest.getName() +"\""));
+		addQuestBook();
 		updateQuestBook();
 	}
 	
