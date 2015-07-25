@@ -11,19 +11,13 @@ Needed
 
 ### For Launch
 
-+ Some standard for position data! Are people expected to put in the exact
-  values for a specific location? This wouldn't be too bad, but we need a
-  decision
-+ Saving/loading quests, and their contained goals and requirements
-+ Progress saving/loading on specifics like Boss Health, position, etc
-+ Configuration definitions & standards
++ Increased requirements, like 'slay 10 rabbits' or 'talk to' or 'deliver'
 
 ### For a complete QM
 
 + A nice party interface
-+ Quest status delivery method (like text on the screen, scoreboard, etc)
 + The ability to drop quests
-
++ Compasses and location stuffs
 
 Extra Features
 --------------
