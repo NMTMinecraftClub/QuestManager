@@ -101,7 +101,7 @@ public class QuestConfiguration {
 			ConfigurationSection npcSection = config.getConfigurationSection(
 					QuestConfigurationField.NPCS.getKey());
 			
-			if (!npcSection.getKeys(false).isEmpty()) {
+			if (!(npcSection == null) && !npcSection.getKeys(false).isEmpty()) {
 				for (String key : npcSection.getKeys(false)) {
 					npcs.add((NPC) npcSection.get(key));
 				}
