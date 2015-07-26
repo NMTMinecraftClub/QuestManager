@@ -177,6 +177,8 @@ public class QuestManager implements Listener {
 				
 						
 			}
+			
+			Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 
 			QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager finished!");	
 			
