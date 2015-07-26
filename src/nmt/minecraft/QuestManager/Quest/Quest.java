@@ -493,6 +493,7 @@ public class Quest implements Listener {
 			update();
 
 			for (QuestPlayer p : players) {
+				p.addQuestBook();
 				p.updateQuestBook();
 			}
 		}
