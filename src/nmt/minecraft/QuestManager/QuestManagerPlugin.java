@@ -19,6 +19,7 @@ import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.SlayRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
@@ -100,6 +101,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 				new PossessRequirement.PossessFactory());
 		reqManager.registerFactory("VANQUISH", 
 				new VanquishRequirement.VanquishFactory());
+		reqManager.registerFactory("SLAY", 
+				new SlayRequirement.SlayFactory());
 		
 	}
 	
