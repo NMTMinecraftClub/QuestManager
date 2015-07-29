@@ -180,6 +180,7 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 				
 				if (trip)
 				{
+					progress++;
 					update();
 				}
 			}
@@ -197,8 +198,6 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 		if (state) {
 			return;
 		}
-		
-		progress++;
 		
 		if (progress >= count) {
 			state = true;
