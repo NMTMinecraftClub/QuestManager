@@ -189,7 +189,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		
 		ChatMenu messageChat = null;
 		
-		if (qp.hasCompleted(quest.getName())  && !quest.isRepeatable()) {
+		if (!quest.isRepeatable() && qp.hasCompleted(quest.getName())) {
 			//already completed it
 			messageChat = ChatMenu.getDefaultMenu(afterMessage);
 		} else if (qp.isInQuest(quest.getName())) {

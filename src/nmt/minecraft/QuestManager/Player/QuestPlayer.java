@@ -3,6 +3,7 @@ package nmt.minecraft.QuestManager.Player;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -340,14 +341,29 @@ public class QuestPlayer implements Participant {
 	}
 	
 	public boolean removeQuest(Quest quest) {
-		return currentQuests.remove(quest);
+		
+		if (currentQuests.isEmpty()) {
+			return false;
+		}
+		
+		Iterator<Quest> it = currentQuests.iterator();
+		
+		while (it.hasNext()) {
+			Quest q = it.next();
+			if (q.equals(quest)) {
+				it.remove();
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public void completeQuest(Quest quest) {
 		if (!completedQuests.contains(quest.getName())) {
 			completedQuests.add(quest.getName());			
 		}
-		currentQuests.remove(quest);
+		removeQuest(quest);
 		
 		history.addHistoryEvent(
 				new HistoryEvent("Completed the quest \"" + quest.getName() + "\""));
