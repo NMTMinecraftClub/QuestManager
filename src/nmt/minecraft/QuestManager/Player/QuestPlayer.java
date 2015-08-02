@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
@@ -135,6 +136,7 @@ public class QuestPlayer implements Participant, Listener {
 	private QuestPlayer() {
 		this.fame = 0;
 		this.title = "";
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 		; //do nothing. This is for non-redundant defining of QuestPlayers from config
 	}
 	
@@ -437,6 +439,7 @@ public class QuestPlayer implements Participant, Listener {
 		map.put("title", title);
 		map.put("fame", fame);
 		map.put("id", player.getUniqueId().toString());
+		map.put("portalloc", this.questPortal);
 		map.put("completedquests", completedQuests);
 		
 		return map;
@@ -450,7 +453,8 @@ public class QuestPlayer implements Participant, Listener {
 	@SuppressWarnings("unchecked")
 	public static QuestPlayer valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("id") || !map.containsKey("fame") 
-				 || !map.containsKey("title") || !map.containsKey("completedquests")) {
+				 || !map.containsKey("title") || !map.containsKey("completedquests")
+				 || !map.containsKey("portalloc")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid Quest Player! "
 					+ (map.containsKey("id") ? ": " + map.get("id") : ""));
 			return null;
@@ -459,6 +463,8 @@ public class QuestPlayer implements Participant, Listener {
 		OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(
 				(String) map.get("id")));
 		QuestPlayer qp = new QuestPlayer(player);
+		
+		qp.questPortal = ((LocationState) map.get("portalloc")).getLocation();
 		
 		qp.fame = (int) map.get("fame");
 		qp.title = (String) map.get("title");
