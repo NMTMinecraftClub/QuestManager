@@ -92,6 +92,11 @@ public class QuestConfiguration {
 				(boolean) QuestConfigurationField.SAVESTATE.getDefault());
 	}
 	
+	public boolean isRepeatable() {
+		return config.getBoolean(QuestConfigurationField.REPEATABLE.getKey(), 
+				(boolean) QuestConfigurationField.REPEATABLE.getDefault());
+	}
+	
 	public Collection<NPC> getAuxNPCs() {
 		
 		List<NPC> npcs = new LinkedList<NPC>();

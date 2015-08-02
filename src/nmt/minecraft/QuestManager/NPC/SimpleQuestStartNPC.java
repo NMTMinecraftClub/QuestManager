@@ -192,7 +192,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		if (qp.hasCompleted(quest.getName())) {
 			//already completed it
 			messageChat = ChatMenu.getDefaultMenu(afterMessage);
-		} else if (qp.isInQuest(quest.getName())) {
+		} else if (qp.isInQuest(quest.getName()) && !quest.isRepeatable()) {
 			//is currently in it
 			
 			//Is this the possible end?
