@@ -344,7 +344,9 @@ public class QuestPlayer implements Participant {
 	}
 	
 	public void completeQuest(Quest quest) {
-		completedQuests.add(quest.getName());
+		if (!completedQuests.contains(quest.getName())) {
+			completedQuests.add(quest.getName());			
+		}
 		currentQuests.remove(quest);
 		
 		history.addHistoryEvent(
