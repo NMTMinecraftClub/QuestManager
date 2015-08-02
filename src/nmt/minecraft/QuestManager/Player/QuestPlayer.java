@@ -464,7 +464,11 @@ public class QuestPlayer implements Participant, Listener {
 				(String) map.get("id")));
 		QuestPlayer qp = new QuestPlayer(player);
 		
-		qp.questPortal = ((LocationState) map.get("portalloc")).getLocation();
+		if (map.get("portalloc") == null) {
+			qp.questPortal = null;
+		} else {
+			qp.questPortal = ((LocationState) map.get("portalloc")).getLocation();
+		}
 		
 		qp.fame = (int) map.get("fame");
 		qp.title = (String) map.get("title");
