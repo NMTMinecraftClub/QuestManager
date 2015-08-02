@@ -18,6 +18,7 @@ import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Instrument;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
@@ -26,9 +27,13 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+
+import com.onarandombox.MultiversePortals.event.MVPortalEvent;
 
 /**
  * Player wrapper to store questing information and make saving player quest status
@@ -36,7 +41,7 @@ import org.bukkit.inventory.meta.BookMeta;
  * @author Skyler
  *
  */
-public class QuestPlayer implements Participant {
+public class QuestPlayer implements Participant, Listener {
 
 	private OfflinePlayer player;
 	
@@ -49,6 +54,8 @@ public class QuestPlayer implements Participant {
 	private int fame;
 	
 	private String title;
+	
+	private Location questPortal;
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -469,6 +476,59 @@ public class QuestPlayer implements Participant {
 	public String getIDString() {
 		return player.getUniqueId().toString();
 	}
+
+	/**
+	 * @return the questPortal
+	 */
+	public Location getQuestPortal() {
+		return questPortal;
+	}
+
+	/**
+	 * @param questPortal the questPortal to set
+	 */
+	public void setQuestPortal(Location questPortal) {
+		this.questPortal = questPortal;
+	}
+	
+	@EventHandler
+	public void onPortal(MVPortalEvent e) {
+		if (!player.isOnline() || e.isCancelled()) {
+			return;
+		}
+			
+		if (e.getTeleportee().equals(player)) {			
+			
+			List<String> qworlds = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+					.getWorlds();
+			if (qworlds.contains(e.getFrom().getWorld().getName())) {
+				
+				//check that we aren't going TO antoher quest world
+				if (qworlds.contains(e.getDestination().getLocation(player.getPlayer()).getWorld().getName())) {
+					//we are! Don't interfere here
+					return;
+				}
+				
+				//we're leaving a quest world, so save the portal!
+				this.questPortal = e.getFrom();
+				return;
+			}
+			if (qworlds.contains(e.getDestination().getLocation(player.getPlayer()).getWorld().getName())) {
+				//Before we warp to our old location, we need to make sure we HAVE one
+				if (this.questPortal == null) {
+					//this is our first time coming in, so just let the portal take us
+					//and save where it plops us out at
+					this.questPortal = e.getDestination().getLocation(player.getPlayer());
+					return;
+				}
+				
+				//we're moving TO a quest world, so actually go to our saved location
+				e.setCancelled(true);
+				player.getPlayer().teleport(questPortal);
+			}
+		}
+	}
+	
 	
 	
 }
