@@ -71,14 +71,7 @@ public class InnAction implements MenuAction {
 		} else {
 			//not enough money
 			//show them a menu, sorrow
-			
-//			FancyMessage msg = new FancyMessage("I'm sorry, but you ")
-//				.then("don't seem to have enough money...")
-//				.color(ChatColor.DARK_RED);
-//			
-//			SimpleMessage message = new SimpleMessage(msg);
-//			message.setSourceLabel(new FancyMessage());
-			
+						
 			ChatMenu menu = new SimpleChatMenu(denial.getFormattedMessage());
 			
 			menu.show(player.getPlayer().getPlayer());
