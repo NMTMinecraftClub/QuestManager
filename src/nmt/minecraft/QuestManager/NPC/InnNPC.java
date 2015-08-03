@@ -161,7 +161,7 @@ public class InnNPC extends SimpleBioptionNPC {
 		.color(ChatColor.DARK_RED);
 			
 		SimpleMessage message = new SimpleMessage(msg);
-		message.setSourceLabel(new FancyMessage());
+		message.setSourceLabel(new FancyMessage(this.name));
 		
 		ChatMenu messageChat = new BioptionChatMenu(chat, 
 					new InnAction(cost, qp, message)

@@ -7,6 +7,7 @@ import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -58,15 +59,17 @@ public class InnAction implements MenuAction {
 			p.setSaturation(20f);
 			
 			p.addPotionEffect(
-					new PotionEffect(PotionEffectType.BLINDNESS, 60, 1));
+					new PotionEffect(PotionEffectType.BLINDNESS, 60, 5));
 			
 			TitleManager.sendTimings(p, 20, 40, 20);
 			
 			TitleManager.sendSubTitle(p, TellrawConverterLite.convertToJSON(
-	        		ChatColor.GREEN + "You rest at the inn"));
+					ChatColor.BLUE + "Your health and hunger are restored"));
 
 	        TitleManager.sendTitle(p, TellrawConverterLite.convertToJSON(
-	        		ChatColor.BLUE + "Your health and hunger are restored"));
+	        		ChatColor.GREEN + "Sweet Dreams"));
+	        
+	        p.playSound(p.getLocation(), Sound.LEVEL_UP, 1, .5f);
 			
 		} else {
 			//not enough money
