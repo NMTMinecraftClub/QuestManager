@@ -18,6 +18,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -298,6 +299,16 @@ public class QuestManager implements Listener {
 			}
 		}
 		
+	}
+	
+	@EventHandler
+	public void onPlayerJoin(PlayerChangedWorldEvent e) {
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(
+				e.getPlayer().getWorld().getName())) {
+			//if they're coming to a quest world, make sure we have a player for them
+			QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
+					e.getPlayer().getUniqueId());
+		}
 	}
 	
 }
