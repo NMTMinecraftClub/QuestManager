@@ -584,10 +584,11 @@ public class QuestPlayer implements Participant, Listener {
 		}
 		
 		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
-				.getWorlds().contains(p.getWorld())) {
+				.getWorlds().contains(p.getWorld().getName())) {
 			return;
 		}
 		
+		System.out.println("amount: " + e.getAmount());
 		money += e.getAmount();
 		p.setLevel(money);
 		
