@@ -30,6 +30,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -259,6 +261,7 @@ public class QuestPlayer implements Participant, Listener {
 		bookMeta.addPage(ChatColor.DARK_PURPLE + " " + player.getName() + " - "
 				+ ChatColor.DARK_RED + title
 				+ "\n-----\n  " + ChatColor.GOLD + "Fame: " + fame
+				+ "\n  "			+ ChatColor.GOLD + "Gold: " + money
 				+ ChatColor.DARK_GREEN + "\n\n  Current Quests: " + currentQuests.size()
 				+ ChatColor.DARK_BLUE + "\n\n  Completed Quests: " + completedQuests.size()
 				+ ChatColor.RESET);	
@@ -305,6 +308,8 @@ public class QuestPlayer implements Participant, Listener {
 				+ " updated!" + ChatColor.RESET);
 		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
 		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
+		
+		play.setLevel(money);
 	}
 	
 	public List<Quest> getCurrentQuests() {
@@ -565,7 +570,59 @@ public class QuestPlayer implements Participant, Listener {
 			}
 		}
 	}
+
+	@EventHandler
+	public void onExp(PlayerExpChangeEvent e) {
+		if (!player.isOnline()) {
+			return;
+		}
+		
+		Player p = player.getPlayer().getPlayer();
+		
+		if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			return;
+		}
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+				.getWorlds().contains(p.getWorld())) {
+			return;
+		}
+		
+		money += e.getAmount();
+		p.setLevel(money);
+		
+		e.setAmount(0);
+	}
 	
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent e) {
+		if (player == null) {
+			return;
+			//just wiat for it to figure itself out
+		}
+		
+		if (!player.isOnline()) {
+			return;
+		}
+		
+		Player p = player.getPlayer().getPlayer();
+		
+		if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			return;
+		}
+		
+		if (e.getItem() != null && e.getItem().getType().equals(Material.WRITTEN_BOOK)) {
+			BookMeta meta = (BookMeta) e.getItem().getItemMeta();
+			
+			if (meta.getTitle().equals("Quest Log") && 
+					e.getItem().getEnchantmentLevel(Enchantment.LUCK) == 5) {
+				//it's a quest log. Update it
+				
+				updateQuestBook();
+			}
+		}
+		
+	}
 	
 	
 }
