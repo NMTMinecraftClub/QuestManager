@@ -418,6 +418,11 @@ public class QuestPlayer implements Participant, Listener {
 	 */
 	public void setMoney(int money) {
 		this.money = money;
+		if (player.isOnline())
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+					.getWorlds().contains(player.getPlayer().getWorld().getName())) {
+			player.getPlayer().setLevel(money);
+		}
 	}
 	
 	/**
@@ -426,6 +431,11 @@ public class QuestPlayer implements Participant, Listener {
 	 */
 	public void addMoney(int money) {
 		this.money += money;
+		if (player.isOnline())
+			if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+						.getWorlds().contains(player.getPlayer().getWorld().getName())) {
+				player.getPlayer().setLevel(money);
+			}
 	}
 
 	public void setTitle(String title) {
@@ -588,7 +598,6 @@ public class QuestPlayer implements Participant, Listener {
 			return;
 		}
 		
-		System.out.println("amount: " + e.getAmount());
 		money += e.getAmount();
 		p.setLevel(money);
 		
