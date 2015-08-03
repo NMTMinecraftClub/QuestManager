@@ -54,6 +54,8 @@ public class QuestPlayer implements Participant, Listener {
 	
 	private int fame;
 	
+	private int money;
+	
 	private String title;
 	
 	private Location questPortal;
@@ -135,7 +137,8 @@ public class QuestPlayer implements Participant, Listener {
 	
 	private QuestPlayer() {
 		this.fame = 0;
-		this.title = "";
+		this.money = 0;
+		this.title = "The Unknown";
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 		; //do nothing. This is for non-redundant defining of QuestPlayers from config
 	}
@@ -398,6 +401,28 @@ public class QuestPlayer implements Participant, Listener {
 		this.fame = fame;
 	}
 	
+	/**
+	 * @return the money
+	 */
+	public int getMoney() {
+		return money;
+	}
+
+	/**
+	 * @param money the money to set
+	 */
+	public void setMoney(int money) {
+		this.money = money;
+	}
+	
+	/**
+	 * Add some money to the player's wallet
+	 * @param money
+	 */
+	public void addMoney(int money) {
+		this.money += money;
+	}
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -438,6 +463,7 @@ public class QuestPlayer implements Participant, Listener {
 		Map<String, Object> map = new HashMap<String, Object>(3);
 		map.put("title", title);
 		map.put("fame", fame);
+		map.put("money", money);
 		map.put("id", player.getUniqueId().toString());
 		map.put("portalloc", this.questPortal);
 		map.put("completedquests", completedQuests);
@@ -454,7 +480,7 @@ public class QuestPlayer implements Participant, Listener {
 	public static QuestPlayer valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("id") || !map.containsKey("fame") 
 				 || !map.containsKey("title") || !map.containsKey("completedquests")
-				 || !map.containsKey("portalloc")) {
+				 || !map.containsKey("portalloc") || !map.containsKey("money")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid Quest Player! "
 					+ (map.containsKey("id") ? ": " + map.get("id") : ""));
 			return null;
@@ -471,6 +497,7 @@ public class QuestPlayer implements Participant, Listener {
 		}
 		
 		qp.fame = (int) map.get("fame");
+		qp.money = (int) map.get("money");
 		qp.title = (String) map.get("title");
 		qp.completedQuests = (List<String>) map.get("completedquests");
 		
