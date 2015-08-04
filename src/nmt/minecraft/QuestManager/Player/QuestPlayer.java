@@ -163,7 +163,10 @@ public class QuestPlayer implements Participant, Listener {
 		this.completedQuests = new LinkedList<String>();
 		this.history = new History();
 		
-		
+		if (player.isOnline()) {
+			Player p = player.getPlayer();
+			questPortal = p.getWorld().getSpawnLocation();
+		}
 	}
 	
 	
