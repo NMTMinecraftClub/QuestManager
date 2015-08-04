@@ -1,7 +1,8 @@
 name: QuestManager
 main: nmt.minecraft.QuestManager.QuestManagerPlugin
 version: 1.0
-softdepend: [Fanciful]
+softdepend: [Fanciful, Multiverse-Core]
+loadfirst:
 commands:
     questlog:
         usage: /questlog

@@ -92,7 +92,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 			questDirectory.mkdirs();
 		}
 		
-		
+				
 		//register our own requirements
 		reqManager.registerFactory("ARRIVE", 
 				new ArriveRequirement.ArriveFactory());
