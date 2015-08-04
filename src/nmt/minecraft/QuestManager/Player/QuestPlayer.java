@@ -31,6 +31,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -635,6 +636,27 @@ public class QuestPlayer implements Participant, Listener {
 	}
 	
 	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent e) {
+		if (!player.isOnline()) {
+			return;
+		}
+		
+		Player p = player.getPlayer().getPlayer();
+		
+		if (!p.getUniqueId().equals(e.getEntity().getUniqueId())) {
+			return;
+		}
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+				.getWorlds().contains(p.getWorld().getName())) {
+			return;
+		}
+		
+		e.setDroppedExp(0);
+		
+	}
+	
+	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent e) {
 
 		if (!player.getUniqueId().equals(e.getPlayer().getUniqueId())) {
@@ -659,6 +681,9 @@ public class QuestPlayer implements Participant, Listener {
 		PortalPlayerSession ps = mvp.getPortalSession(e.getPlayer());
 		ps.playerDidTeleport(questPortal);
 		ps.setTeleportTime(new Date());
+		
+		e.getPlayer().setLevel(QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
+				e.getPlayer().getUniqueId()).getMoney());
 		
 	}
 	
