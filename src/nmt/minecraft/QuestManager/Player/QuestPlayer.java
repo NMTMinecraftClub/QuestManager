@@ -653,6 +653,7 @@ public class QuestPlayer implements Participant, Listener {
 		}
 		
 		e.setDroppedExp(0);
+		e.setNewLevel(money);
 		
 	}
 	
@@ -682,8 +683,6 @@ public class QuestPlayer implements Participant, Listener {
 		ps.playerDidTeleport(questPortal);
 		ps.setTeleportTime(new Date());
 		
-		e.getPlayer().setLevel(QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
-				e.getPlayer().getUniqueId()).getMoney());
 		
 	}
 	
