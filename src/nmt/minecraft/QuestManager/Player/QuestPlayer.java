@@ -2,6 +2,7 @@ package nmt.minecraft.QuestManager.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -32,10 +33,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
+import com.onarandombox.MultiversePortals.MultiversePortals;
+import com.onarandombox.MultiversePortals.PortalPlayerSession;
 import com.onarandombox.MultiversePortals.event.MVPortalEvent;
 
 /**
@@ -606,10 +610,6 @@ public class QuestPlayer implements Participant, Listener {
 	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e) {
-		if (player == null) {
-			return;
-			//just wiat for it to figure itself out
-		}
 		
 		if (!player.isOnline()) {
 			return;
@@ -631,6 +631,34 @@ public class QuestPlayer implements Participant, Listener {
 				updateQuestBook();
 			}
 		}
+		
+	}
+	
+	@EventHandler
+	public void onPlayerRespawn(PlayerRespawnEvent e) {
+
+		if (!player.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			return;
+		}
+
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+				.getWorlds().contains(e.getRespawnLocation().getWorld().getName())) {
+			return;
+		}
+		
+		//in a quest world, so put them back to their last checkpoint
+		e.setRespawnLocation(
+				this.questPortal);
+		MultiversePortals mvp = (MultiversePortals) Bukkit.getPluginManager().getPlugin("Multiverse-Portals");
+		
+		if (mvp == null) {
+			System.out.println("null");
+			return;
+		}
+		
+		PortalPlayerSession ps = mvp.getPortalSession(e.getPlayer());
+		ps.playerDidTeleport(questPortal);
+		ps.setTeleportTime(new Date());
 		
 	}
 	
