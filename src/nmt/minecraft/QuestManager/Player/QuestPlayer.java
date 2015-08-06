@@ -429,7 +429,7 @@ public class QuestPlayer implements Participant, Listener {
 		if (player.isOnline())
 		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 					.getWorlds().contains(player.getPlayer().getWorld().getName())) {
-			player.getPlayer().setLevel(money);
+			player.getPlayer().setLevel(this.money);
 		}
 	}
 	
@@ -442,7 +442,7 @@ public class QuestPlayer implements Participant, Listener {
 		if (player.isOnline())
 			if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 						.getWorlds().contains(player.getPlayer().getWorld().getName())) {
-				player.getPlayer().setLevel(money);
+				player.getPlayer().setLevel(this.money);
 			}
 	}
 
