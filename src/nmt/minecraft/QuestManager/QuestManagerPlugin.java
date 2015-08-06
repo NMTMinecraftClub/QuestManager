@@ -10,6 +10,7 @@ import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Fanciful.MessagePart;
 import nmt.minecraft.QuestManager.Fanciful.TextualComponent;
+import nmt.minecraft.QuestManager.NPC.ForgeNPC;
 import nmt.minecraft.QuestManager.NPC.InnNPC;
 import nmt.minecraft.QuestManager.NPC.MuteNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleBioptionNPC;
@@ -118,6 +119,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		SimpleBioptionNPC.registerWithAliases();
 		SimpleQuestStartNPC.registerWithAliases();
 		InnNPC.registerWithAliases();
+		ForgeNPC.registerWithAliases();
 		SimpleMessage.registerWithAliases();
 		BioptionMessage.registerWithAliases();
 		ConfigurationSerialization.registerClass(MessagePart.class);
