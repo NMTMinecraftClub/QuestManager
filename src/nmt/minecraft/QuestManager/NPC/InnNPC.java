@@ -66,7 +66,11 @@ public class InnNPC extends SimpleBioptionNPC {
 			return alias;
 		}
 	}
+
 	
+	private InnNPC(Location startingLoc) {
+		super(startingLoc);
+	}
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>(4);
@@ -103,7 +107,6 @@ public class InnNPC extends SimpleBioptionNPC {
 			return null;
 		}
 		
-		InnNPC npc = new InnNPC();
 		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
@@ -118,6 +121,7 @@ public class InnNPC extends SimpleBioptionNPC {
 		LocationState ls = (LocationState) map.get("location");
 		Location loc = ls.getLocation();
 		
+		InnNPC npc = new InnNPC(loc);
 		EntityType type = EntityType.valueOf((String) map.get("type"));
 		
 		npc.name = (String) map.get("name");

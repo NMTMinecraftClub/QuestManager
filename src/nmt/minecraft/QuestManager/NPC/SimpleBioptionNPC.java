@@ -27,7 +27,7 @@ import org.bukkit.inventory.EntityEquipment;
  * @author Skyler
  *
  */
-public class SimpleBioptionNPC extends NPC {
+public class SimpleBioptionNPC extends SimpleNPC {
 
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -66,8 +66,8 @@ public class SimpleBioptionNPC extends NPC {
 	
 	protected BioptionMessage chat;
 	
-	protected SimpleBioptionNPC() {
-		super();
+	protected SimpleBioptionNPC(Location startingLoc) {
+		super(startingLoc);
 	}
 		
 	@Override
@@ -105,7 +105,6 @@ public class SimpleBioptionNPC extends NPC {
 			return null;
 		}
 		
-		SimpleBioptionNPC npc = new SimpleBioptionNPC();
 		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
@@ -120,6 +119,8 @@ public class SimpleBioptionNPC extends NPC {
 		LocationState ls = (LocationState) map.get("location");
 		Location loc = ls.getLocation();
 		
+
+		SimpleBioptionNPC npc = new SimpleBioptionNPC(loc);
 		EntityType type = EntityType.valueOf((String) map.get("type"));
 		
 		npc.name = (String) map.get("name");

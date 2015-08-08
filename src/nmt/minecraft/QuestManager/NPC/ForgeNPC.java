@@ -66,6 +66,10 @@ public class ForgeNPC extends SimpleBioptionNPC {
 		}
 	}
 	
+	private ForgeNPC(Location startingLoc) {
+		super(startingLoc);
+	}
+	
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>(4);
@@ -102,7 +106,6 @@ public class ForgeNPC extends SimpleBioptionNPC {
 			return null;
 		}
 		
-		ForgeNPC npc = new ForgeNPC();
 		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
@@ -117,6 +120,7 @@ public class ForgeNPC extends SimpleBioptionNPC {
 		LocationState ls = (LocationState) map.get("location");
 		Location loc = ls.getLocation();
 		
+		ForgeNPC npc = new ForgeNPC(loc);
 		EntityType type = EntityType.valueOf((String) map.get("type"));
 		
 		npc.name = (String) map.get("name");

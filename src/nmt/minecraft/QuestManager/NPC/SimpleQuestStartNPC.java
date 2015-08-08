@@ -69,7 +69,11 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 			return alias;
 		}
 	}
+
 	
+	private SimpleQuestStartNPC(Location startingLoc) {
+		super(startingLoc);
+	}
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>(4);
@@ -108,9 +112,6 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 			return null;
 		}
 		
-		SimpleQuestStartNPC npc = new SimpleQuestStartNPC();
-		npc.isEnd = false;
-		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
 			YamlConfiguration tmp = new YamlConfiguration();
@@ -125,6 +126,10 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		Location loc = ls.getLocation();
 		
 		EntityType type = EntityType.valueOf((String) map.get("type"));
+		
+		
+		SimpleQuestStartNPC npc = new SimpleQuestStartNPC(loc);
+		npc.isEnd = false;
 		
 		npc.name = (String) map.get("name");
 		

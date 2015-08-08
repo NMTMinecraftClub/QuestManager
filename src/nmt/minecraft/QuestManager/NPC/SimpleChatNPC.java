@@ -28,7 +28,7 @@ import org.bukkit.inventory.EntityEquipment;
  * @author Skyler
  *
  */
-public class SimpleChatNPC extends NPC {
+public class SimpleChatNPC extends SimpleNPC {
 
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -67,8 +67,8 @@ public class SimpleChatNPC extends NPC {
 	
 	private SimpleMessage chat;
 	
-	private SimpleChatNPC() {
-		super();
+	private SimpleChatNPC(Location startingLoc) {
+		super(startingLoc);
 	}
 		
 	@Override
@@ -106,8 +106,6 @@ public class SimpleChatNPC extends NPC {
 			return null;
 		}
 		
-		SimpleChatNPC npc = new SimpleChatNPC();
-		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
 			YamlConfiguration tmp = new YamlConfiguration();
@@ -123,9 +121,12 @@ public class SimpleChatNPC extends NPC {
 		
 		EntityType type = EntityType.valueOf((String) map.get("type"));
 		
+		
+		SimpleChatNPC npc = new SimpleChatNPC(loc);
 
 		loc.getChunk();
 		npc.setEntity(loc.getWorld().spawnEntity(loc, type));
+		npc.setStartingLoc(loc);
 		npc.name = (String) map.get("name");
 		npc.getEntity().setCustomName((String) map.get("name"));
 
@@ -163,6 +164,11 @@ public class SimpleChatNPC extends NPC {
 	protected void interact(Player player) {
 		ChatMenu messageChat = new SimpleChatMenu(chat.getFormattedMessage());
 		messageChat.show(player);
+	}
+	
+	@Override
+	public void tick() {
+		
 	}
 
 }

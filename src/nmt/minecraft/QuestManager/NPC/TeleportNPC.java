@@ -68,6 +68,11 @@ public class TeleportNPC extends SimpleBioptionNPC {
 			return alias;
 		}
 	}
+
+	
+	private TeleportNPC(Location startingLoc) {
+		super(startingLoc);
+	}
 	
 	@Override
 	public Map<String, Object> serialize() {
@@ -113,8 +118,6 @@ public class TeleportNPC extends SimpleBioptionNPC {
 			return null;
 		}
 		
-		TeleportNPC npc = new TeleportNPC();
-		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
 			YamlConfiguration tmp = new YamlConfiguration();
@@ -129,6 +132,8 @@ public class TeleportNPC extends SimpleBioptionNPC {
 		Location loc = ls.getLocation();
 		
 		EntityType type = EntityType.valueOf((String) map.get("type"));
+		
+		TeleportNPC npc = new TeleportNPC(loc);
 		
 		npc.name = (String) map.get("name");
 		

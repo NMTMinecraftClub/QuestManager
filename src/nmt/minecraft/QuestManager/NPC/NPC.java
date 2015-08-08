@@ -3,6 +3,7 @@ package nmt.minecraft.QuestManager.NPC;
 import java.util.UUID;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Scheduling.Tickable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -13,7 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-public abstract class NPC implements ConfigurationSerializable, Listener {
+public abstract class NPC implements ConfigurationSerializable, Listener, Tickable {
 	
 	/**
 	 * Cache value for saving lookup times for entities
