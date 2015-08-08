@@ -90,9 +90,11 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		
 		map.put("equipment", econ);
 		
-		map.put("message", chat);
-	
-		
+		map.put("firstmessage", chat);
+		map.put("duringmessage", duringMessage);
+		map.put("postmessage", afterMessage);
+		map.put("badrequirementmessage", altMessage);
+				
 		return map;
 	}
 	
