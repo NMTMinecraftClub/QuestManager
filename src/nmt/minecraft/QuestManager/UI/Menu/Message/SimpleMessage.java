@@ -99,7 +99,7 @@ public class SimpleMessage extends Message {
 
 	@Override
 	public FancyMessage getFormattedMessage() {
-		return new FancyMessage("\n")
+		return new FancyMessage("")
 		.then(label == null ? 
 				new FancyMessage("Unknown")	: label)
 			.color(ChatColor.DARK_GRAY)
