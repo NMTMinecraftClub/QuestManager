@@ -75,14 +75,14 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		Map<String, Object> map = new HashMap<String, Object>(4);
 		
 		map.put("name", name);
-		map.put("type", entity.getType());
-		map.put("location", new LocationState(entity.getLocation()));
+		map.put("type", getEntity().getType());
+		map.put("location", new LocationState(getEntity().getLocation()));
 		
 		EquipmentConfiguration econ;
 		
-		if (entity instanceof LivingEntity) {
+		if (getEntity() instanceof LivingEntity) {
 			econ = new EquipmentConfiguration(
-					((LivingEntity) entity).getEquipment()
+					((LivingEntity) getEntity()).getEquipment()
 					);
 		} else {
 			econ = new EquipmentConfiguration();
@@ -128,11 +128,13 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		
 		npc.name = (String) map.get("name");
 		
-		npc.entity = loc.getWorld().spawnEntity(loc, type);
-		npc.entity.setCustomName((String) map.get("name"));
+		//load the chunk
+		loc.getChunk();
+		npc.setEntity(loc.getWorld().spawnEntity(loc, type));
+		npc.getEntity().setCustomName((String) map.get("name"));
 
-		if (npc.entity instanceof LivingEntity) {
-			EntityEquipment equipment = ((LivingEntity) npc.entity).getEquipment();
+		if (npc.getEntity() instanceof LivingEntity) {
+			EntityEquipment equipment = ((LivingEntity) npc.getEntity()).getEquipment();
 			equipment.setHelmet(econ.getHead());
 			equipment.setChestplate(econ.getChest());
 			equipment.setLeggings(econ.getLegs());
