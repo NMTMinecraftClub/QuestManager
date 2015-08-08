@@ -16,6 +16,7 @@ import nmt.minecraft.QuestManager.NPC.MuteNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleBioptionNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleChatNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
+import nmt.minecraft.QuestManager.NPC.TeleportNPC;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
@@ -120,6 +121,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		SimpleQuestStartNPC.registerWithAliases();
 		InnNPC.registerWithAliases();
 		ForgeNPC.registerWithAliases();
+		TeleportNPC.registerWithAliases();
 		SimpleMessage.registerWithAliases();
 		BioptionMessage.registerWithAliases();
 		ConfigurationSerialization.registerClass(MessagePart.class);
