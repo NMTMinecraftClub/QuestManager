@@ -1,6 +1,7 @@
 package nmt.minecraft.QuestManager.NPC;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
@@ -99,7 +100,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		if (map == null || !map.containsKey("name") || !map.containsKey("type") 
 				 || !map.containsKey("location") || !map.containsKey("equipment")
 				  || !map.containsKey("firstmessage") || !map.containsKey("duringmessage")
-				  || !map.containsKey("postmessage")) {
+				  || !map.containsKey("postmessage") || !map.containsKey("badrequirementmessage")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid NPC info! "
 					+ (map.containsKey("name") ? ": " + map.get("name") : ""));
 			return null;
@@ -141,6 +142,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		npc.chat = (BioptionMessage) map.get("firstmessage");
 		npc.duringMessage = (Message) map.get("duringmessage");
 		npc.afterMessage = (Message) map.get("postmessage");
+		npc.altMessage = (Message) map.get("badrequirementmessage");
 		
 		
 		//provide our npc's name, unless we don't have one!
@@ -149,7 +151,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 			npc.chat.setSourceLabel(label);
 			npc.duringMessage.setSourceLabel(label);
 			npc.afterMessage.setSourceLabel(label);
-			
+			npc.altMessage.setSourceLabel(label);
 		}
 		
 		return npc;
@@ -164,6 +166,8 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 	private Message afterMessage;
 	
 	private Message finishMessage;
+	
+	private Message altMessage;
 	
 	public void setQuestTemplate(QuestConfiguration questTemplate) {
 		this.quest = questTemplate;
@@ -188,8 +192,24 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 				player.getUniqueId());
 		
 		ChatMenu messageChat = null;
+		boolean meetreqs = true;
 		
-		if (!quest.isRepeatable() && qp.hasCompleted(quest.getName())) {
+		List<String> reqs = quest.getRequiredQuests();
+		
+		if (reqs != null && !reqs.isEmpty()) {
+			//go through reqs, see if the player has those quests completed
+			for (String req : reqs) {
+				if (!qp.hasCompleted(req)) {
+					meetreqs=false;
+					break;
+				}
+			}
+		}
+		
+		if (!meetreqs) {
+			//doesn't have all the required quests done yet!
+			messageChat = ChatMenu.getDefaultMenu(altMessage);
+		} else if (!quest.isRepeatable() && qp.hasCompleted(quest.getName())) {
 			//already completed it
 			messageChat = ChatMenu.getDefaultMenu(afterMessage);
 		} else if (qp.isInQuest(quest.getName())) {
