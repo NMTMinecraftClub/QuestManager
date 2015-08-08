@@ -1,6 +1,7 @@
 package nmt.minecraft.QuestManager.NPC;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
@@ -12,6 +13,7 @@ import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Action.TeleportAction;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
+import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
 
 import org.bukkit.ChatColor;
@@ -90,16 +92,22 @@ public class TeleportNPC extends SimpleBioptionNPC {
 		map.put("equipment", econ);
 		
 		map.put("message", chat);
+		
+		map.put("badrequirementmessage", altMessage);
+		
+		map.put("requiredquests", requirements);
 	
 		
 		return map;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static TeleportNPC valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("name") || !map.containsKey("type") 
 				 || !map.containsKey("location") || !map.containsKey("equipment")
 				  || !map.containsKey("message") || !map.containsKey("cost") 
-				|| !map.containsKey("destination")) {
+				|| !map.containsKey("destination") || !map.containsKey("requiredquests")
+				|| !map.containsKey("badrequirementmessage")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid NPC info! "
 					+ (map.containsKey("name") ? ": " + map.get("name") : ""));
 			return null;
@@ -141,12 +149,15 @@ public class TeleportNPC extends SimpleBioptionNPC {
 			
 		}
 		
-		npc.chat = (BioptionMessage) map.get("message");		
+		npc.chat = (BioptionMessage) map.get("message");
+		npc.altMessage = (Message) map.get("badrequirementmessage");
+		npc.requirements = (List<String>) map.get("requiredquests");
 		
 		//provide our npc's name, unless we don't have one!
 		if (npc.name != null && !npc.name.equals("")) {
 			FancyMessage label = new FancyMessage(npc.name);
 			npc.chat.setSourceLabel(label);			
+			npc.altMessage.setSourceLabel(label);
 		}
 		
 		return npc;
@@ -155,6 +166,10 @@ public class TeleportNPC extends SimpleBioptionNPC {
 	private int cost;
 	
 	private Location destination;
+	
+	private Message altMessage;
+	
+	private List<String> requirements;
 		
 	@Override
 	protected void interact(Player player) {
@@ -165,6 +180,25 @@ public class TeleportNPC extends SimpleBioptionNPC {
 		FancyMessage msg = new FancyMessage("I apologize, but you ")
 		.then("don't seem to have enough for fare...")
 		.color(ChatColor.DARK_RED);
+		
+		boolean meetreqs = true;
+		
+		if (requirements != null && !requirements.isEmpty()) {
+			//go through reqs, see if the player has those quests completed
+			for (String req : requirements) {
+				if (!qp.hasCompleted(req)) {
+					meetreqs=false;
+					break;
+				}
+			}
+		}
+		
+		if (!meetreqs) {
+			//doesn't have all the required quests done yet!
+			ChatMenu messageChat = ChatMenu.getDefaultMenu(altMessage);
+			messageChat.show(player);
+			return;
+		}
 			
 		SimpleMessage message = new SimpleMessage(msg);
 		message.setSourceLabel(new FancyMessage(this.name));
