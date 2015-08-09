@@ -1,5 +1,6 @@
 package nmt.minecraft.QuestManager.Scheduling;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -67,6 +68,8 @@ public class DispersedScheduler extends Scheduler {
 	private DispersedScheduler() {
 		this.delay = defaultDelay;
 		this.rest = defaultRest;
+		
+		this.list = new LinkedList<Tickable>();
 		
 		resting = true;
 		Bukkit.getScheduler().runTaskLater(QuestManagerPlugin.questManagerPlugin

@@ -9,9 +9,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 public abstract class NPC implements ConfigurationSerializable, Listener, Tickable {
@@ -86,6 +88,28 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 		if (e.getRightClicked().getUniqueId().equals(id)) {
 			e.setCancelled(true);
 			this.interact(e.getPlayer());
+		}
+	}
+	
+	@EventHandler
+	public void onEntityHurt(EntityDamageEvent e) {
+		if (!e.getEntity().getUniqueId().equals(id)) {
+			return;
+		}
+			
+		//grab the damage. if it's gonna kill us, just take no damage?
+		
+		
+		Entity ent = getEntity();
+		if (!(ent instanceof LivingEntity)) {
+			return;
+		}
+		
+		LivingEntity l = (LivingEntity) e;
+		
+		
+		if (e.getDamage() >= l.getHealth()){
+			e.setDamage(0.0);
 		}
 	}
 	
