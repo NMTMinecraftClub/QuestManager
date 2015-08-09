@@ -42,7 +42,7 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 	 * @return The entity attached to our UUID, or NULL if none is found
 	 */
 	public Entity getEntity() {
-		if (entity != null && !entity.isDead() && entity.getUniqueId().equals(id)) {
+		if (entity != null && entity.isValid() && !entity.isDead() && entity.getUniqueId().equals(id)) {
 			//still cached
 			return entity;
 		}
@@ -50,6 +50,8 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 		//try and load last chunk the entity was in
 		if (entity != null) {
 			entity.getLocation().getChunk();
+		} else {
+			System.out.println("entity is null: " + name);
 		}
 		
 		//cache has expired (new entity ID, etc) so grab entity
@@ -102,8 +104,7 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 			return;
 		}
 			
-		//grab the damage. if it's gonna kill us, just take no damage?
-		
+		//grab the damage. if it's gonna kill us, just take no damage? 
 		
 		Entity ent = getEntity();
 		if (!(ent instanceof LivingEntity)) {
@@ -111,7 +112,6 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 		}
 		
 		LivingEntity l = (LivingEntity) ent;
-		
 		
 		if (e.getDamage() >= l.getHealth()){
 			e.setDamage(0.0);
