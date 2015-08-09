@@ -3,7 +3,6 @@ package nmt.minecraft.QuestManager.UI.Menu.Action;
 
 import java.util.ListIterator;
 
-import net.minecraft.server.v1_8_R3.Material;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
@@ -11,6 +10,7 @@ import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
