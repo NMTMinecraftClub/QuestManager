@@ -103,6 +103,19 @@ public class ForgeAction implements MenuAction {
 				}
 			}
 			
+			//also run check over their equipment
+			for (ItemStack it : p.getEquipment().getArmorContents()) {
+				if (it == null) {
+					continue;
+				}
+				if (!it.getType().equals(Material.AIR))
+				if (Repairable.isRepairable(it.getType()))
+				if (it.getDurability() > 0) {
+					it.setDurability((short) 0);
+					count++;
+				}
+			}
+			
 			//make sure they had items to repair
 			if (count == 0) {
 				//no items were repaired!
