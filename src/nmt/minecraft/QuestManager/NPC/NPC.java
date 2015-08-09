@@ -47,6 +47,9 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 			return entity;
 		}
 		
+		//try and load last chunk the entity was in
+		entity.getLocation().getChunk();
+		
 		//cache has expired (new entity ID, etc) so grab entity
 		for (World w : Bukkit.getWorlds())
 		for (Entity e : w.getEntities()) {
@@ -105,7 +108,7 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 			return;
 		}
 		
-		LivingEntity l = (LivingEntity) e;
+		LivingEntity l = (LivingEntity) ent;
 		
 		
 		if (e.getDamage() >= l.getHealth()){
