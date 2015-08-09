@@ -71,8 +71,8 @@ public class ForgeAction implements MenuAction {
 					continue;
 				}
 				if (!item.getType().equals(Material.AIR))
-				if (item.getDurability() < item.getType().getMaxDurability()-1) {
-					item.setDurability((short) (item.getType().getMaxDurability()-1));
+				if (item.getDurability() > 0) {
+					item.setDurability((short) 0);
 					count++;
 				}
 			}
