@@ -25,6 +25,31 @@ import de.inventivegames.util.title.TitleManager;
  *
  */
 public class ForgeAction implements MenuAction {
+	
+	private enum Repairable {
+		SWORD,
+		BOW,
+		PICKAXE,
+		SPADE,
+		AXE,
+		CHESTPLATE,
+		LEGGINGS,
+		HELMET,
+		BOOTS;
+		
+		public static boolean isRepairable(Material mat) {
+			
+			String cname = mat.name();
+			for (Repairable rep : Repairable.values()) {
+				if (cname.endsWith(rep.name())) {
+					return true;
+				}
+			}
+			
+			
+			return false;
+		}
+	}
 
 	private int cost;
 	
@@ -71,6 +96,7 @@ public class ForgeAction implements MenuAction {
 					continue;
 				}
 				if (!item.getType().equals(Material.AIR))
+				if (Repairable.isRepairable(item.getType()))
 				if (item.getDurability() > 0) {
 					item.setDurability((short) 0);
 					count++;
