@@ -48,7 +48,9 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 		}
 		
 		//try and load last chunk the entity was in
-		entity.getLocation().getChunk();
+		if (entity != null) {
+			entity.getLocation().getChunk();
+		}
 		
 		//cache has expired (new entity ID, etc) so grab entity
 		for (World w : Bukkit.getWorlds())
