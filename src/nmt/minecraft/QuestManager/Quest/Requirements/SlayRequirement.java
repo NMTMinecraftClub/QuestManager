@@ -225,7 +225,7 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 		this.type = EntityType.valueOf(config.getString("entitytype"));
 		this.count = config.getInt("count");
 		
-		String tmp = config.getString("forcedname", "");
+		String tmp = config.getString("name", "");
 		
 		if (tmp.trim().isEmpty()) {
 			this.name = null;
