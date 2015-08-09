@@ -93,7 +93,6 @@ public class QuestManagerPlugin extends JavaPlugin {
 		if (!questDirectory.exists()) {
 			questDirectory.mkdirs();
 		}
-		
 	
 		//register our own requirements
 		reqManager.registerFactory("ARRIVE", 
