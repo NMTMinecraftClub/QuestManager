@@ -117,7 +117,7 @@ public class ArriveRequirement extends Requirement implements Listener {
 		if (state) {
 			return;
 		}
-		
+		sync();
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().isOnline())
 			if (player.getPlayer().getPlayer().getLocation().getWorld().getName().equals(destination.getWorld().getName()))

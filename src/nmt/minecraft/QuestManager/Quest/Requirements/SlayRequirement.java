@@ -198,7 +198,7 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 		if (state) {
 			return;
 		}
-		
+		sync();
 		if (progress >= count) {
 			state = true;
 			updateQuest();
