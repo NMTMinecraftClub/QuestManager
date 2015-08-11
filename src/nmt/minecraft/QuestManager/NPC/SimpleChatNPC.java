@@ -28,7 +28,7 @@ import org.bukkit.inventory.EntityEquipment;
  * @author Skyler
  *
  */
-public class SimpleChatNPC extends NPC {
+public class SimpleChatNPC extends SimpleNPC {
 
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -67,8 +67,8 @@ public class SimpleChatNPC extends NPC {
 	
 	private SimpleMessage chat;
 	
-	private SimpleChatNPC() {
-		super();
+	private SimpleChatNPC(Location startingLoc) {
+		super(startingLoc);
 	}
 		
 	@Override
@@ -76,14 +76,14 @@ public class SimpleChatNPC extends NPC {
 		Map<String, Object> map = new HashMap<String, Object>(4);
 		
 		map.put("name", name);
-		map.put("type", entity.getType());
-		map.put("location", new LocationState(entity.getLocation()));
+		map.put("type", getEntity().getType());
+		map.put("location", new LocationState(getEntity().getLocation()));
 		
 		EquipmentConfiguration econ;
 		
-		if (entity instanceof LivingEntity) {
+		if (getEntity() instanceof LivingEntity) {
 			econ = new EquipmentConfiguration(
-					((LivingEntity) entity).getEquipment()
+					((LivingEntity) getEntity()).getEquipment()
 					);
 		} else {
 			econ = new EquipmentConfiguration();
@@ -106,8 +106,6 @@ public class SimpleChatNPC extends NPC {
 			return null;
 		}
 		
-		SimpleChatNPC npc = new SimpleChatNPC();
-		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
 			YamlConfiguration tmp = new YamlConfiguration();
@@ -123,12 +121,17 @@ public class SimpleChatNPC extends NPC {
 		
 		EntityType type = EntityType.valueOf((String) map.get("type"));
 		
-		npc.entity = loc.getWorld().spawnEntity(loc, type);
-		npc.name = (String) map.get("name");
-		npc.entity.setCustomName((String) map.get("name"));
+		
+		SimpleChatNPC npc = new SimpleChatNPC(loc);
 
-		if (npc.entity instanceof LivingEntity) {
-			EntityEquipment equipment = ((LivingEntity) npc.entity).getEquipment();
+		loc.getChunk();
+		npc.setEntity(loc.getWorld().spawnEntity(loc, type));
+		npc.setStartingLoc(loc);
+		npc.name = (String) map.get("name");
+		npc.getEntity().setCustomName((String) map.get("name"));
+
+		if (npc.getEntity() instanceof LivingEntity) {
+			EntityEquipment equipment = ((LivingEntity) npc.getEntity()).getEquipment();
 			equipment.setHelmet(econ.getHead());
 			equipment.setChestplate(econ.getChest());
 			equipment.setLeggings(econ.getLegs());
@@ -161,6 +164,11 @@ public class SimpleChatNPC extends NPC {
 	protected void interact(Player player) {
 		ChatMenu messageChat = new SimpleChatMenu(chat.getFormattedMessage());
 		messageChat.show(player);
+	}
+	
+	@Override
+	public void tick() {
+		
 	}
 
 }

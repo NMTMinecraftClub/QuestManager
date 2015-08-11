@@ -43,24 +43,27 @@ public class BioptionChatMenu extends ChatMenu implements RespondableMenu {
 		//two things to do. 
 		if (arg.equals(BioptionMessage.OPTION1)) {
 			
-			if (opt1 != null) {
-				opt1.onAction();
-			}
 			
 			if (messageCache.getResponse1() != null) {
 				SimpleChatMenu menu = new SimpleChatMenu(messageCache.getResponse1());
 				menu.show(player);
 			}
+
+			if (opt1 != null) {
+				opt1.onAction();
+			}
 			
 			return true;
 		} else if (arg.equals(BioptionMessage.OPTION2)) {
-			if (opt2 != null) {
-				opt2.onAction();
-			}
+			
 			
 			if (messageCache.getResponse2() != null) {
 				SimpleChatMenu menu = new SimpleChatMenu(messageCache.getResponse2());
 				menu.show(player);
+			}
+			
+			if (opt2 != null) {
+				opt2.onAction();
 			}
 			
 			return true;

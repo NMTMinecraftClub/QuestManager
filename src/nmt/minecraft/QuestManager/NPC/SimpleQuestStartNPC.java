@@ -1,6 +1,7 @@
 package nmt.minecraft.QuestManager.NPC;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
@@ -68,20 +69,24 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 			return alias;
 		}
 	}
+
 	
+	private SimpleQuestStartNPC(Location startingLoc) {
+		super(startingLoc);
+	}
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>(4);
 		
 		map.put("name", name);
-		map.put("type", entity.getType());
-		map.put("location", new LocationState(entity.getLocation()));
+		map.put("type", getEntity().getType());
+		map.put("location", new LocationState(getEntity().getLocation()));
 		
 		EquipmentConfiguration econ;
 		
-		if (entity instanceof LivingEntity) {
+		if (getEntity() instanceof LivingEntity) {
 			econ = new EquipmentConfiguration(
-					((LivingEntity) entity).getEquipment()
+					((LivingEntity) getEntity()).getEquipment()
 					);
 		} else {
 			econ = new EquipmentConfiguration();
@@ -89,9 +94,11 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		
 		map.put("equipment", econ);
 		
-		map.put("message", chat);
-	
-		
+		map.put("firstmessage", chat);
+		map.put("duringmessage", duringMessage);
+		map.put("postmessage", afterMessage);
+		map.put("badrequirementmessage", altMessage);
+				
 		return map;
 	}
 	
@@ -99,14 +106,11 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		if (map == null || !map.containsKey("name") || !map.containsKey("type") 
 				 || !map.containsKey("location") || !map.containsKey("equipment")
 				  || !map.containsKey("firstmessage") || !map.containsKey("duringmessage")
-				  || !map.containsKey("postmessage")) {
+				  || !map.containsKey("postmessage") || !map.containsKey("badrequirementmessage")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid NPC info! "
 					+ (map.containsKey("name") ? ": " + map.get("name") : ""));
 			return null;
 		}
-		
-		SimpleQuestStartNPC npc = new SimpleQuestStartNPC();
-		npc.isEnd = false;
 		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
@@ -123,13 +127,19 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		
 		EntityType type = EntityType.valueOf((String) map.get("type"));
 		
+		
+		SimpleQuestStartNPC npc = new SimpleQuestStartNPC(loc);
+		npc.isEnd = false;
+		
 		npc.name = (String) map.get("name");
 		
-		npc.entity = loc.getWorld().spawnEntity(loc, type);
-		npc.entity.setCustomName((String) map.get("name"));
+		//load the chunk
+		loc.getChunk();
+		npc.setEntity(loc.getWorld().spawnEntity(loc, type));
+		npc.getEntity().setCustomName((String) map.get("name"));
 
-		if (npc.entity instanceof LivingEntity) {
-			EntityEquipment equipment = ((LivingEntity) npc.entity).getEquipment();
+		if (npc.getEntity() instanceof LivingEntity) {
+			EntityEquipment equipment = ((LivingEntity) npc.getEntity()).getEquipment();
 			equipment.setHelmet(econ.getHead());
 			equipment.setChestplate(econ.getChest());
 			equipment.setLeggings(econ.getLegs());
@@ -141,6 +151,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		npc.chat = (BioptionMessage) map.get("firstmessage");
 		npc.duringMessage = (Message) map.get("duringmessage");
 		npc.afterMessage = (Message) map.get("postmessage");
+		npc.altMessage = (Message) map.get("badrequirementmessage");
 		
 		
 		//provide our npc's name, unless we don't have one!
@@ -149,7 +160,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 			npc.chat.setSourceLabel(label);
 			npc.duringMessage.setSourceLabel(label);
 			npc.afterMessage.setSourceLabel(label);
-			
+			npc.altMessage.setSourceLabel(label);
 		}
 		
 		return npc;
@@ -164,6 +175,8 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 	private Message afterMessage;
 	
 	private Message finishMessage;
+	
+	private Message altMessage;
 	
 	public void setQuestTemplate(QuestConfiguration questTemplate) {
 		this.quest = questTemplate;
@@ -188,8 +201,24 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 				player.getUniqueId());
 		
 		ChatMenu messageChat = null;
+		boolean meetreqs = true;
 		
-		if (qp.hasCompleted(quest.getName())) {
+		List<String> reqs = quest.getRequiredQuests();
+		
+		if (reqs != null && !reqs.isEmpty()) {
+			//go through reqs, see if the player has those quests completed
+			for (String req : reqs) {
+				if (!qp.hasCompleted(req)) {
+					meetreqs=false;
+					break;
+				}
+			}
+		}
+		
+		if (!meetreqs) {
+			//doesn't have all the required quests done yet!
+			messageChat = ChatMenu.getDefaultMenu(altMessage);
+		} else if (!quest.isRepeatable() && qp.hasCompleted(quest.getName())) {
 			//already completed it
 			messageChat = ChatMenu.getDefaultMenu(afterMessage);
 		} else if (qp.isInQuest(quest.getName())) {

@@ -11,7 +11,9 @@ Needed
 
 ### For Launch
 
-+ Increased requirements, like 'slay 10 rabbits' or 'talk to' or 'deliver'
++ Increased requirements:
+++ 'talk to'
+++ 'deliver'
 
 ### For a complete QM
 
@@ -25,7 +27,5 @@ Extra Features
 + API capability (program your own very customized quests by getting API access
   to QM)
 + Visual information, like hovering text over monsters or party members, etc
-+ A nice visual way of interacting with quest components, like clicking
-  responses in the chat bar instead of typing in commands
 + Add a graphical editor for quest configuration files
 

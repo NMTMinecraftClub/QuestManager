@@ -26,7 +26,7 @@ import org.bukkit.inventory.EntityEquipment;
  * <i>equipment</i>:<br />
  * &nbsp;&nbsp;[valid {@link nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration}]
  */
-public class MuteNPC extends NPC {
+public class MuteNPC extends SimpleNPC {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -63,6 +63,10 @@ public class MuteNPC extends NPC {
 		}
 	}
 
+	private MuteNPC(Location startingLoc) {
+		super(startingLoc);
+	}
+
 	public static MuteNPC valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("name") || !map.containsKey("type") 
 				 || !map.containsKey("location") || !map.containsKey("equipment")) {
@@ -70,8 +74,6 @@ public class MuteNPC extends NPC {
 					+ (map.containsKey("name") ? ": " + map.get("name") : ""));
 			return null;
 		}
-		
-		MuteNPC npc = new MuteNPC();
 		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
@@ -88,11 +90,16 @@ public class MuteNPC extends NPC {
 		
 		EntityType type = EntityType.valueOf((String) map.get("type"));
 		
-		npc.entity = loc.getWorld().spawnEntity(loc, type);
-		npc.entity.setCustomName((String) map.get("name"));
+		
+		MuteNPC npc = new MuteNPC(loc);
 
-		if (npc.entity instanceof LivingEntity) {
-			EntityEquipment equipment = ((LivingEntity) npc.entity).getEquipment();
+		loc.getChunk();
+		npc.setEntity(loc.getWorld().spawnEntity(loc, type));
+		npc.setStartingLoc(loc);
+		npc.getEntity().setCustomName((String) map.get("name"));
+
+		if (npc.getEntity() instanceof LivingEntity) {
+			EntityEquipment equipment = ((LivingEntity) npc.getEntity()).getEquipment();
 			equipment.setHelmet(econ.getHead());
 			equipment.setChestplate(econ.getChest());
 			equipment.setLeggings(econ.getLegs());
@@ -109,14 +116,14 @@ public class MuteNPC extends NPC {
 		Map<String, Object> map = new HashMap<String, Object>(4);
 		
 		map.put("name", name);
-		map.put("type", entity.getType());
-		map.put("location", new LocationState(entity.getLocation()));
+		map.put("type", getEntity().getType());
+		map.put("location", new LocationState(getEntity().getLocation()));
 		
 		EquipmentConfiguration econ;
 		
-		if (entity instanceof LivingEntity) {
+		if (getEntity() instanceof LivingEntity) {
 			econ = new EquipmentConfiguration(
-					((LivingEntity) entity).getEquipment()
+					((LivingEntity) getEntity()).getEquipment()
 					);
 		} else {
 			econ = new EquipmentConfiguration();
@@ -126,10 +133,6 @@ public class MuteNPC extends NPC {
 	
 		
 		return map;
-	}
-	
-	private MuteNPC() {
-		super();
 	}
 
 	@Override

@@ -69,6 +69,10 @@ public class PluginConfiguration {
 		return config.getStringList("quests");
 	}
 	
+	public List<String> getWorlds() {
+		return config.getStringList("questworlds");
+	}
+	
 	/**
 	 * Gets the stored quest path information -- where the quest configuration files are stored
 	 * @return
@@ -119,6 +123,11 @@ public class PluginConfiguration {
 		config.set("version", QuestManagerPlugin.version);
 		config.set("conservativemode", true);
 		config.set("verbosemenus", false);
+		
+		List<String> worlds = new ArrayList<String>();
+		worlds.add("QuestWorld");
+		worlds.add("TutorialWorld");
+		config.set("questworlds", worlds);
 		//ConfigurationSection managers = config.createSection("managers");
 		
 		List<String> questNames = new ArrayList<String>(1);

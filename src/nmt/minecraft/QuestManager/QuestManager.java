@@ -13,11 +13,18 @@ import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.Quest.Quest;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scoreboard.Scoreboard;
 
-public class QuestManager {
+public class QuestManager implements Listener {
 	
 	private List<Quest> runningQuests;
 	
@@ -171,6 +178,8 @@ public class QuestManager {
 				
 						
 			}
+			
+			Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 
 			QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager finished!");	
 			
@@ -220,7 +229,9 @@ public class QuestManager {
 		//remove starting NPCs
 		if (!questNPCs.isEmpty()) {
 			for (NPC npc : questNPCs) {
-				npc.getEntity().remove();
+				if (npc.getEntity() != null) {
+					npc.getEntity().remove();
+				}
 			}
 		}
 	}
@@ -265,6 +276,41 @@ public class QuestManager {
 		
 		return null;
 	}
-
+	
+	@EventHandler
+	public void onItemPickup(PlayerPickupItemEvent e) {
+		
+		if (e.isCancelled()) {
+			return;
+		}
+		
+		ItemStack item = e.getItem().getItemStack();
+		
+		if (item.getType().equals(Material.WRITTEN_BOOK)) {
+			BookMeta meta = (BookMeta) item.getItemMeta();
+			
+			if (meta.getTitle().equals("Quest Log")) {
+				e.getItem().remove();
+				e.setCancelled(true);
+				
+				QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
+						e.getPlayer().getUniqueId()).addQuestBook();
+				
+				QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
+						e.getPlayer().getUniqueId()).updateQuestBook();
+			}
+		}
+		
+	}
+	
+	@EventHandler
+	public void onPlayerJoin(PlayerChangedWorldEvent e) {
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(
+				e.getPlayer().getWorld().getName())) {
+			//if they're coming to a quest world, make sure we have a player for them
+			QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
+					e.getPlayer().getUniqueId());
+		}
+	}
 	
 }

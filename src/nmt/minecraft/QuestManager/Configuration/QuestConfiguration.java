@@ -92,6 +92,21 @@ public class QuestConfiguration {
 				(boolean) QuestConfigurationField.SAVESTATE.getDefault());
 	}
 	
+	public boolean isRepeatable() {
+		return config.getBoolean(QuestConfigurationField.REPEATABLE.getKey(), 
+				(boolean) QuestConfigurationField.REPEATABLE.getDefault());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getRequiredQuests() {
+		if (!config.contains(QuestConfigurationField.PREREQS.getKey())) {
+			return (List<String>) QuestConfigurationField.PREREQS.getDefault();
+		}
+		
+		return config.getStringList(QuestConfigurationField.PREREQS.getKey());
+				
+	}
+	
 	public Collection<NPC> getAuxNPCs() {
 		
 		List<NPC> npcs = new LinkedList<NPC>();

@@ -7,10 +7,14 @@ import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Action.InnAction;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
+import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,21 +25,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 
 /**
- * Provides a simple two-option menu when interacted with. This NPC also supports simple response
- * menus in response to each option.<br />
- * This NPC does <b>not</b> support performing actions based on the response.
+ * NPC that offers a safe night to players<br />
+ * Stores the amount to charge players?
  * @author Skyler
  *
  */
-public class SimpleBioptionNPC extends SimpleNPC {
-
+public class InnNPC extends SimpleBioptionNPC {
+	
 	/**
 	 * Registers this class as configuration serializable with all defined 
 	 * {@link aliases aliases}
 	 */
 	public static void registerWithAliases() {
 		for (aliases alias : aliases.values()) {
-			ConfigurationSerialization.registerClass(SimpleBioptionNPC.class, alias.getAlias());
+			ConfigurationSerialization.registerClass(InnNPC.class, alias.getAlias());
 		}
 	}
 	
@@ -43,15 +46,15 @@ public class SimpleBioptionNPC extends SimpleNPC {
 	 * Registers this class as configuration serializable with only the default alias
 	 */
 	public static void registerWithoutAliases() {
-		ConfigurationSerialization.registerClass(SimpleBioptionNPC.class);
+		ConfigurationSerialization.registerClass(InnNPC.class);
 	}
 	
 
 	private enum aliases {
-		FULL("nmt.minecraft.QuestManager.NPC.SimpleBioptionNPCC"),
-		DEFAULT(SimpleBioptionNPC.class.getName()),
-		SHORT("SimpleBioptionNPC"),
-		INFORMAL("SBINPC");
+		FULL("nmt.minecraft.QuestManager.NPC.InnNPC"),
+		DEFAULT(InnNPC.class.getName()),
+		SHORT("InnNPC"),
+		INFORMAL("INNNPC");
 		
 		private String alias;
 		
@@ -63,19 +66,18 @@ public class SimpleBioptionNPC extends SimpleNPC {
 			return alias;
 		}
 	}
+
 	
-	protected BioptionMessage chat;
-	
-	protected SimpleBioptionNPC(Location startingLoc) {
+	private InnNPC(Location startingLoc) {
 		super(startingLoc);
 	}
-		
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>(4);
 		
 		map.put("name", name);
 		map.put("type", getEntity().getType());
+		map.put("cost", cost);
 		map.put("location", new LocationState(getEntity().getLocation()));
 		
 		EquipmentConfiguration econ;
@@ -96,10 +98,10 @@ public class SimpleBioptionNPC extends SimpleNPC {
 		return map;
 	}
 	
-	public static SimpleBioptionNPC valueOf(Map<String, Object> map) {
+	public static InnNPC valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("name") || !map.containsKey("type") 
 				 || !map.containsKey("location") || !map.containsKey("equipment")
-				  || !map.containsKey("message")) {
+				  || !map.containsKey("message") || !map.containsKey("cost")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid NPC info! "
 					+ (map.containsKey("name") ? ": " + map.get("name") : ""));
 			return null;
@@ -119,11 +121,12 @@ public class SimpleBioptionNPC extends SimpleNPC {
 		LocationState ls = (LocationState) map.get("location");
 		Location loc = ls.getLocation();
 		
-
-		SimpleBioptionNPC npc = new SimpleBioptionNPC(loc);
+		InnNPC npc = new InnNPC(loc);
 		EntityType type = EntityType.valueOf((String) map.get("type"));
 		
 		npc.name = (String) map.get("name");
+		
+		npc.cost = (int) map.get("cost");
 		
 
 		loc.getChunk();
@@ -140,22 +143,37 @@ public class SimpleBioptionNPC extends SimpleNPC {
 			
 		}
 		
-		npc.chat = (BioptionMessage) map.get("message");
+		npc.chat = (BioptionMessage) map.get("message");		
 		
 		//provide our npc's name, unless we don't have one!
 		if (npc.name != null && !npc.name.equals("")) {
-			npc.chat.setSourceLabel(
-					new FancyMessage(npc.name));
-			
+			FancyMessage label = new FancyMessage(npc.name);
+			npc.chat.setSourceLabel(label);			
 		}
 		
 		return npc;
 	}
-
+		
+	private int cost;
+		
 	@Override
 	protected void interact(Player player) {
-		ChatMenu messageChat = new BioptionChatMenu(chat, null, null);
+		
+		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager()
+				.getPlayer(player.getUniqueId());
+		
+		FancyMessage msg = new FancyMessage("I'm sorry, but you ")
+		.then("don't seem to have enough money...")
+		.color(ChatColor.DARK_RED);
+			
+		SimpleMessage message = new SimpleMessage(msg);
+		message.setSourceLabel(new FancyMessage(this.name));
+		
+		ChatMenu messageChat = new BioptionChatMenu(chat, 
+					new InnAction(cost, qp, message)
+		, null);			
+
 		messageChat.show(player);
 	}
-
+	
 }

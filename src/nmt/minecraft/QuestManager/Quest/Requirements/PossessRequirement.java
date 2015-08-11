@@ -138,7 +138,7 @@ public class PossessRequirement extends Requirement implements Listener {
 	 */
 	@Override
 	protected void update() {
-		
+		sync();
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().isOnline())
 			if (player.getPlayer().getPlayer().getInventory().containsAtLeast(new ItemStack(itemType), itemCount)) {

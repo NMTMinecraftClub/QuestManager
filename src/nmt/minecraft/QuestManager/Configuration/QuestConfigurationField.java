@@ -15,8 +15,10 @@ import org.bukkit.inventory.ItemStack;
  * <li>DESCRIPTION | description | "No Description"</li>
  * <li>GOALS | goals | <i>Empty List</i></li>
  * <li>SAVESTATE | savestate | false</li>
+ * <li>REPEATABLE | repeatable | false </li>
  * <li>NPCS | npcs | <i>Empty List</i></li>
  * <li>START | start | <i>null</i> </li>
+ * <li>PREREQS | requiredquests | <i>Empty List</i></li>
  * <li> END | end | same </li>
  * <li> FAME | fame | 100 </li>
  * <li> REWARDS | rewards | <i>Empty List</i> </li>
@@ -31,8 +33,10 @@ public enum QuestConfigurationField {
 	DESCRIPTION("description", "No Description"),
 	GOALS("goals", new LinkedList<Goal>()),
 	SAVESTATE("savestate", false),
+	REPEATABLE("repeatable", false),
 	NPCS("npcs", new LinkedList<Goal>()),
 	START("start", null),
+	PREREQS("requiredquests", new LinkedList<String>()),
 	END("end", "same"),
 	FAME("fame", 100),
 	REWARDS("rewards", new LinkedList<ItemStack>());

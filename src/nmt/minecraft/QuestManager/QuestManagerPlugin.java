@@ -10,15 +10,19 @@ import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Fanciful.MessagePart;
 import nmt.minecraft.QuestManager.Fanciful.TextualComponent;
+import nmt.minecraft.QuestManager.NPC.ForgeNPC;
+import nmt.minecraft.QuestManager.NPC.InnNPC;
 import nmt.minecraft.QuestManager.NPC.MuteNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleBioptionNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleChatNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
+import nmt.minecraft.QuestManager.NPC.TeleportNPC;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.SlayRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
@@ -89,8 +93,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		if (!questDirectory.exists()) {
 			questDirectory.mkdirs();
 		}
-		
-		
+	
 		//register our own requirements
 		reqManager.registerFactory("ARRIVE", 
 				new ArriveRequirement.ArriveFactory());
@@ -100,6 +103,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 				new PossessRequirement.PossessFactory());
 		reqManager.registerFactory("VANQUISH", 
 				new VanquishRequirement.VanquishFactory());
+		reqManager.registerFactory("SLAY", 
+				new SlayRequirement.SlayFactory());
 		
 	}
 	
@@ -113,6 +118,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 		SimpleChatNPC.registerWithAliases();
 		SimpleBioptionNPC.registerWithAliases();
 		SimpleQuestStartNPC.registerWithAliases();
+		InnNPC.registerWithAliases();
+		ForgeNPC.registerWithAliases();
+		TeleportNPC.registerWithAliases();
 		SimpleMessage.registerWithAliases();
 		BioptionMessage.registerWithAliases();
 		ConfigurationSerialization.registerClass(MessagePart.class);

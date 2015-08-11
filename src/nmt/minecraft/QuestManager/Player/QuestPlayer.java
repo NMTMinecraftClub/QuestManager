@@ -2,13 +2,16 @@ package nmt.minecraft.QuestManager.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
@@ -17,6 +20,7 @@ import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Instrument;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
@@ -25,9 +29,19 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+
+import com.onarandombox.MultiversePortals.MultiversePortals;
+import com.onarandombox.MultiversePortals.PortalPlayerSession;
+import com.onarandombox.MultiversePortals.event.MVPortalEvent;
 
 /**
  * Player wrapper to store questing information and make saving player quest status
@@ -35,7 +49,7 @@ import org.bukkit.inventory.meta.BookMeta;
  * @author Skyler
  *
  */
-public class QuestPlayer implements Participant {
+public class QuestPlayer implements Participant, Listener {
 
 	private OfflinePlayer player;
 	
@@ -47,7 +61,11 @@ public class QuestPlayer implements Participant {
 	
 	private int fame;
 	
+	private int money;
+	
 	private String title;
+	
+	private Location questPortal;
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -126,7 +144,9 @@ public class QuestPlayer implements Participant {
 	
 	private QuestPlayer() {
 		this.fame = 0;
-		this.title = "";
+		this.money = 0;
+		this.title = "The Unknown";
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 		; //do nothing. This is for non-redundant defining of QuestPlayers from config
 	}
 	
@@ -140,9 +160,13 @@ public class QuestPlayer implements Participant {
 		this();
 		this.player = player;
 		this.currentQuests = new LinkedList<Quest>();
+		this.completedQuests = new LinkedList<String>();
 		this.history = new History();
 		
-		
+		if (player.isOnline()) {
+			Player p = player.getPlayer();
+			questPortal = p.getWorld().getSpawnLocation();
+		}
 	}
 	
 	
@@ -245,6 +269,7 @@ public class QuestPlayer implements Participant {
 		bookMeta.addPage(ChatColor.DARK_PURPLE + " " + player.getName() + " - "
 				+ ChatColor.DARK_RED + title
 				+ "\n-----\n  " + ChatColor.GOLD + "Fame: " + fame
+				+ "\n  "			+ ChatColor.GOLD + "Gold: " + money
 				+ ChatColor.DARK_GREEN + "\n\n  Current Quests: " + currentQuests.size()
 				+ ChatColor.DARK_BLUE + "\n\n  Completed Quests: " + completedQuests.size()
 				+ ChatColor.RESET);	
@@ -291,6 +316,8 @@ public class QuestPlayer implements Participant {
 				+ " updated!" + ChatColor.RESET);
 		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
 		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
+		
+		play.setLevel(money);
 	}
 	
 	public List<Quest> getCurrentQuests() {
@@ -334,16 +361,34 @@ public class QuestPlayer implements Participant {
 	public void addQuest(Quest quest) {
 		currentQuests.add(quest);
 		history.addHistoryEvent(new HistoryEvent("Accepted the quest \"" + quest.getName() +"\""));
+		addQuestBook();
 		updateQuestBook();
 	}
 	
 	public boolean removeQuest(Quest quest) {
-		return currentQuests.remove(quest);
+		
+		if (currentQuests.isEmpty()) {
+			return false;
+		}
+		
+		Iterator<Quest> it = currentQuests.iterator();
+		
+		while (it.hasNext()) {
+			Quest q = it.next();
+			if (q.equals(quest)) {
+				it.remove();
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public void completeQuest(Quest quest) {
-		completedQuests.add(quest.getName());
-		currentQuests.remove(quest);
+		if (!completedQuests.contains(quest.getName())) {
+			completedQuests.add(quest.getName());			
+		}
+		removeQuest(quest);
 		
 		history.addHistoryEvent(
 				new HistoryEvent("Completed the quest \"" + quest.getName() + "\""));
@@ -369,6 +414,38 @@ public class QuestPlayer implements Participant {
 		this.fame = fame;
 	}
 	
+	/**
+	 * @return the money
+	 */
+	public int getMoney() {
+		return money;
+	}
+
+	/**
+	 * @param money the money to set
+	 */
+	public void setMoney(int money) {
+		this.money = money;
+		if (player.isOnline())
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+					.getWorlds().contains(player.getPlayer().getWorld().getName())) {
+			player.getPlayer().setLevel(this.money);
+		}
+	}
+	
+	/**
+	 * Add some money to the player's wallet
+	 * @param money
+	 */
+	public void addMoney(int money) {
+		this.money += money;
+		if (player.isOnline())
+			if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+						.getWorlds().contains(player.getPlayer().getWorld().getName())) {
+				player.getPlayer().setLevel(this.money);
+			}
+	}
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -409,7 +486,9 @@ public class QuestPlayer implements Participant {
 		Map<String, Object> map = new HashMap<String, Object>(3);
 		map.put("title", title);
 		map.put("fame", fame);
+		map.put("money", money);
 		map.put("id", player.getUniqueId().toString());
+		map.put("portalloc", this.questPortal);
 		map.put("completedquests", completedQuests);
 		
 		return map;
@@ -423,7 +502,8 @@ public class QuestPlayer implements Participant {
 	@SuppressWarnings("unchecked")
 	public static QuestPlayer valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("id") || !map.containsKey("fame") 
-				 || !map.containsKey("title") || !map.containsKey("completedquests")) {
+				 || !map.containsKey("title") || !map.containsKey("completedquests")
+				 || !map.containsKey("portalloc") || !map.containsKey("money")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid Quest Player! "
 					+ (map.containsKey("id") ? ": " + map.get("id") : ""));
 			return null;
@@ -433,7 +513,14 @@ public class QuestPlayer implements Participant {
 				(String) map.get("id")));
 		QuestPlayer qp = new QuestPlayer(player);
 		
+		if (map.get("portalloc") == null) {
+			qp.questPortal = null;
+		} else {
+			qp.questPortal = ((LocationState) map.get("portalloc")).getLocation();
+		}
+		
 		qp.fame = (int) map.get("fame");
+		qp.money = (int) map.get("money");
 		qp.title = (String) map.get("title");
 		qp.completedQuests = (List<String>) map.get("completedquests");
 		
@@ -448,6 +535,158 @@ public class QuestPlayer implements Participant {
 	@Override
 	public String getIDString() {
 		return player.getUniqueId().toString();
+	}
+
+	/**
+	 * @return the questPortal
+	 */
+	public Location getQuestPortal() {
+		return questPortal;
+	}
+
+	/**
+	 * @param questPortal the questPortal to set
+	 */
+	public void setQuestPortal(Location questPortal) {
+		this.questPortal = questPortal;
+	}
+	
+	@EventHandler
+	public void onPortal(MVPortalEvent e) {
+		if (!player.isOnline() || e.isCancelled()) {
+			return;
+		}
+			
+		if (e.getTeleportee().equals(player)) {			
+			
+			List<String> qworlds = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+					.getWorlds();
+			if (qworlds.contains(e.getFrom().getWorld().getName())) {
+				
+				//check that we aren't going TO antoher quest world
+				if (qworlds.contains(e.getDestination().getLocation(player.getPlayer()).getWorld().getName())) {
+					//we are! Don't interfere here
+					return;
+				}
+				
+				//we're leaving a quest world, so save the portal!
+				this.questPortal = e.getFrom();
+				return;
+			}
+			if (qworlds.contains(e.getDestination().getLocation(player.getPlayer()).getWorld().getName())) {
+				//Before we warp to our old location, we need to make sure we HAVE one
+				if (this.questPortal == null) {
+					//this is our first time coming in, so just let the portal take us
+					//and save where it plops us out at
+					this.questPortal = e.getDestination().getLocation(player.getPlayer());
+					return;
+				}
+				
+				//we're moving TO a quest world, so actually go to our saved location
+				e.setCancelled(true);
+				player.getPlayer().teleport(questPortal);
+			}
+		}
+	}
+
+	@EventHandler
+	public void onExp(PlayerExpChangeEvent e) {
+		if (!player.isOnline()) {
+			return;
+		}
+		
+		Player p = player.getPlayer().getPlayer();
+		
+		if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			return;
+		}
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+				.getWorlds().contains(p.getWorld().getName())) {
+			return;
+		}
+		
+		money += e.getAmount();
+		p.setLevel(money);
+		
+		e.setAmount(0);
+	}
+	
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent e) {
+		
+		if (!player.isOnline()) {
+			return;
+		}
+		
+		Player p = player.getPlayer().getPlayer();
+		
+		if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			return;
+		}
+		
+		if (e.getItem() != null && e.getItem().getType().equals(Material.WRITTEN_BOOK)) {
+			BookMeta meta = (BookMeta) e.getItem().getItemMeta();
+			
+			if (meta.getTitle().equals("Quest Log") && 
+					e.getItem().getEnchantmentLevel(Enchantment.LUCK) == 5) {
+				//it's a quest log. Update it
+				
+				updateQuestBook();
+			}
+		}
+		
+	}
+	
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent e) {
+		if (!player.isOnline()) {
+			return;
+		}
+		
+		Player p = player.getPlayer().getPlayer();
+		
+		if (!p.getUniqueId().equals(e.getEntity().getUniqueId())) {
+			return;
+		}
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+				.getWorlds().contains(p.getWorld().getName())) {
+			return;
+		}
+		
+		e.setDroppedExp(0);
+		e.setNewLevel(money);
+		
+	}
+	
+	@EventHandler
+	public void onPlayerRespawn(PlayerRespawnEvent e) {
+
+		if (!player.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			return;
+		}
+
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+				.getWorlds().contains(e.getRespawnLocation().getWorld().getName())) {
+			return;
+		}
+		
+		//in a quest world, so put them back to their last checkpoint
+		e.setRespawnLocation(
+				this.questPortal);
+		MultiversePortals mvp = (MultiversePortals) Bukkit.getPluginManager().getPlugin("Multiverse-Portals");
+		
+		if (mvp == null) {
+			System.out.println("null");
+			return;
+		}
+		
+		PortalPlayerSession ps = mvp.getPortalSession(e.getPlayer());
+		ps.playerDidTeleport(questPortal);
+		ps.setTeleportTime(new Date());
+		
+		
 	}
 	
 	
