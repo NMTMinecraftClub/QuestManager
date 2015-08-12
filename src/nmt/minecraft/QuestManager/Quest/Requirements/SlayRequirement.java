@@ -229,6 +229,8 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 		
 		if (tmp.trim().isEmpty()) {
 			this.name = null;
+		} else {
+			this.name = tmp;
 		}
 		
 	}
