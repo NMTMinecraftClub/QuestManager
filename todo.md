@@ -13,13 +13,14 @@ Needed
 
 + Increased requirements:
 ++ 'talk to'
-++ 'deliver'
 
 ### For a complete QM
 
 + A nice party interface
 + The ability to drop quests
 + Compasses and location stuffs
++ Toggle 'taming' on and off
++ Item requirements compatible with names (Rusty Iron Ore vs Shiny Iron Ore, etc)
 
 Extra Features
 --------------
