@@ -14,10 +14,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
  * Requirement specification that requires the user to have some quantity of a specific item
+ * This requirement can also check whether or not the name of the item matches one given to it
  * @author Skyler
  *
  */
@@ -41,6 +43,8 @@ public class PossessRequirement extends Requirement implements Listener {
 	
 	private int itemCount;
 	
+	private String itemName;
+	
 	private PossessRequirement(Goal goal) {
 		super(goal);
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
@@ -55,12 +59,21 @@ public class PossessRequirement extends Requirement implements Listener {
 	}
 	
 	public PossessRequirement(Participant participants, Goal goal, String description, Material itemType, int itemCount) {
+		this(participants, goal, description, itemType, 1, "");
+	}
+	
+	public PossessRequirement(Participant participants, Goal goal, String description, Material itemType, int itemCount,
+			String itemName) {
 		super(goal, description);
 		state = false;
 		this.itemType = itemType;
 		this.itemCount = itemCount;
+		this.itemName = itemName;
 		this.participants = participants;
 		
+		if (itemName.trim().isEmpty()) {
+			this.itemName = null;
+		}
 	}
 
 	/**
@@ -94,6 +107,9 @@ public class PossessRequirement extends Requirement implements Listener {
 					int pos = e.getPlayer().getInventory().first(itemType);
 					ItemStack item = e.getPlayer().getInventory().getItem(pos);
 					item.setAmount(item.getAmount() - count);
+					if (e.getItem().getItemStack().hasItemMeta()) {
+						item.setItemMeta(e.getItem().getItemStack().getItemMeta());
+					}
 					e.getPlayer().getInventory().setItem(pos, item);
 					
 					return;
@@ -120,6 +136,9 @@ public class PossessRequirement extends Requirement implements Listener {
 					int pos = e.getPlayer().getInventory().first(itemType);
 					ItemStack item = e.getPlayer().getInventory().getItem(pos);
 					item.setAmount(item.getAmount() - count);
+					if (e.getItemDrop().getItemStack().hasItemMeta()) {
+						item.setItemMeta(e.getItemDrop().getItemStack().getItemMeta());
+					}
 					e.getPlayer().getInventory().setItem(pos, item);
 					
 					return;
@@ -140,15 +159,28 @@ public class PossessRequirement extends Requirement implements Listener {
 	protected void update() {
 		sync();
 		for (QuestPlayer player : participants.getParticipants()) {
-			if (player.getPlayer().isOnline())
-			if (player.getPlayer().getPlayer().getInventory().containsAtLeast(new ItemStack(itemType), itemCount)) {
-				if (!state) {
-					//if we just achieved it, update the quest!
-					this.state = true;
-					updateQuest();
+				if (player.getPlayer().isOnline()) {
+					
+					//if (player.getPlayer().getPlayer().getInventory().containsAtLeast(new ItemStack(itemType), itemCount))
+					int count = 0;
+					Inventory inv = player.getPlayer().getPlayer().getInventory();
+					
+					for (ItemStack item : inv.all(itemType).values()) {
+						if (itemName == null || 
+								(item.hasItemMeta() && itemName.equals(item.getItemMeta().getDisplayName()))) {
+							count += item.getAmount();
+						}
+					}
+						
+					if (!state && count >= itemCount) {
+						//if we just achieved it, update the quest!
+						this.state = true;
+						updateQuest();
+					}
+					
+					return;
+				
 				}
-				return;
-			}
 		}
 		
 		state = false;

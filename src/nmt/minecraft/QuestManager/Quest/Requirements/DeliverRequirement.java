@@ -18,6 +18,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -45,6 +46,8 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 	
 	private int itemCount;
 	
+	private String itemName;
+	
 	private DeliverRequirement(Goal goal) {
 		super(goal);
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
@@ -59,12 +62,21 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 	}
 	
 	public DeliverRequirement(Participant participants, Goal goal, String description, Material itemType, int itemCount) {
+		this(participants, goal, description, itemType, 1, "");
+	}
+	
+	public DeliverRequirement(Participant participants, Goal goal, String description, Material itemType, int itemCount,
+			String itemName) {
 		super(goal, description);
 		state = false;
 		this.itemType = itemType;
 		this.itemCount = itemCount;
+		this.itemName = itemName;
 		this.participants = participants;
 		
+		if (itemName.trim().isEmpty()) {
+			this.itemName = null;
+		}
 	}
 
 	/**
@@ -86,6 +98,9 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 		if (this.participants == null) {
 			return;
 		}
+		if (state) {
+			return;
+		}
 		if (!e.isCancelled() && e.getItem().getItemStack().getType() == itemType) {
 			
 			for (QuestPlayer qp : participants.getParticipants()) {
@@ -98,6 +113,9 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 					int pos = e.getPlayer().getInventory().first(itemType);
 					ItemStack item = e.getPlayer().getInventory().getItem(pos);
 					item.setAmount(item.getAmount() - count);
+					if (e.getItem().getItemStack().hasItemMeta()) {
+						item.setItemMeta(e.getItem().getItemStack().getItemMeta());
+					}
 					e.getPlayer().getInventory().setItem(pos, item);
 					
 					return;
@@ -112,6 +130,9 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 		if (this.participants == null) {
 			return;
 		}
+		if (state) {
+			return;
+		}
 		if (!e.isCancelled() && e.getItemDrop().getItemStack().getType() == itemType) {
 			
 			for (QuestPlayer qp : participants.getParticipants()) {
@@ -121,15 +142,48 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 					e.getPlayer().getInventory().addItem(e.getItemDrop().getItemStack());
 					update();
 					
-					int pos = e.getPlayer().getInventory().first(itemType);
-					ItemStack item = e.getPlayer().getInventory().getItem(pos);
-					item.setAmount(item.getAmount() - count);
-					e.getPlayer().getInventory().setItem(pos, item);
+//					int pos = e.getPlayer().getInventory().first(itemType);
+//					ItemStack item = e.getPlayer().getInventory().getItem(pos);
+//					item.setAmount(item.getAmount() - count);
+//					if (e.getItemDrop().getItemStack().hasItemMeta()) {
+//						item.setItemMeta(e.getItemDrop().getItemStack().getItemMeta());
+//					}
+//					e.getPlayer().getInventory().setItem(pos, item);
+					
+					if (itemName == null) {
+						//do not need to match a name, so remove a count of itemtype
+						e.getPlayer().getInventory().remove(
+								new ItemStack(itemType, count));
+					} else {
+						//gotta go through and find ones that match the name
+						int left = count;
+						for (ItemStack item : e.getPlayer().getInventory().all(itemType).values()) {
+							if (item.hasItemMeta() && itemName.equals(item.getItemMeta().getDisplayName())) {
+								//deduct from this item stack as much as we can, up to 'left'
+								//but if there's more than 'left' left, just remove it
+								int amt = item.getAmount();
+								if (amt <= left) {
+									//gonna remove entire stack
+									item.setType(Material.AIR);
+									item.setAmount(0);
+									item.setItemMeta(null);
+								} else {
+									item.setAmount(amt - left);
+								}
+								
+								left-=amt;
+								
+								if (left <= 0) {
+									break;
+								}
+							}
+						}
 					
 					return;
+					}
 				}
-			}
 			
+			}
 		}
 	}
 	
@@ -143,14 +197,57 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 	@Override
 	protected void update() {
 		sync();
+		if (state) {
+			//no need to check anything, cause we've already been met
+			return;
+		}
+		
 		for (QuestPlayer player : participants.getParticipants()) {
-			if (player.getPlayer().isOnline())
-			if (player.getPlayer().getPlayer().getInventory().containsAtLeast(new ItemStack(itemType), itemCount)) {
-				if (!state) {
+			if (player.getPlayer().isOnline()) {
+			
+				int count = 0;
+				Inventory inv = player.getPlayer().getPlayer().getInventory();
+				
+				for (ItemStack item : inv.all(itemType).values()) {
+					if (itemName == null || 
+							(item.hasItemMeta() && item.getItemMeta().getDisplayName().equals(itemName))) {
+						count += item.getAmount();
+					}
+				}
+					
+				if (count >= itemCount) {
 					//if we just achieved it, update the quest!
 					this.state = true;
-					player.getPlayer().getPlayer().getInventory().remove(
-							new ItemStack(itemType, itemCount));
+					
+					if (itemName == null) {
+						//do not need to match a name, so remove a count of itemtype
+						player.getPlayer().getPlayer().getInventory().remove(
+								new ItemStack(itemType, itemCount));
+					} else {
+						//gotta go through and find ones that match the name
+						int left = itemCount;
+						for (ItemStack item : inv.all(itemType).values()) {
+							if (item.hasItemMeta() && itemName.equals(item.getItemMeta().getDisplayName())) {
+								//deduct from this item stack as much as we can, up to 'left'
+								//but if there's more than 'left' left, just remove it
+								int amt = item.getAmount();
+								if (amt <= left) {
+									//gonna remove entire stack
+									item.setType(Material.AIR);
+									item.setAmount(0);
+									item.setItemMeta(null);
+								} else {
+									item.setAmount(amt - left);
+								}
+								
+								left-=amt;
+								
+								if (left <= 0) {
+									break;
+								}
+							}
+						}
+					}
 					HandlerList.unregisterAll(this);
 					updateQuest();
 				}
@@ -168,9 +265,10 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 		//  type: "delr"
 		//  itemYype: (Material. ENUM CONSTANT NAME)
 		//  count: [int]
+		//  name: [string]
 		
-		if (!config.contains("type") || !config.getString("type").equals("pr")) {
-			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'pr' but got " + config.getString("type", "null"));
+		if (!config.contains("type") || !config.getString("type").equals("delr")) {
+			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'delr' but got " + config.getString("type", "null"));
 		}
 		
 		this.itemType = Material.valueOf(
@@ -178,6 +276,10 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 		
 		this.itemCount = config.getInt("count", 1);
 		
+		this.itemName = config.getString("name");
+		if (itemName.trim().isEmpty()) {
+			itemName = null;
+		}
 	}
 
 	@Override
