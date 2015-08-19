@@ -24,6 +24,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.DeliverRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.SlayRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.TimeRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
@@ -108,6 +109,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 				new SlayRequirement.SlayFactory());
 		reqManager.registerFactory("DELIVER", 
 				new DeliverRequirement.DeliverFactory());
+		reqManager.registerFactory("TIME", 
+				new TimeRequirement.TimeFactory());
 		
 	}
 	
