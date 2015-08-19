@@ -13,11 +13,14 @@ import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.Quest.Quest;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -310,6 +313,23 @@ public class QuestManager implements Listener {
 			//if they're coming to a quest world, make sure we have a player for them
 			QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
 					e.getPlayer().getUniqueId());
+		}
+	}
+	
+	@EventHandler
+	public void onCraft(CraftItemEvent e) {
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getAllowCrafting()) {
+			return;
+		}
+		
+		if (e.getWhoClicked() instanceof Player) {
+			Player p = (Player) e.getWhoClicked();
+			Location loc = p.getLocation();
+			
+			if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+					.getWorlds().contains(loc.getWorld().getName())) {
+				e.setCancelled(true);
+			}
 		}
 	}
 	

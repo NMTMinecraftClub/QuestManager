@@ -112,7 +112,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 			return;
 		}
 		
-		if (!foe.isValid()) {
+		if (!foe.isValid() || foe.isDead()) {
 			foe = getFoe();
 		}
 		

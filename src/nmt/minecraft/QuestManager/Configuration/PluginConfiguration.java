@@ -99,6 +99,10 @@ public class PluginConfiguration {
 		return config.getBoolean("verbosemenus");
 	}
 	
+	public boolean getAllowCrafting() {
+		return config.getBoolean("allowcrafting");
+	}
+	
 	/**
 	 * Gets the stored save data path information
 	 * @return
@@ -123,6 +127,7 @@ public class PluginConfiguration {
 		config.set("version", QuestManagerPlugin.version);
 		config.set("conservativemode", true);
 		config.set("verbosemenus", false);
+		config.set("allowcrafting", false);
 		
 		List<String> worlds = new ArrayList<String>();
 		worlds.add("QuestWorld");
