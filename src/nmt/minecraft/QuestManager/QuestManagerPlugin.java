@@ -20,6 +20,7 @@ import nmt.minecraft.QuestManager.NPC.TeleportNPC;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.CountdownRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.DeliverRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
@@ -111,6 +112,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 				new DeliverRequirement.DeliverFactory());
 		reqManager.registerFactory("TIME", 
 				new TimeRequirement.TimeFactory());
+		reqManager.registerFactory("TIME", 
+				new CountdownRequirement.CountdownFactory());
 		
 	}
 	
