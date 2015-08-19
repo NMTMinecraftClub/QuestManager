@@ -21,7 +21,7 @@ There already are a large number of features available. A lot of work has been p
 
     * Chat-based menu system with automatic handling and proofing
     * Multiple NPC types with custom functionality
-    * Five requirement types to build completely custom goals
+    * Eight requirement types to build completely custom goals
     * Player stats including current & completed quest count and Fame
     * Self-updated Quest-log
 
