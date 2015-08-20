@@ -90,6 +90,10 @@ public class TimeRequirement extends Requirement implements Tickable {
 	@Override
 	protected void update() {
 		sync();
+		
+		if (participants == null || participants.getParticipants().isEmpty()) {
+			return;
+		}
 				
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().isOnline()) {

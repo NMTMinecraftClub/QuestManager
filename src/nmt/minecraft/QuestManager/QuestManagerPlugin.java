@@ -112,7 +112,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 				new DeliverRequirement.DeliverFactory());
 		reqManager.registerFactory("TIME", 
 				new TimeRequirement.TimeFactory());
-		reqManager.registerFactory("TIME", 
+		reqManager.registerFactory("COUNTDOWN", 
 				new CountdownRequirement.CountdownFactory());
 		
 	}
