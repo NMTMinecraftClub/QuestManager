@@ -202,6 +202,11 @@ public class PossessRequirement extends Requirement implements Listener {
 				config.getString("itemType", "AIR"));
 		
 		this.itemCount = config.getInt("count", 1);
+
+		this.itemName = config.getString("name", "");
+		if (itemName.trim().isEmpty()) {
+			itemName = null;
+		}
 		
 	}
 	

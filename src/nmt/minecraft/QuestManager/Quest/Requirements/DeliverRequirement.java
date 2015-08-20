@@ -276,7 +276,7 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 		
 		this.itemCount = config.getInt("count", 1);
 		
-		this.itemName = config.getString("name");
+		this.itemName = config.getString("name", "");
 		if (itemName.trim().isEmpty()) {
 			itemName = null;
 		}
