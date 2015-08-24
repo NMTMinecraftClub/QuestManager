@@ -9,6 +9,7 @@ import nmt.minecraft.QuestManager.Player.QuestPlayer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -19,6 +20,41 @@ import org.bukkit.inventory.ItemStack;
  *
  */
 public class GuiInventory implements ConfigurationSerializable {
+	
+	/**
+	 * Registers this class as configuration serializable with all defined 
+	 * {@link aliases aliases}
+	 */
+	public static void registerWithAliases() {
+		for (aliases alias : aliases.values()) {
+			ConfigurationSerialization.registerClass(GuiInventory.class, alias.getAlias());
+		}
+	}
+	
+	/**
+	 * Registers this class as configuration serializable with only the default alias
+	 */
+	public static void registerWithoutAliases() {
+		ConfigurationSerialization.registerClass(GuiInventory.class);
+	}
+	
+
+	private enum aliases {
+		FULL("nmt.minecraft.QuestManager.UI.Inventory.GuiInventory"),
+		DEFAULT(GuiInventory.class.getName()),
+		SHORT("GuiInventory"),
+		INFORMAL("GINV");
+		
+		private String alias;
+		
+		private aliases(String alias) {
+			this.alias = alias;
+		}
+		
+		public String getAlias() {
+			return alias;
+		}
+	}
 	
 	private Map<Integer, InventoryItem> items;
 	

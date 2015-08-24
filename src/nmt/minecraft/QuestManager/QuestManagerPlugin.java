@@ -29,6 +29,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.TimeRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 import nmt.minecraft.QuestManager.UI.InventoryGuiHandler;
+import nmt.minecraft.QuestManager.UI.Menu.Inventory.GuiInventory;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
 import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
 
@@ -135,6 +136,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		TeleportNPC.registerWithAliases();
 		SimpleMessage.registerWithAliases();
 		BioptionMessage.registerWithAliases();
+		GuiInventory.registerWithAliases();
 		ConfigurationSerialization.registerClass(MessagePart.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ArbitraryTextTypeComponent.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ComplexTextTypeComponent.class);
