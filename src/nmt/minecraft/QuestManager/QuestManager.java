@@ -20,6 +20,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -330,6 +331,48 @@ public class QuestManager implements Listener {
 					.getWorlds().contains(loc.getWorld().getName())) {
 				e.setCancelled(true);
 			}
+		}
+	}
+	
+	@EventHandler
+	public void onEntityDeath(EntityDeathEvent e) {
+		String world = e.getEntity().getWorld().getName();
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+					.getWorlds().contains(world)) {
+			return;
+		}
+		
+		
+		if (e.getEntity().getCustomName() != null)
+		if (e.getEntity().getKiller() != null)
+		if (e.getEntity().getCustomName().contains("(Lvl ")) {
+			//level'ed entity!
+			String cache = e.getEntity().getCustomName();
+			int pos = cache.indexOf("(Lvl ");
+			//advance pos by 5 to get the number
+			pos += 5;
+			String tail = cache.substring(pos);
+			int length = 0;
+			for (char c : tail.toCharArray()) {
+				if (Character.isDigit(c)) {
+					length += 1;
+				} else {
+					break;
+				}
+			}
+			
+			if (length == 0) {
+				System.out.println("Error when finding level! Expected a number, got:  " + tail.charAt(0));
+				return;
+			}
+			
+			String lvl = tail.substring(0, length);
+			int level = Integer.valueOf(lvl);
+			level = (level-1) / 3; //1,2,3 are 0, 4,5,6 are 1, etc
+			level +=1; 			   //1,2,3 are 1, 5,6,7 are 2, etc
+			
+			e.setDroppedExp(level);
 		}
 	}
 	
