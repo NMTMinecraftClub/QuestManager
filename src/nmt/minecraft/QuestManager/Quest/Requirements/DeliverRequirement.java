@@ -210,7 +210,8 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 				
 				for (ItemStack item : inv.all(itemType).values()) {
 					if (itemName == null || 
-							(item.hasItemMeta() && item.getItemMeta().getDisplayName().equals(itemName))) {
+							(item.hasItemMeta() && item.getItemMeta().getDisplayName() != null 
+							  && item.getItemMeta().getDisplayName().equals(itemName))) {
 						count += item.getAmount();
 					}
 				}

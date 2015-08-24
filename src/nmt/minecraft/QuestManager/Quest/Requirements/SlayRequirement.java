@@ -168,8 +168,8 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 		if (e.getEntityType().equals(type)) {
 			
 			//if name is null (SHORT CIRCUIT IF SO) or if the name matches
-			if (name == null || (e.getEntity().getCustomName().equals(name)))
-			if (e.getEntity().getKiller()  != null) {
+			if (name == null || (e.getEntity().getCustomName() != null && e.getEntity().getCustomName().equals(name)))
+			if (e.getEntity().getKiller() != null) {
 				boolean trip = false;
 				for (QuestPlayer quester : participants.getParticipants()) {
 					if (quester.getPlayer().getUniqueId().equals(e.getEntity().getKiller().getUniqueId())) {
