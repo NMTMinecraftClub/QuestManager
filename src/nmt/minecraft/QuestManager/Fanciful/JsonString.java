@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gson.stream.JsonWriter;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
+import com.google.gson.stream.JsonWriter;
 
 /**
  * Represents a JSON string value.

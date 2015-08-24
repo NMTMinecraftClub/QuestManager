@@ -62,7 +62,7 @@ public class ForgeAction implements MenuAction {
 		this.player = player;
 		this.denial = denialMessage;
 	}
-	
+
 	@Override
 	public void onAction() {
 		

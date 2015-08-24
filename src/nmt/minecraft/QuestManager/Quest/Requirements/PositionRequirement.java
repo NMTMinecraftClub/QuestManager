@@ -108,7 +108,7 @@ public class PositionRequirement extends Requirement implements Listener {
 	 */
 	@Override
 	public void update() {
-		
+		sync();
 		for (QuestPlayer player : participants.getParticipants()) {
 			if (player.getPlayer().isOnline())
 			if (player.getPlayer().getPlayer().getLocation().getWorld().getName().equals(destination.getWorld().getName()))

@@ -1,5 +1,7 @@
 package nmt.minecraft.QuestManager.Quest.Requirements;
 
+import java.util.UUID;
+
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.State.RequirementState;
@@ -9,10 +11,13 @@ import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -45,6 +50,8 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	
 	private LivingEntity foe;
 	
+	private UUID id;
+	
 	private VanquishRequirement(Goal goal) {
 		super(goal);
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
@@ -65,7 +72,15 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	 * @return the foe
 	 */
 	public LivingEntity getFoe() {
-		return foe;
+		for (World w : Bukkit.getWorlds())
+		for (Entity e : w.getEntities()) {
+			if (e.getUniqueId().equals(id)) {
+				foe = (LivingEntity) e;
+				return foe;
+			}
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -95,6 +110,10 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	public void update() {
 		if (state) {
 			return;
+		}
+		
+		if (!foe.isValid() || foe.isDead()) {
+			foe = getFoe();
 		}
 		
 		state = foe.isDead();
@@ -138,7 +157,11 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		ConfigurationSection foeState =  myState.getConfigurationSection("foe");
 		Location loc = ((LocationState) foeState.get("location")).getLocation();
 		
+		//load chunk before creating foe
+		loc.getChunk();
+		
 		foe = (LivingEntity) loc.getWorld().spawnEntity(loc, EntityType.valueOf(foeState.getString("type")));
+		this.id = foe.getUniqueId();
 		foe.setMaxHealth(foeState.getDouble("maxhp"));
 		foe.setHealth(foeState.getDouble("hp"));
 		foe.setCustomName(foeState.getString("name"));
@@ -174,6 +197,16 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	}
 	
 	public void stop() {
+		//load chunk
+		Chunk chunk = foe.getLocation().getChunk();
+		
+		for (Entity e : chunk.getEntities()) {
+			if (e.getUniqueId().equals(id)) {
+				foe = (LivingEntity) e;
+				break;
+			}
+		}
+		
 		foe.remove();
 	}
 	

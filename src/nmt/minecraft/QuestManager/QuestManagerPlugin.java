@@ -13,6 +13,7 @@ import nmt.minecraft.QuestManager.Fanciful.TextualComponent;
 import nmt.minecraft.QuestManager.NPC.ForgeNPC;
 import nmt.minecraft.QuestManager.NPC.InnNPC;
 import nmt.minecraft.QuestManager.NPC.MuteNPC;
+import nmt.minecraft.QuestManager.NPC.ShopNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleBioptionNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleChatNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
@@ -20,11 +21,16 @@ import nmt.minecraft.QuestManager.NPC.TeleportNPC;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.CountdownRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.DeliverRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.SlayRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.TimeRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
+import nmt.minecraft.QuestManager.UI.InventoryGuiHandler;
+import nmt.minecraft.QuestManager.UI.Menu.Inventory.GuiInventory;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
 import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
 
@@ -59,7 +65,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private QuestManager manager;
 	
-	private ChatGuiHandler guiHandler;
+	private ChatGuiHandler chatGuiHandler;
+	
+	private InventoryGuiHandler inventoryGuiHandler;
 	
 	private PluginConfiguration config;
 	
@@ -105,6 +113,12 @@ public class QuestManagerPlugin extends JavaPlugin {
 				new VanquishRequirement.VanquishFactory());
 		reqManager.registerFactory("SLAY", 
 				new SlayRequirement.SlayFactory());
+		reqManager.registerFactory("DELIVER", 
+				new DeliverRequirement.DeliverFactory());
+		reqManager.registerFactory("TIME", 
+				new TimeRequirement.TimeFactory());
+		reqManager.registerFactory("COUNTDOWN", 
+				new CountdownRequirement.CountdownFactory());
 		
 	}
 	
@@ -120,15 +134,18 @@ public class QuestManagerPlugin extends JavaPlugin {
 		SimpleQuestStartNPC.registerWithAliases();
 		InnNPC.registerWithAliases();
 		ForgeNPC.registerWithAliases();
+		ShopNPC.registerWithAliases();
 		TeleportNPC.registerWithAliases();
 		SimpleMessage.registerWithAliases();
 		BioptionMessage.registerWithAliases();
+		GuiInventory.registerWithAliases();
 		ConfigurationSerialization.registerClass(MessagePart.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ArbitraryTextTypeComponent.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ComplexTextTypeComponent.class);
 		ConfigurationSerialization.registerClass(FancyMessage.class);
 
-		guiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
+		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
+		inventoryGuiHandler = new InventoryGuiHandler();
 		
 		
 		//preload Player data
@@ -243,8 +260,12 @@ public class QuestManagerPlugin extends JavaPlugin {
 		return playerManager;
 	}
 	
-	public ChatGuiHandler getGuiHandler() {
-		return guiHandler;
+	public ChatGuiHandler getChatGuiHandler() {
+		return chatGuiHandler;
+	}
+	
+	public InventoryGuiHandler getInventoryGuiHandler() {
+		return inventoryGuiHandler;
 	}
 	
 	public QuestManager getManager() {

@@ -46,7 +46,7 @@ public abstract class ChatMenu {
 		this.message = msg;
 		
 		if (ChatMenu.handler == null) {
-			handler = QuestManagerPlugin.questManagerPlugin.getGuiHandler();
+			handler = QuestManagerPlugin.questManagerPlugin.getChatGuiHandler();
 		}
 	}
 	
