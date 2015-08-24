@@ -28,6 +28,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.SlayRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.TimeRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
+import nmt.minecraft.QuestManager.UI.InventoryGuiHandler;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
 import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
 
@@ -62,7 +63,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private QuestManager manager;
 	
-	private ChatGuiHandler guiHandler;
+	private ChatGuiHandler chatGuiHandler;
+	
+	private InventoryGuiHandler inventoryGuiHandler;
 	
 	private PluginConfiguration config;
 	
@@ -137,7 +140,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 		ConfigurationSerialization.registerClass(TextualComponent.ComplexTextTypeComponent.class);
 		ConfigurationSerialization.registerClass(FancyMessage.class);
 
-		guiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
+		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
+		inventoryGuiHandler = new InventoryGuiHandler();
 		
 		
 		//preload Player data
@@ -252,8 +256,12 @@ public class QuestManagerPlugin extends JavaPlugin {
 		return playerManager;
 	}
 	
-	public ChatGuiHandler getGuiHandler() {
-		return guiHandler;
+	public ChatGuiHandler getChatGuiHandler() {
+		return chatGuiHandler;
+	}
+	
+	public InventoryGuiHandler getInventoryGuiHandler() {
+		return inventoryGuiHandler;
 	}
 	
 	public QuestManager getManager() {
