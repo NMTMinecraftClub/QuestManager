@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
@@ -81,7 +82,20 @@ public class GuiInventory implements ConfigurationSerializable {
 		Inventory inv = Bukkit.createInventory(p, 45);
 		if (!items.isEmpty()) {
 			for (Entry<Integer, InventoryItem> e : items.entrySet()) {
-				inv.setItem(e.getKey(), e.getValue().getDisplay(player));
+				Object key = e.getKey();
+				if (key == null) {
+					continue;
+				}
+				int val;
+				if (key instanceof Integer) {
+					val = (Integer) key;
+				} else if (key instanceof String) {
+					val = Integer.valueOf((String) key);
+				} else {
+					val = 0;
+					System.out.println("invalid key! not string or int!");
+				}
+				inv.setItem(val, e.getValue().getDisplay(player));
 			}
 		}
 		
@@ -124,7 +138,7 @@ public class GuiInventory implements ConfigurationSerializable {
 		return map;
 	}
 	
-	public GuiInventory valueOf(Map<String, Object> configMap) {
+	public static GuiInventory valueOf(Map<String, Object> configMap) {
 		/*
 		 * 4:
 		 * 	display:
@@ -139,28 +153,28 @@ public class GuiInventory implements ConfigurationSerializable {
 		//TODO instead of jumping right into display, item, etc
 		//make multiple inventory items. E.g. a purchase one, an inn one, etc
 		
+		YamlConfiguration config = new YamlConfiguration();
+		config.createSection("top", configMap);
+		
 		Map<Integer, InventoryItem> map = new HashMap<Integer, InventoryItem>();
-		for (Entry<String, Object> e : configMap.entrySet()) {
-			Object obj = e.getValue();
-			if (!(obj instanceof Map<?, ?>)) {
-				QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to load GuiInventory"
-						+ " from config! Was looking for map, found:\n" + obj.toString());
-				return null;
+		ConfigurationSection conf = config.getConfigurationSection("top");
+		
+		for (String slotString : conf.getKeys(false)) {
+			ConfigurationSection section = conf.getConfigurationSection(slotString);
+			if (slotString.startsWith("==")) {
+				continue;
 			}
-			
-			@SuppressWarnings("unchecked")
-			Map<String, Object> itemMap = (Map<String, Object>) obj;
-			int key = Integer.valueOf(e.getKey());
+			int key = Integer.valueOf(slotString);
 			
 			int cost, fame;
 			ItemStack display, item;
 			
-			display = (ItemStack) itemMap.get("display");
-			item = (ItemStack) itemMap.get("item");
-			cost = (int) itemMap.get("cost");
-			fame = (int) itemMap.get("fame");
+			display = section.getItemStack("display");
+			item = section.getItemStack("item");
+			cost = section.getInt("cost");
+			fame = section.getInt("fame");
 			
-			InventoryItem ii = new InventoryItem(display, item, cost, fame);
+			InventoryItem ii = new InventoryItem(item, display, cost, fame);
 			
 			map.put(key, ii);
 			

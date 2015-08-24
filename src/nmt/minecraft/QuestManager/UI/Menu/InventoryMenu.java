@@ -71,7 +71,13 @@ public class InventoryMenu implements Listener {
 		
 		//our inventory event!
 		int pos = e.getRawSlot();
+		
+		if (gui.getItem(pos) == null) {
+			return;
+		}
+		
 		gui.getItem(pos).getAction(player).onAction();
+		e.setCancelled(true);
 	}
 	
 	@EventHandler

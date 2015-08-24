@@ -13,6 +13,7 @@ import nmt.minecraft.QuestManager.Fanciful.TextualComponent;
 import nmt.minecraft.QuestManager.NPC.ForgeNPC;
 import nmt.minecraft.QuestManager.NPC.InnNPC;
 import nmt.minecraft.QuestManager.NPC.MuteNPC;
+import nmt.minecraft.QuestManager.NPC.ShopNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleBioptionNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleChatNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
@@ -133,6 +134,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		SimpleQuestStartNPC.registerWithAliases();
 		InnNPC.registerWithAliases();
 		ForgeNPC.registerWithAliases();
+		ShopNPC.registerWithAliases();
 		TeleportNPC.registerWithAliases();
 		SimpleMessage.registerWithAliases();
 		BioptionMessage.registerWithAliases();

@@ -51,9 +51,9 @@ public class InventoryItem {
 		ItemMeta meta = ret.getItemMeta();
 		meta.setLore(Arrays.asList(
 				(cost <= player.getMoney() ? ChatColor.DARK_GREEN : ChatColor.DARK_RED) + 
-					"Cost:          " + cost,
+					"Cost:               " + cost,
 				(famecost <= player.getFame() ? ChatColor.DARK_GREEN : ChatColor.DARK_RED) +
-					"Fame Required: "));
+					"Fame Required: " + famecost));
 		ret.setItemMeta(meta);
 		
 		return ret;
@@ -64,7 +64,7 @@ public class InventoryItem {
 	}
 	
 	public MenuAction getAction(QuestPlayer player) {
-		return new PurchaseAction(player, displayItem, cost, famecost);
+		return new PurchaseAction(player, item, cost, famecost);
 	}
 
 	/**
