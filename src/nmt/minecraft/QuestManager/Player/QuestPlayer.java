@@ -440,7 +440,7 @@ public class QuestPlayer implements Participant, Listener {
 	public void addMoney(int money) {
 		this.money += money;
 		if (player.isOnline())
-			if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+			if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 						.getWorlds().contains(player.getPlayer().getWorld().getName())) {
 				player.getPlayer().setLevel(this.money);
 			}
