@@ -3,6 +3,11 @@ package nmt.minecraft.QuestManager.UI.Menu.Action;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 
+import org.bukkit.Instrument;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
+import org.bukkit.entity.Player;
+
 /**
  * Adds a player to another player's party, creating it if it doesn't exist
  * @author Skyler
@@ -28,6 +33,10 @@ public class JoinPartyAction implements MenuAction {
 		} else {
 			other.joinParty(leader.getParty());
 		}
+		Player p = other.getPlayer().getPlayer();
+		p.playNote(p.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
+		p.playNote(p.getLocation(), Instrument.PIANO, Note.natural(1, Tone.G));
+		p.playNote(p.getLocation(), Instrument.PIANO, Note.natural(1, Tone.E));
 	}
 
 }

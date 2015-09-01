@@ -246,9 +246,22 @@ public class QuestManagerPlugin extends JavaPlugin {
 		}
 		
 		if (cmd.getName().equals("party")) {
-
+			
+			if (args.length == 0 || !(sender instanceof Player)) {
+				return false;
+			}
+			
 			QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
-			qp.getParty().updateScoreboard();
+			if (qp.getParty() == null) {
+				sender.sendMessage("You're not in a party!");
+				return true;
+			}
+			
+			String msg = "[Party] <" + sender.getName() + "> ";
+			for (String part : args) {
+				msg += part + " ";
+			}
+			qp.getParty().tellMembers(msg);
 			return true;
 		}
 		

@@ -14,7 +14,11 @@ import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Instrument;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -331,27 +335,29 @@ public class Party implements Participant {
 	}
 	
 	public void tellMembers(String message) {
-		if (leader != null && leader.getPlayer().isOnline()) {
-			leader.getPlayer().getPlayer().sendMessage(message);
-		}
-		if (members.isEmpty()) {
-			return;
-		}
-		
-		for (QuestPlayer qp : members) {
-			qp.getPlayer().getPlayer().sendMessage(message);
-		}
+		tellMembers(new FancyMessage(message));
 	}
 	
 	public void tellMembers(FancyMessage message) {
 		if (leader != null) {
-			message.send(leader.getPlayer().getPlayer());
+			Player l = leader.getPlayer().getPlayer();
+			message.send(l);
+			l.playNote(l.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
+			l.playNote(l.getLocation(), Instrument.PIANO, Note.natural(1, Tone.G));
+			l.playNote(l.getLocation(), Instrument.PIANO, Note.natural(1, Tone.E));
 		}
 		if (members.isEmpty()) {
 			return;
 		}
 		for (QuestPlayer qp : members) {
+			if (!qp.getPlayer().isOnline()) {
+				continue;
+			}
+			Player p = qp.getPlayer().getPlayer();
 			message.send(qp.getPlayer().getPlayer());
+			p.playNote(p.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
+			p.playNote(p.getLocation(), Instrument.PIANO, Note.natural(1, Tone.G));
+			p.playNote(p.getLocation(), Instrument.PIANO, Note.natural(1, Tone.E));
 		}
 	}
 	

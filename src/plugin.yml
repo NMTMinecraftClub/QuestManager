@@ -13,3 +13,4 @@ commands:
     party:
         usage: /party
         description: used to interface with the party menus
+        aliases: p

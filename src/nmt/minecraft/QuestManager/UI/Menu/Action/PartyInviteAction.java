@@ -9,6 +9,10 @@ import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Message.PlainMessage;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Instrument;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
+import org.bukkit.entity.Player;
 
 public class PartyInviteAction implements MenuAction {
 	
@@ -51,7 +55,11 @@ public class PartyInviteAction implements MenuAction {
 		
 		ChatMenu menu = new MultioptionChatMenu(body, joinOpt, denyOpt);
 		
-		menu.show(other.getPlayer().getPlayer());
+		Player op = other.getPlayer().getPlayer();
+		menu.show(op);
+		op.playNote(op.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
+		op.playNote(op.getLocation(), Instrument.PIANO, Note.natural(1, Tone.G));
+		op.playNote(op.getLocation(), Instrument.PIANO, Note.natural(1, Tone.E));
 		
 		ChatMenu myMenu = new SimpleChatMenu(new FancyMessage("Your invitation has been sent."));
 		myMenu.show(leader.getPlayer().getPlayer());
