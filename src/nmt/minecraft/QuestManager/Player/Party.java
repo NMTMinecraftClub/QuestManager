@@ -92,13 +92,14 @@ public class Party implements Participant {
 		tLeader = partyBoard.registerNewTeam("Leader");
 		tMembers = partyBoard.registerNewTeam("members");
 		
-		tLeader.setPrefix(ChatColor.BOLD.toString());
+		tLeader.setPrefix(ChatColor.GOLD.toString());
+		tMembers.setPrefix(ChatColor.DARK_GREEN.toString());
 		
 		hover = partyBoard.registerNewObjective("hover", "health");
 		hover.setDisplaySlot(DisplaySlot.BELOW_NAME);
 		hover.setDisplayName(" / 20");
 		
-		board = partyBoard.registerNewObjective("board", "health");
+		board = partyBoard.registerNewObjective("side", "health");
 		board.setDisplayName("Party");
 		board.setDisplaySlot(DisplaySlot.SIDEBAR);
 		
@@ -146,14 +147,16 @@ public class Party implements Participant {
 		}
 		
 		//now that everyone's registered, let's update health
-		
+		Objective obj = partyBoard.getObjective(DisplaySlot.SIDEBAR);
 		if (leader.getPlayer().isOnline()) {
 			(leader.getPlayer().getPlayer()).setHealth(leader.getPlayer().getPlayer().getHealth());
+			obj.getScore(leader.getPlayer().getName()).setScore((int) leader.getPlayer().getPlayer().getHealth());
 		}
 		if (!members.isEmpty())
 		for (QuestPlayer member : members) {
 			if (member.getPlayer().isOnline()) {
 				(member.getPlayer().getPlayer()).setHealth(member.getPlayer().getPlayer().getHealth());
+				obj.getScore(member.getPlayer().getName()).setScore((int) member.getPlayer().getPlayer().getHealth());
 			}
 		}
 	}

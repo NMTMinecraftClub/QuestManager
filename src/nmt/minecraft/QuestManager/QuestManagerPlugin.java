@@ -246,6 +246,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 		}
 		
 		if (cmd.getName().equals("party")) {
+
+			QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
+			qp.getParty().updateScoreboard();
 			return true;
 		}
 		

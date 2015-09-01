@@ -53,6 +53,9 @@ public class PartyInviteAction implements MenuAction {
 		
 		menu.show(other.getPlayer().getPlayer());
 		
+		ChatMenu myMenu = new SimpleChatMenu(new FancyMessage("Your invitation has been sent."));
+		myMenu.show(leader.getPlayer().getPlayer());
+		
 		
 	}
 
