@@ -12,10 +12,15 @@ import java.util.UUID;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
+import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.ChatMenuOption;
+import nmt.minecraft.QuestManager.UI.Menu.MultioptionChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Message.PlainMessage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,7 +38,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -66,6 +73,8 @@ public class QuestPlayer implements Participant, Listener {
 	private String title;
 	
 	private Location questPortal;
+	
+	private Party party;
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -571,6 +580,9 @@ public class QuestPlayer implements Participant, Listener {
 				
 				//we're leaving a quest world, so save the portal!
 				this.questPortal = e.getFrom();
+				
+				//player quit
+				onPlayerQuit();
 				return;
 			}
 			if (qworlds.contains(e.getDestination().getLocation(player.getPlayer()).getWorld().getName())) {
@@ -689,5 +701,69 @@ public class QuestPlayer implements Participant, Listener {
 		
 	}
 	
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent e) {
+		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+			onPlayerQuit();
+		}
+	}
+	
+	/**
+	 * Internal helper method to house what happens when a player quits (by leaving, logging out, etc)
+	 */
+	private void onPlayerQuit() {
+		if (party != null) {
+			party.removePlayer(this);
+			party = null;
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerInteractWithPlayer(PlayerInteractEntityEvent e) {
+		if (!player.isOnline()) {
+			return;
+		}
+		
+		Player p = player.getPlayer().getPlayer();
+		
+		if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			return;
+		}
+		
+		//did interact with another player?
+		if (e.getRightClicked() instanceof Player) {
+			QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
+					(Player) e.getRightClicked());
+			
+			showPlayerMenu(qp);
+			return;
+		}
+	
+	}
+	
+	/**
+	 * Displays for this quest player a player menu for the given player.
+	 * @param player
+	 */
+	private void showPlayerMenu(QuestPlayer player) {
+		/*
+		 * ++++++++++++++++++++++++++++++
+		 *     Name - Title
+		 *     
+		 *  Send Message    View Info      Trade
+		 *  Invite To Party
+		 * ++++++++++++++++++++++++++++++
+		 */
+		FancyMessage msg = new FancyMessage(player.getPlayer().getName() + "  -  " + player.getTitle());
+		
+		ChatMenuOption opt1 = new ChatMenuOption(new PlainMessage("Option 1"), null);
+		
+		ChatMenuOption opt2 = new ChatMenuOption(new PlainMessage("Option 2"), null);
+		
+		ChatMenu menu = new MultioptionChatMenu(new PlainMessage(msg), opt1, opt2);
+		
+		menu.show(this.player.getPlayer().getPlayer());
+		
+	}
 	
 }

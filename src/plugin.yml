@@ -10,3 +10,6 @@ commands:
     qmchatmenu:
         usage: This command is not meant to be called directly.
         description: Internal interface command for quest menus - chat
+    party:
+        usage: /party
+        description: used to interface with the party menus

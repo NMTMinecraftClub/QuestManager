@@ -245,6 +245,10 @@ public class QuestManagerPlugin extends JavaPlugin {
 			return true;
 		}
 		
+		if (cmd.getName().equals("party")) {
+			return true;
+		}
+		
 		return false;
 	}
 	

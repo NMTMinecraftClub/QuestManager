@@ -5,15 +5,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
 import nmt.minecraft.QuestManager.Configuration.Utils.GUID;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -28,6 +29,8 @@ public class Party implements Participant {
 	
 	
 	//private List<QuestPlayer> players;
+	
+	private static final int maxSize = 4;
 	
 	private List<QuestPlayer> members;
 	
@@ -115,6 +118,7 @@ public class Party implements Participant {
 	
 	public Party(String name, QuestPlayer leader, Collection<QuestPlayer> players) {
 		this(name, leader);
+		
 		members.addAll(players);
 		
 		for (QuestPlayer p : players) {
@@ -131,24 +135,24 @@ public class Party implements Participant {
 		}
 		
 		if (leader.getPlayer().isOnline()) {
-			((Player) leader.getPlayer()).setScoreboard(partyBoard);
+			(leader.getPlayer().getPlayer()).setScoreboard(partyBoard);
 		}
 		if (!members.isEmpty())
 		for (QuestPlayer member : members) {
 			if (member.getPlayer().isOnline()) {
-				((Player) member.getPlayer()).setScoreboard(partyBoard);
+				( member.getPlayer().getPlayer()).setScoreboard(partyBoard);
 			}
 		}
 		
 		//now that everyone's registered, let's update health
 		
 		if (leader.getPlayer().isOnline()) {
-			((Player) leader.getPlayer()).setHealth(leader.getPlayer().getPlayer().getHealth());
+			(leader.getPlayer().getPlayer()).setHealth(leader.getPlayer().getPlayer().getHealth());
 		}
 		if (!members.isEmpty())
 		for (QuestPlayer member : members) {
 			if (member.getPlayer().isOnline()) {
-				((Player) member.getPlayer()).setHealth(member.getPlayer().getPlayer().getHealth());
+				(member.getPlayer().getPlayer()).setHealth(member.getPlayer().getPlayer().getHealth());
 			}
 		}
 	}
@@ -231,7 +235,76 @@ public class Party implements Participant {
 		return id;
 	}
 	
+	/**
+	 * Adds the player to the party, returning true if successful. If the player cannot be added,
+	 * false is returned instead.
+	 * @param player
+	 * @return true if successful
+	 */
+	public boolean addMember(QuestPlayer player) {
+		if (members.size() < Party.maxSize) {
+			tellMembers(
+					new FancyMessage(player.getPlayer().getName())
+						.color(ChatColor.DARK_BLUE)
+						.then(" has joined the party")
+					);
+			members.add(player);
+			return true;
+		}
+		
+		return false;
+	}
 	
+	public int getSize() {
+		return members.size();
+	}
 	
+	public boolean isFull() {
+		return (members.size() >= Party.maxSize);
+	}
+	
+	public boolean removePlayer(QuestPlayer player) {
+		if (members.isEmpty()) {
+			return false;
+		}
+		
+		ListIterator<QuestPlayer> it = members.listIterator();
+		QuestPlayer qp;
+		
+		while (it.hasNext()) {
+			qp = it.next();
+			if (qp.getIDString().equals(player.getIDString())) {
+				it.remove();
+				tellMembers(
+						new FancyMessage(player.getPlayer().getName())
+							.color(ChatColor.DARK_BLUE)
+							.then(" has left the party")
+						);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public void tellMembers(String message) {
+		if (members.isEmpty()) {
+			return;
+		}
+		
+		for (QuestPlayer qp : members) {
+			qp.getPlayer().getPlayer().sendMessage(message);
+		}
+	}
+	
+	public void tellMembers(FancyMessage message) {
+		if (members.isEmpty()) {
+			return;
+		}
+		
+		for (QuestPlayer qp : members) {
+			message.send(qp.getPlayer().getPlayer());
+		}
+	}
 	
 }

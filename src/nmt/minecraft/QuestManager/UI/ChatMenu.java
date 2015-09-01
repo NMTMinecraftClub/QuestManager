@@ -65,6 +65,10 @@ public abstract class ChatMenu {
 		return message;
 	}
 	
+	protected void setMessage(FancyMessage message) {
+		this.message = message;
+	}
+	
 	/**
 	 * Defines the menu that goes with most standard message types.<br />
 	 * If you do not register your own message types here, they will always default
