@@ -99,6 +99,7 @@ public class Party implements Participant {
 		hover.setDisplayName(" / 20");
 		
 		board = partyBoard.registerNewObjective("board", "health");
+		board.setDisplayName("Party");
 		board.setDisplaySlot(DisplaySlot.SIDEBAR);
 		
 	}
@@ -249,7 +250,15 @@ public class Party implements Participant {
 						.then(" has joined the party")
 					);
 			members.add(player);
+			updateScoreboard();
 			return true;
+		} else {
+			tellMembers(
+					new FancyMessage("Unable to add ")
+						.then(player.getPlayer().getName())
+						.color(ChatColor.DARK_BLUE)
+						.then(" becuase the party is full!")
+					);
 		}
 		
 		return false;
@@ -264,6 +273,28 @@ public class Party implements Participant {
 	}
 	
 	public boolean removePlayer(QuestPlayer player) {
+		
+		if (player.getIDString().equals(leader.getIDString())) {
+			tLeader.removePlayer(leader.getPlayer());
+			
+			if (members.size() == 1) {
+				//close party
+				members.get(0).leaveParty("The party has been closed");
+				return true;
+			}
+			
+			leader = members.get(0);
+			tMembers.removePlayer(leader.getPlayer());
+			members.remove(0);
+			updateScoreboard();
+			tellMembers(
+					new FancyMessage(player.getPlayer().getName())
+						.color(ChatColor.DARK_BLUE)
+						.then(" has left the party")
+					);
+			return true;
+		}
+		
 		if (members.isEmpty()) {
 			return false;
 		}
@@ -274,12 +305,21 @@ public class Party implements Participant {
 		while (it.hasNext()) {
 			qp = it.next();
 			if (qp.getIDString().equals(player.getIDString())) {
+				tMembers.removePlayer(qp.getPlayer());
 				it.remove();
 				tellMembers(
 						new FancyMessage(player.getPlayer().getName())
 							.color(ChatColor.DARK_BLUE)
 							.then(" has left the party")
 						);
+				
+				//make sure leader isn't the only one left
+				if (members.isEmpty()) {
+					leader.leaveParty("The party has been closed.");
+				} else {
+					updateScoreboard();
+				}
+				
 				return true;
 			}
 		}
@@ -288,6 +328,9 @@ public class Party implements Participant {
 	}
 	
 	public void tellMembers(String message) {
+		if (leader != null && leader.getPlayer().isOnline()) {
+			leader.getPlayer().getPlayer().sendMessage(message);
+		}
 		if (members.isEmpty()) {
 			return;
 		}
@@ -298,10 +341,12 @@ public class Party implements Participant {
 	}
 	
 	public void tellMembers(FancyMessage message) {
+		if (leader != null) {
+			message.send(leader.getPlayer().getPlayer());
+		}
 		if (members.isEmpty()) {
 			return;
 		}
-		
 		for (QuestPlayer qp : members) {
 			message.send(qp.getPlayer().getPlayer());
 		}

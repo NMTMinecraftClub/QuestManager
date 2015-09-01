@@ -20,6 +20,9 @@ import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.ChatMenuOption;
 import nmt.minecraft.QuestManager.UI.Menu.MultioptionChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Action.PartyInviteAction;
+import nmt.minecraft.QuestManager.UI.Menu.Action.ShowChatMenuAction;
 import nmt.minecraft.QuestManager.UI.Menu.Message.PlainMessage;
 
 import org.bukkit.Bukkit;
@@ -423,6 +426,31 @@ public class QuestPlayer implements Participant, Listener {
 		this.fame = fame;
 	}
 	
+	public Party getParty() {
+		return party;
+	}
+	
+	public Party createParty() {
+		this.party = new Party(this);
+		return party;
+	}
+	
+	public void joinParty(Party party) {
+		if (party.addMember(this))	{
+			this.party = party;
+		}
+	}
+	
+	protected void leaveParty(String message) {
+		if (getPlayer().isOnline()) {
+			getPlayer().getPlayer().sendMessage(message);
+			getPlayer().getPlayer().setScoreboard(
+					Bukkit.getScoreboardManager().getNewScoreboard());
+		}
+		
+		this.party = null;
+	}
+	
 	/**
 	 * @return the money
 	 */
@@ -704,6 +732,7 @@ public class QuestPlayer implements Participant, Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+			System.out.println("process (id: " + player.getUniqueId() + ") ====\n" + e.getPlayer().getUniqueId());
 			onPlayerQuit();
 		}
 	}
@@ -756,9 +785,13 @@ public class QuestPlayer implements Participant, Listener {
 		 */
 		FancyMessage msg = new FancyMessage(player.getPlayer().getName() + "  -  " + player.getTitle());
 		
-		ChatMenuOption opt1 = new ChatMenuOption(new PlainMessage("Option 1"), null);
+		ChatMenuOption opt1 = new ChatMenuOption(new PlainMessage("Invite to Party"), 
+				new PartyInviteAction(this, player));
 		
-		ChatMenuOption opt2 = new ChatMenuOption(new PlainMessage("Option 2"), null);
+		
+		ChatMenuOption opt2 = new ChatMenuOption(new PlainMessage("Option 2"), 
+				new ShowChatMenuAction(new SimpleChatMenu(new FancyMessage("lol2")), 
+				this.player.getPlayer()));
 		
 		ChatMenu menu = new MultioptionChatMenu(new PlainMessage(msg), opt1, opt2);
 		

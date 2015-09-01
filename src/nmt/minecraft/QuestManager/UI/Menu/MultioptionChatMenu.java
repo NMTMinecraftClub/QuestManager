@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
@@ -87,7 +88,7 @@ public class MultioptionChatMenu extends ChatMenu implements RespondableMenu {
 		}
 		
 		
-		player.sendMessage("Something went wrong! [Invalid Biopt Argument!]");
+		player.sendMessage("Something went wrong! [Invalid Mopt Argument!]");
 		return false;
 		
 	}
@@ -111,8 +112,10 @@ public class MultioptionChatMenu extends ChatMenu implements RespondableMenu {
 				.then("\n\n");
 				
 		if (!options.isEmpty())
-		for (ChatMenuOption opt : options.values()) {
-			msg.then("    " + opt.getLabel().getFormattedMessage())
+		for (String key : options.keySet()) {
+			ChatMenuOption opt = options.get(key);
+			msg.then("    ")
+			.then(opt.getLabel().getFormattedMessage()).command(ChatGuiHandler.cmdBase + " " + key)
 				.color(ChatColor.DARK_GREEN)
 				.style(ChatColor.ITALIC);
 		}
