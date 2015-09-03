@@ -9,9 +9,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import nmt.minecraft.QuestManager.Configuration.Utils.GUID;
-import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Instrument;
@@ -19,17 +16,25 @@ import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.Utils.GUID;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 
 /**
  * A group of players who work together on 
  * @author Skyler
  *
  */
-public class Party implements Participant {
+public class Party implements Participant, Listener {
 	
 	
 	//private List<QuestPlayer> players;
@@ -99,13 +104,15 @@ public class Party implements Participant {
 		tLeader.setPrefix(ChatColor.GOLD.toString());
 		tMembers.setPrefix(ChatColor.DARK_GREEN.toString());
 		
-		hover = partyBoard.registerNewObjective("hover", "health");
+		hover = partyBoard.registerNewObjective("hover", "dummy");
 		hover.setDisplaySlot(DisplaySlot.BELOW_NAME);
 		hover.setDisplayName(" / 20");
 		
-		board = partyBoard.registerNewObjective("side", "health");
+		board = partyBoard.registerNewObjective("side", "dummy");
 		board.setDisplayName("Party");
 		board.setDisplaySlot(DisplaySlot.SIDEBAR);
+		
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 		
 	}
 	
@@ -151,16 +158,17 @@ public class Party implements Participant {
 		}
 		
 		//now that everyone's registered, let's update health
-		Objective obj = partyBoard.getObjective(DisplaySlot.SIDEBAR);
+		Objective side = partyBoard.getObjective(DisplaySlot.SIDEBAR);
+		Objective top = partyBoard.getObjective(DisplaySlot.BELOW_NAME);
 		if (leader.getPlayer().isOnline()) {
-			(leader.getPlayer().getPlayer()).setHealth(leader.getPlayer().getPlayer().getHealth());
-			obj.getScore(leader.getPlayer().getName()).setScore((int) leader.getPlayer().getPlayer().getHealth());
+			side.getScore(leader.getPlayer().getName()).setScore((int) leader.getPlayer().getPlayer().getHealth());
+			top.getScore(leader.getPlayer().getName()).setScore((int) leader.getPlayer().getPlayer().getHealth());
 		}
 		if (!members.isEmpty())
 		for (QuestPlayer member : members) {
 			if (member.getPlayer().isOnline()) {
-				(member.getPlayer().getPlayer()).setHealth(member.getPlayer().getPlayer().getHealth());
-				obj.getScore(member.getPlayer().getName()).setScore((int) member.getPlayer().getPlayer().getHealth());
+				side.getScore(member.getPlayer().getName()).setScore((int) member.getPlayer().getPlayer().getHealth());
+				top.getScore(member.getPlayer().getName()).setScore((int) member.getPlayer().getPlayer().getHealth());
 			}
 		}
 	}
@@ -257,6 +265,7 @@ public class Party implements Participant {
 						.then(" has joined the party")
 					);
 			members.add(player);
+			tMembers.addPlayer(player.getPlayer());
 			updateScoreboard();
 			return true;
 		} else {
@@ -277,6 +286,58 @@ public class Party implements Participant {
 	
 	public boolean isFull() {
 		return (members.size() >= Party.maxSize);
+	}
+	
+	@EventHandler
+	public void onPlayerDamage(EntityDamageEvent e) {
+		if (e.isCancelled() || !(e.getEntity() instanceof Player)) {
+			return;
+		}
+		
+		Player p = (Player) e.getEntity();
+		if (leader.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+			double old = p.getHealth();
+			p.setHealth(old - e.getFinalDamage());
+			updateScoreboard();
+			p.setHealth(old);
+			return;
+		}
+		if (!members.isEmpty())
+		for (QuestPlayer qp : members) {
+			if (qp.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+				double old = p.getHealth();
+				p.setHealth(old - e.getFinalDamage());
+				updateScoreboard();
+				p.setHealth(old);
+				return;
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerRegen(EntityRegainHealthEvent e) {
+		if (e.isCancelled() || !(e.getEntity() instanceof Player)) {
+			return;
+		}
+		
+		Player p = (Player) e.getEntity();
+		if (leader.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+			double old = p.getHealth();
+			p.setHealth(old + e.getAmount());
+			updateScoreboard();
+			p.setHealth(old);
+			return;
+		}
+		if (!members.isEmpty())
+		for (QuestPlayer qp : members) {
+			if (qp.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+				double old = p.getHealth();
+				p.setHealth(old + e.getAmount());
+				updateScoreboard();
+				p.setHealth(old);
+				return;
+			}
+		}
 	}
 	
 	public boolean removePlayer(QuestPlayer player) {
