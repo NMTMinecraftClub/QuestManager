@@ -343,7 +343,9 @@ public class Party implements Participant, Listener {
 	public boolean removePlayer(QuestPlayer player) {
 		
 		if (player.getIDString().equals(leader.getIDString())) {
+			
 			tLeader.removePlayer(leader.getPlayer());
+			partyBoard.resetScores(leader.getPlayer().getName());
 			
 			if (members.size() == 1) {
 				//close party
@@ -374,6 +376,7 @@ public class Party implements Participant, Listener {
 			qp = it.next();
 			if (qp.getIDString().equals(player.getIDString())) {
 				tMembers.removePlayer(qp.getPlayer());
+				partyBoard.resetScores(qp.getPlayer().getName());
 				it.remove();
 				tellMembers(
 						new FancyMessage(player.getPlayer().getName())
