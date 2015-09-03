@@ -1,15 +1,14 @@
 package nmt.minecraft.QuestManager.UI.Menu.Action;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
-import nmt.minecraft.QuestManager.Quest.Quest;
-
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 
 import de.inventivegames.util.tellraw.TellrawConverterLite;
 import de.inventivegames.util.title.TitleManager;
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
+import nmt.minecraft.QuestManager.Quest.Quest;
 
 public class QuestStartAction implements MenuAction {
 

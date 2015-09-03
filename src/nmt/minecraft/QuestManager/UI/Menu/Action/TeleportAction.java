@@ -1,16 +1,16 @@
 package nmt.minecraft.QuestManager.UI.Menu.Action;
 
 
-import nmt.minecraft.QuestManager.Player.QuestPlayer;
-import nmt.minecraft.QuestManager.UI.ChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
-
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
 /**
  * Ferries a player

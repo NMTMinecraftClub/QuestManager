@@ -2,9 +2,9 @@ package nmt.minecraft.QuestManager.Configuration;
 
 import java.util.LinkedList;
 
-import nmt.minecraft.QuestManager.Quest.Goal;
-
 import org.bukkit.inventory.ItemStack;
+
+import nmt.minecraft.QuestManager.Quest.Goal;
 
 /**
  * Holds key and default information for defined quest config fields.

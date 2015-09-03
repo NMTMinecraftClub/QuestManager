@@ -1,13 +1,5 @@
 package nmt.minecraft.QuestManager.Quest.Requirements;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.Configuration.State.RequirementState;
-import nmt.minecraft.QuestManager.Configuration.State.StatekeepingRequirement;
-import nmt.minecraft.QuestManager.Player.Participant;
-import nmt.minecraft.QuestManager.Player.QuestPlayer;
-import nmt.minecraft.QuestManager.Quest.Goal;
-import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -17,6 +9,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.State.RequirementState;
+import nmt.minecraft.QuestManager.Configuration.State.StatekeepingRequirement;
+import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
 /**
  * Requires the participants to defeat (kill) some number of a type of entity.<br />

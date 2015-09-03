@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-
 import org.bukkit.Bukkit;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
 
 /**
  * Gathers a list of scheduled Tickable entities and goes through ticking each

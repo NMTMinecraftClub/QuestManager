@@ -1,8 +1,8 @@
 package nmt.minecraft.QuestManager.UI.Menu.Action;
 
-import nmt.minecraft.QuestManager.UI.ChatMenu;
-
 import org.bukkit.entity.Player;
+
+import nmt.minecraft.QuestManager.UI.ChatMenu;
 
 /**
  * Actions that causes a chat menu to be shown to a player

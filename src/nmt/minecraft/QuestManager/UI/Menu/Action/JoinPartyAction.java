@@ -1,12 +1,12 @@
 package nmt.minecraft.QuestManager.UI.Menu.Action;
 
-import nmt.minecraft.QuestManager.Player.Party;
-import nmt.minecraft.QuestManager.Player.QuestPlayer;
-
 import org.bukkit.Instrument;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.entity.Player;
+
+import nmt.minecraft.QuestManager.Player.Party;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
 
 /**
  * Adds a player to another player's party, creating it if it doesn't exist

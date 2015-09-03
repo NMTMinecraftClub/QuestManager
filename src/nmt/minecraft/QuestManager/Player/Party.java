@@ -51,8 +51,6 @@ public class Party implements Participant, Listener {
 	
 	private Team tLeader, tMembers;
 	
-	private Objective hover;
-	
 	private Objective board;
 	
 	private GUID id;
@@ -103,10 +101,6 @@ public class Party implements Participant, Listener {
 		
 		tLeader.setPrefix(ChatColor.GOLD.toString());
 		tMembers.setPrefix(ChatColor.DARK_GREEN.toString());
-		
-		hover = partyBoard.registerNewObjective("hover", "dummy");
-		hover.setDisplaySlot(DisplaySlot.BELOW_NAME);
-		hover.setDisplayName(" / 20");
 		
 		board = partyBoard.registerNewObjective("side", "dummy");
 		board.setDisplayName("Party");
@@ -159,17 +153,14 @@ public class Party implements Participant, Listener {
 		
 		//now that everyone's registered, let's update health
 		Objective side = partyBoard.getObjective(DisplaySlot.SIDEBAR);
-		Objective top = partyBoard.getObjective(DisplaySlot.BELOW_NAME);
 		if (leader.getPlayer().isOnline()) {
 			side.getScore(leader.getPlayer().getName()).setScore((int) leader.getPlayer().getPlayer().getHealth());
-			top.getScore(leader.getPlayer().getName()).setScore((int) leader.getPlayer().getPlayer().getHealth());
-		}
+			}
 		if (!members.isEmpty())
 		for (QuestPlayer member : members) {
 			if (member.getPlayer().isOnline()) {
 				side.getScore(member.getPlayer().getName()).setScore((int) member.getPlayer().getPlayer().getHealth());
-				top.getScore(member.getPlayer().getName()).setScore((int) member.getPlayer().getPlayer().getHealth());
-			}
+				}
 		}
 	}
 	

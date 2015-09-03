@@ -7,11 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
-import nmt.minecraft.QuestManager.Configuration.State.QuestState;
-import nmt.minecraft.QuestManager.NPC.NPC;
-import nmt.minecraft.QuestManager.Quest.Quest;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,6 +22,11 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scoreboard.Scoreboard;
+
+import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
+import nmt.minecraft.QuestManager.Configuration.State.QuestState;
+import nmt.minecraft.QuestManager.NPC.NPC;
+import nmt.minecraft.QuestManager.Quest.Quest;
 
 public class QuestManager implements Listener {
 	

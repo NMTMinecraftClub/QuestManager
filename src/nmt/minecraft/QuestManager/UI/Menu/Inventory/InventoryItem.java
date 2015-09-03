@@ -2,13 +2,13 @@ package nmt.minecraft.QuestManager.UI.Menu.Inventory;
 
 import java.util.Arrays;
 
-import nmt.minecraft.QuestManager.Player.QuestPlayer;
-import nmt.minecraft.QuestManager.UI.Menu.Action.MenuAction;
-import nmt.minecraft.QuestManager.UI.Menu.Action.PurchaseAction;
-
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.UI.Menu.Action.MenuAction;
+import nmt.minecraft.QuestManager.UI.Menu.Action.PurchaseAction;
 
 /**
  * An item used in an inventory menu.<br />

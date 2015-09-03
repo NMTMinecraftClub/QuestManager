@@ -3,11 +3,11 @@ package nmt.minecraft.QuestManager;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.configuration.ConfigurationSection;
+
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
-
-import org.bukkit.configuration.ConfigurationSection;
 
 /**
  * Keeps track of requirement keys and registered factories

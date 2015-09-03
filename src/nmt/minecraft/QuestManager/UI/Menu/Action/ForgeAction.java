@@ -3,12 +3,6 @@ package nmt.minecraft.QuestManager.UI.Menu.Action;
 
 import java.util.ListIterator;
 
-import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-import nmt.minecraft.QuestManager.Player.QuestPlayer;
-import nmt.minecraft.QuestManager.UI.ChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -18,6 +12,11 @@ import org.bukkit.inventory.ItemStack;
 
 import de.inventivegames.util.tellraw.TellrawConverterLite;
 import de.inventivegames.util.title.TitleManager;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
 /**
  * Repairs a player's equipment

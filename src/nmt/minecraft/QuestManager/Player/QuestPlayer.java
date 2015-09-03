@@ -10,21 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
-import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-import nmt.minecraft.QuestManager.Quest.Goal;
-import nmt.minecraft.QuestManager.Quest.Quest;
-import nmt.minecraft.QuestManager.Quest.History.History;
-import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
-import nmt.minecraft.QuestManager.UI.ChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.ChatMenuOption;
-import nmt.minecraft.QuestManager.UI.Menu.MultioptionChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.Action.PartyInviteAction;
-import nmt.minecraft.QuestManager.UI.Menu.Action.ShowChatMenuAction;
-import nmt.minecraft.QuestManager.UI.Menu.Message.PlainMessage;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Instrument;
@@ -52,6 +37,21 @@ import org.bukkit.inventory.meta.BookMeta;
 import com.onarandombox.MultiversePortals.MultiversePortals;
 import com.onarandombox.MultiversePortals.PortalPlayerSession;
 import com.onarandombox.MultiversePortals.event.MVPortalEvent;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.Quest;
+import nmt.minecraft.QuestManager.Quest.History.History;
+import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
+import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.ChatMenuOption;
+import nmt.minecraft.QuestManager.UI.Menu.MultioptionChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Action.PartyInviteAction;
+import nmt.minecraft.QuestManager.UI.Menu.Action.ShowChatMenuAction;
+import nmt.minecraft.QuestManager.UI.Menu.Message.PlainMessage;
 
 /**
  * Player wrapper to store questing information and make saving player quest status

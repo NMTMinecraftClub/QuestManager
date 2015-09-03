@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
 
 /**
  * Wrapper class for configuration files needed by the plugin.<br />

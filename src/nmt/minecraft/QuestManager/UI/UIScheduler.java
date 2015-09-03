@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-
 import org.bukkit.Bukkit;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
 
 /**
  * Schedule and timing handler for UI elements

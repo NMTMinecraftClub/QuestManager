@@ -6,11 +6,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.Player.Participant;
-
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Player.Participant;
 
 /**
  * Wrapper for state info config

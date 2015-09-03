@@ -3,13 +3,13 @@ package nmt.minecraft.QuestManager.UI.Menu;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 public class MultioptionChatMenu extends ChatMenu implements RespondableMenu {
 	

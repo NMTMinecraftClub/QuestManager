@@ -3,10 +3,10 @@ package nmt.minecraft.QuestManager.UI.Menu.Message;
 import java.util.HashMap;
 import java.util.Map;
 
-import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 
 /**
  * Wraps arounds a simple, single -use- message.<br />

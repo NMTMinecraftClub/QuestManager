@@ -7,9 +7,6 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-import nmt.minecraft.QuestManager.UI.Menu.RespondableMenu;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,6 +14,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.UI.Menu.RespondableMenu;
 
 /**
  * Organizes, catches, and dispatches chat click events to the responsible menus

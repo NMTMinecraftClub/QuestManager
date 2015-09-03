@@ -1,13 +1,13 @@
 package nmt.minecraft.QuestManager.UI;
 
+import org.bukkit.entity.Player;
+
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
 import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
-
-import org.bukkit.entity.Player;
 
 /**
  * A menu represented in chat buttons and links

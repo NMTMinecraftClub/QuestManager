@@ -1,11 +1,11 @@
 package nmt.minecraft.QuestManager.UI.Menu;
 
+import org.bukkit.entity.Player;
+
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Action.MenuAction;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
-
-import org.bukkit.entity.Player;
 
 public class BioptionChatMenu extends ChatMenu implements RespondableMenu {
 	

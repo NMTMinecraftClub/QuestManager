@@ -1,5 +1,11 @@
 package nmt.minecraft.QuestManager.UI.Menu.Action;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Instrument;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
+import org.bukkit.entity.Player;
+
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
@@ -7,12 +13,6 @@ import nmt.minecraft.QuestManager.UI.Menu.ChatMenuOption;
 import nmt.minecraft.QuestManager.UI.Menu.MultioptionChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Message.PlainMessage;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Instrument;
-import org.bukkit.Note;
-import org.bukkit.Note.Tone;
-import org.bukkit.entity.Player;
 
 public class PartyInviteAction implements MenuAction {
 	

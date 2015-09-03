@@ -1,8 +1,8 @@
 package nmt.minecraft.QuestManager.UI.Menu.Message;
 
-import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 
 /**
  * Holds a messaged used with a menu.
