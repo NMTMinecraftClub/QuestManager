@@ -60,8 +60,8 @@ import com.onarandombox.MultiversePortals.event.MVPortalEvent;
  *
  */
 public class QuestPlayer implements Participant, Listener {
-
-	private OfflinePlayer player;
+	
+	private UUID playerID;
 	
 	private History history;
 	
@@ -170,7 +170,7 @@ public class QuestPlayer implements Participant, Listener {
 	 */
 	public QuestPlayer(OfflinePlayer player) {
 		this();
-		this.player = player;
+		this.playerID = player.getUniqueId();
 		this.currentQuests = new LinkedList<Quest>();
 		this.completedQuests = new LinkedList<String>();
 		this.history = new History();
@@ -191,11 +191,11 @@ public class QuestPlayer implements Participant, Listener {
 	 * This method will produce a fully updated quest book in the players inventory.
 	 */
 	public void addQuestBook() {
-		if (!player.isOnline()) {
+		if (!getPlayer().isOnline()) {
 			return;
 		}
 		
-		Player play = player.getPlayer();
+		Player play = getPlayer().getPlayer();
 		Inventory inv = play.getInventory();
 		
 		if (inv.firstEmpty() == -1) {
@@ -243,11 +243,11 @@ public class QuestPlayer implements Participant, Listener {
 	 * If the user does not have abook already or has discarded it, this method will do nothing.
 	 */
 	public void updateQuestBook() {
-		if (!player.isOnline()) {
+		if (!getPlayer().isOnline()) {
 			return;
 		}
 		
-		Player play = player.getPlayer();
+		Player play = getPlayer().getPlayer();
 		Inventory inv = play.getInventory();
 		ItemStack book = null;
 		
@@ -278,7 +278,7 @@ public class QuestPlayer implements Participant, Listener {
 						+ "  This book details your current quest progress & history.");
 		
 		//generate the stats page
-		bookMeta.addPage(ChatColor.DARK_PURPLE + " " + player.getName() + " - "
+		bookMeta.addPage(ChatColor.DARK_PURPLE + " " + getPlayer().getName() + " - "
 				+ ChatColor.DARK_RED + title
 				+ "\n-----\n  " + ChatColor.GOLD + "Fame: " + fame
 				+ "\n  "			+ ChatColor.GOLD + "Gold: " + money
@@ -406,10 +406,6 @@ public class QuestPlayer implements Participant, Listener {
 				new HistoryEvent("Completed the quest \"" + quest.getName() + "\""));
 	}
 	
-	public OfflinePlayer getPlayer() {
-		return player;
-	}
-	
 	public int getFame() {
 		return fame;
 	}
@@ -463,10 +459,10 @@ public class QuestPlayer implements Participant, Listener {
 	 */
 	public void setMoney(int money) {
 		this.money = money;
-		if (player.isOnline())
+		if (getPlayer().isOnline())
 		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
-					.getWorlds().contains(player.getPlayer().getWorld().getName())) {
-			player.getPlayer().setLevel(this.money);
+					.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
+			getPlayer().getPlayer().setLevel(this.money);
 		}
 	}
 	
@@ -476,10 +472,10 @@ public class QuestPlayer implements Participant, Listener {
 	 */
 	public void addMoney(int money) {
 		this.money += money;
-		if (player.isOnline())
+		if (getPlayer().isOnline())
 			if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
-						.getWorlds().contains(player.getPlayer().getWorld().getName())) {
-				player.getPlayer().setLevel(this.money);
+						.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
+				getPlayer().getPlayer().setLevel(this.money);
 			}
 	}
 
@@ -524,7 +520,7 @@ public class QuestPlayer implements Participant, Listener {
 		map.put("title", title);
 		map.put("fame", fame);
 		map.put("money", money);
-		map.put("id", player.getUniqueId().toString());
+		map.put("id", getPlayer().getUniqueId().toString());
 		map.put("portalloc", this.questPortal);
 		map.put("completedquests", completedQuests);
 		
@@ -571,7 +567,7 @@ public class QuestPlayer implements Participant, Listener {
 
 	@Override
 	public String getIDString() {
-		return player.getUniqueId().toString();
+		return getPlayer().getUniqueId().toString();
 	}
 
 	/**
@@ -590,18 +586,18 @@ public class QuestPlayer implements Participant, Listener {
 	
 	@EventHandler
 	public void onPortal(MVPortalEvent e) {
-		if (!player.isOnline() || e.isCancelled()) {
+		if (!getPlayer().isOnline() || e.isCancelled()) {
 			return;
 		}
 			
-		if (e.getTeleportee().equals(player)) {			
+		if (e.getTeleportee().equals(getPlayer())) {			
 			
 			List<String> qworlds = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 					.getWorlds();
 			if (qworlds.contains(e.getFrom().getWorld().getName())) {
 				
 				//check that we aren't going TO antoher quest world
-				if (qworlds.contains(e.getDestination().getLocation(player.getPlayer()).getWorld().getName())) {
+				if (qworlds.contains(e.getDestination().getLocation(getPlayer().getPlayer()).getWorld().getName())) {
 					//we are! Don't interfere here
 					return;
 				}
@@ -613,29 +609,29 @@ public class QuestPlayer implements Participant, Listener {
 				onPlayerQuit();
 				return;
 			}
-			if (qworlds.contains(e.getDestination().getLocation(player.getPlayer()).getWorld().getName())) {
+			if (qworlds.contains(e.getDestination().getLocation(getPlayer().getPlayer()).getWorld().getName())) {
 				//Before we warp to our old location, we need to make sure we HAVE one
 				if (this.questPortal == null) {
 					//this is our first time coming in, so just let the portal take us
 					//and save where it plops us out at
-					this.questPortal = e.getDestination().getLocation(player.getPlayer());
+					this.questPortal = e.getDestination().getLocation(getPlayer().getPlayer());
 					return;
 				}
 				
 				//we're moving TO a quest world, so actually go to our saved location
 				e.setCancelled(true);
-				player.getPlayer().teleport(questPortal);
+				getPlayer().getPlayer().teleport(questPortal);
 			}
 		}
 	}
 
 	@EventHandler
 	public void onExp(PlayerExpChangeEvent e) {
-		if (!player.isOnline()) {
+		if (!getPlayer().isOnline()) {
 			return;
 		}
 		
-		Player p = player.getPlayer().getPlayer();
+		Player p = getPlayer().getPlayer();
 		
 		if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
 			return;
@@ -655,11 +651,11 @@ public class QuestPlayer implements Participant, Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		
-		if (!player.isOnline()) {
+		if (!getPlayer().isOnline()) {
 			return;
 		}
 		
-		Player p = player.getPlayer().getPlayer();
+		Player p = getPlayer().getPlayer();
 		
 		if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
 			return;
@@ -680,11 +676,11 @@ public class QuestPlayer implements Participant, Listener {
 	
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent e) {
-		if (!player.isOnline()) {
+		if (!getPlayer().isOnline()) {
 			return;
 		}
 		
-		Player p = player.getPlayer().getPlayer();
+		Player p = getPlayer().getPlayer();
 		
 		if (!p.getUniqueId().equals(e.getEntity().getUniqueId())) {
 			return;
@@ -703,7 +699,7 @@ public class QuestPlayer implements Participant, Listener {
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent e) {
 
-		if (!player.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+		if (!getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
 			return;
 		}
 
@@ -731,8 +727,7 @@ public class QuestPlayer implements Participant, Listener {
 	
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
-		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-			System.out.println("process (id: " + player.getUniqueId() + ") ====\n" + e.getPlayer().getUniqueId());
+		if (e.getPlayer().getUniqueId().equals(getPlayer().getUniqueId())) {
 			onPlayerQuit();
 		}
 	}
@@ -749,11 +744,11 @@ public class QuestPlayer implements Participant, Listener {
 	
 	@EventHandler
 	public void onPlayerInteractWithPlayer(PlayerInteractEntityEvent e) {
-		if (!player.isOnline()) {
+		if (!getPlayer().isOnline()) {
 			return;
 		}
 		
-		Player p = player.getPlayer().getPlayer();
+		Player p = getPlayer().getPlayer();
 		
 		if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
 			return;
@@ -791,12 +786,16 @@ public class QuestPlayer implements Participant, Listener {
 		
 		ChatMenuOption opt2 = new ChatMenuOption(new PlainMessage("Option 2"), 
 				new ShowChatMenuAction(new SimpleChatMenu(new FancyMessage("lol2")), 
-				this.player.getPlayer()));
+				this.getPlayer().getPlayer()));
 		
 		ChatMenu menu = new MultioptionChatMenu(new PlainMessage(msg), opt1, opt2);
 		
-		menu.show(this.player.getPlayer().getPlayer());
+		menu.show(this.getPlayer().getPlayer().getPlayer());
 		
+	}
+	
+	public OfflinePlayer getPlayer() {
+		return Bukkit.getOfflinePlayer(playerID);
 	}
 	
 }
