@@ -53,6 +53,8 @@ public class QuestManager implements Listener {
 		questTemplates = new LinkedList<QuestConfiguration>();
 		questNPCs = new HashSet<NPC>();
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 		
 		this.saveDirectory = saveDirectory;
 		
@@ -184,7 +186,6 @@ public class QuestManager implements Listener {
 						
 			}
 			
-			Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 
 			QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager finished!");	
 			
