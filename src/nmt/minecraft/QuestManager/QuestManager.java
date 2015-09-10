@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -374,6 +375,22 @@ public class QuestManager implements Listener {
 			
 			e.setDroppedExp(level);
 		}
+	}
+	
+	@EventHandler
+	public void onTame(EntityTameEvent e) {
+		if (e.isCancelled()) {
+			return;
+		}
+		System.out.println("cancel");
+		String worldname = e.getEntity().getWorld().getName();
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(worldname)) {
+			return;
+		}
+		System.out.println("cancel");
+		
+		e.setCancelled(true);
+		
 	}
 	
 }
