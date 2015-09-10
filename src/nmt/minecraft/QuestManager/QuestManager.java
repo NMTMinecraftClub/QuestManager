@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -383,13 +384,15 @@ public class QuestManager implements Listener {
 		if (e.isCancelled()) {
 			return;
 		}
-		System.out.println("cancel");
+		
 		String worldname = e.getEntity().getWorld().getName();
 		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(worldname)) {
 			return;
 		}
-		System.out.println("cancel");
 		
+		if (e.getOwner() instanceof Player) {
+			((Player) e.getOwner()).sendMessage(ChatColor.DARK_PURPLE + "Taming is not allowed here!" + ChatColor.RESET);
+		}
 		e.setCancelled(true);
 		
 	}
