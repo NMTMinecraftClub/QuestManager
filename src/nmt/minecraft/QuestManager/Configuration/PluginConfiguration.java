@@ -70,7 +70,7 @@ public class PluginConfiguration {
 	}
 	
 	public List<String> getWorlds() {
-		return config.getStringList("questworlds");
+		return config.getStringList("questWorlds");
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public String getQuestPath() {
-		return config.getString("questdir");
+		return config.getString("questDir");
 	}
 	
 	/**
@@ -87,7 +87,61 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public boolean getKeepOnError() {
-		return config.getBoolean("conservativemode", true);
+		return config.getBoolean("conservativeMode", true);
+	}
+	
+	/**
+	 * Should the plugin remove ALL villager in quest worlds before populating it with quest related NPCs?<br />
+	 * This is useful to avoid stray villagers escape on error of the plugin, but removed the possibility to use villagers
+	 * that aren't managed by QuestManager in registered QuestWorlds!
+	 * @return
+	 */
+	public boolean getVillagerCleanup() {
+		return config.getBoolean("villagerCleanup");
+	}
+	
+	/**
+	 * Should xp gained in the quest world count as 'money'?<br />
+	 * When this is enabled, all XP received is instead converted to 'money'. This is represented to the player's client
+	 * as the level of the player.
+	 * @return
+	 */
+	public boolean getXPMoney() {
+		return config.getBoolean("useXPMoney");
+	}
+	
+	/**
+	 * Returns the largest size a party can get
+	 * @return
+	 */
+	public int getMaxPartySize() {
+		return config.getInt("maxPartySize");
+	}
+	
+	/**
+	 * Can players tame animals in the QuestWorlds?
+	 * @return
+	 */
+	public boolean getAllowTaming() {
+		return config.getBoolean("allowTaming");
+	}
+	
+	/**
+	 * Whether or not multiverse portals should be used and tracked.<br />
+	 * When this is on, players will be returned to the last portal they used when leaving registered QuestWorlds.<br />
+	 * @return
+	 */
+	public boolean getUsePortals() {
+		return config.getBoolean("usePortals");
+	}
+	
+	/**
+	 * Returns whether or not the number of XP mobs drop should depend on their level
+	 * @note Currently, this requires that the name of the mob have "Lvl ###" in it! TODO
+	 * @return
+	 */
+	public boolean getAdjustXP() {
+		return config.getBoolean("adjustXP");
 	}
 	
 	/**
@@ -96,11 +150,11 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public boolean getMenuVerbose() {
-		return config.getBoolean("verbosemenus");
+		return config.getBoolean("verboseMenus");
 	}
 	
 	public boolean getAllowCrafting() {
-		return config.getBoolean("allowcrafting");
+		return config.getBoolean("allowCrafting");
 	}
 	
 	/**
@@ -108,7 +162,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public String getSavePath() {
-		return config.getString("savedir");
+		return config.getString("saveDir");
 	}
 	
 	/**
@@ -125,20 +179,26 @@ public class PluginConfiguration {
 		YamlConfiguration config = new YamlConfiguration();
 		
 		config.set("version", QuestManagerPlugin.version);
-		config.set("conservativemode", true);
-		config.set("verbosemenus", false);
-		config.set("allowcrafting", false);
+		config.set("conservativeMode", true);
+		config.set("verboseMenus", false);
+		config.set("allowCrafting", false);
+		config.set("villagerCleanup", false);
+		config.set("useXPMoney", true);
+		config.set("maxPartySize", 4);
+		config.set("allowTaming", false);
+		config.set("usePortals", true);
+		config.set("adjustXP", true);
 		
 		List<String> worlds = new ArrayList<String>();
 		worlds.add("QuestWorld");
 		worlds.add("TutorialWorld");
-		config.set("questworlds", worlds);
+		config.set("questWorlds", worlds);
 		//ConfigurationSection managers = config.createSection("managers");
 		
 		List<String> questNames = new ArrayList<String>(1);
 		config.set("quests", questNames);
-		config.set("questdir", "quests/");
-		config.set("savedir", "savedata/");
+		config.set("questDir", "quests/");
+		config.set("saveDir", "savedata/");
 		
 		try {
 			config.save(configFile);
