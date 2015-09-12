@@ -100,6 +100,14 @@ public class PlayerManager {
 		return parties.get(id);
 	}
 	
+	public void addParty(Party party) {
+		parties.put(party.getID(), party);
+	}
+	
+	public void removeParty(Party party) {
+		parties.remove(party.getID());
+	}
+	
 	public Participant getParticipant(String idString) {
 		
 		if (GUID.valueOf(idString) != null) {
@@ -135,6 +143,9 @@ public class PlayerManager {
 		ConfigurationSection gSex = config.createSection("parties");
 		if (!parties.isEmpty()) {
 			for (GUID key : parties.keySet()) {
+				if (key == null) {
+					continue;
+				}
 				gSex.set(key.toString(), getParty(key));
 			}
 		}

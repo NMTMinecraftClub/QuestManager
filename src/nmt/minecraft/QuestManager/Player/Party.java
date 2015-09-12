@@ -108,6 +108,8 @@ public class Party implements Participant, Listener {
 		
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 		
+		QuestManagerPlugin.questManagerPlugin.getPlayerManager().addParty(this);
+		
 	}
 	
 	public Party(QuestPlayer leader) {
@@ -343,6 +345,7 @@ public class Party implements Participant, Listener {
 			if (members.size() == 1) {
 				//close party
 				members.get(0).leaveParty("The party has been closed");
+				QuestManagerPlugin.questManagerPlugin.getPlayerManager().removeParty(this);
 				return true;
 			}
 			
@@ -380,6 +383,7 @@ public class Party implements Participant, Listener {
 				//make sure leader isn't the only one left
 				if (members.isEmpty()) {
 					leader.leaveParty("The party has been closed.");
+					QuestManagerPlugin.questManagerPlugin.getPlayerManager().removeParty(this);
 				} else {
 					updateScoreboard();
 				}
@@ -396,6 +400,8 @@ public class Party implements Participant, Listener {
 			player.leaveParty("The party has disbanded.");
 		}
 		leader.leaveParty("The party has disbanded");
+		
+		QuestManagerPlugin.questManagerPlugin.getPlayerManager().removeParty(this);
 	}
 	
 	public void tellMembers(String message) {
