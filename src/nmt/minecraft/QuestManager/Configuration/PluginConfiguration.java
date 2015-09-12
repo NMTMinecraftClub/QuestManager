@@ -158,6 +158,14 @@ public class PluginConfiguration {
 	}
 	
 	/**
+	 * Returns whether or not titles should be put into chat in all worlds
+	 * @return
+	 */
+	public boolean getChatTitle() {
+		return config.getBoolean("titleInChat");
+	}
+	
+	/**
 	 * Gets the stored save data path information
 	 * @return
 	 */
@@ -188,6 +196,7 @@ public class PluginConfiguration {
 		config.set("allowTaming", false);
 		config.set("usePortals", true);
 		config.set("adjustXP", true);
+		config.set("titleInChat", true);
 		
 		List<String> worlds = new ArrayList<String>();
 		worlds.add("QuestWorld");

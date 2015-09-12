@@ -22,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -32,6 +33,7 @@ import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
 import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.Player.Party;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Quest;
 
 public class QuestManager implements Listener {
@@ -432,6 +434,29 @@ public class QuestManager implements Listener {
 		}
 		e.setCancelled(true);
 		
+	}
+	
+	@EventHandler
+	public void onChat(AsyncPlayerChatEvent e) {
+		if (e.isCancelled()) {
+			return;
+		}
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getChatTitle()) {
+			//if no, check worlds
+			if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
+					.contains(e.getPlayer().getWorld().getName())) {
+				return;
+			}
+		}
+		
+		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(e.getPlayer());
+		if (qp.getTitle() == null || qp.getTitle().trim().isEmpty()) {
+			return;
+		}
+		
+		String msg = "[" + qp.getTitle() + "] " + e.getMessage();
+		e.setMessage(msg);
 	}
 	
 }
