@@ -75,6 +75,10 @@ public class Quest implements Listener {
 	
 	private List<ItemStack> itemRewards;
 	
+	private String titleReward;
+	
+	private int moneyReward;
+	
 	private History history;
 	
 	private boolean useParty;
@@ -247,6 +251,10 @@ public class Quest implements Listener {
 				
 				//fame reward
 				qp.addFame(fame);
+				if (moneyReward > 0) {
+					qp.addMoney(moneyReward);
+				}
+				
 				
 				qp.completeQuest(this);
 				
@@ -271,7 +279,11 @@ public class Quest implements Listener {
 						);
 			    
 			    menu.show(player);
-			    
+
+				if (titleReward != null && !titleReward.trim().isEmpty()) {
+					qp.addTitle(titleReward);
+				}
+				
 			    QuestManagerPlugin.questManagerPlugin.getManager().removeQuest(this);
 			    
 			    halt();
@@ -497,6 +509,22 @@ public class Quest implements Listener {
 	
 	public void addItemReward(ItemStack reward) {
 		itemRewards.add(reward);
+	}
+
+	public String getTitleReward() {
+		return titleReward;
+	}
+
+	public void setTitleReward(String titleReward) {
+		this.titleReward = titleReward;
+	}
+
+	public int getMoneyReward() {
+		return moneyReward;
+	}
+
+	public void setMoneyReward(int moneyReward) {
+		this.moneyReward = moneyReward;
 	}
 
 	@EventHandler

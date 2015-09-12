@@ -76,6 +76,8 @@ public class QuestPlayer implements Participant, Listener {
 	
 	private String title;
 	
+	private List<String> unlockedTitles;
+	
 	private Location questPortal;
 	
 	private Party party;
@@ -159,6 +161,7 @@ public class QuestPlayer implements Participant, Listener {
 		this.fame = 0;
 		this.money = 0;
 		this.title = "The Unknown";
+		this.unlockedTitles = new LinkedList<String>();
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
@@ -514,6 +517,24 @@ public class QuestPlayer implements Participant, Listener {
 		this.title = title;
 	}
 	
+	public void addTitle(String title) {
+		this.unlockedTitles.add(title);
+		
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		ChatMenu menu = new SimpleChatMenu(
+				new FancyMessage("You've unlocked the ")
+					.color(ChatColor.DARK_GRAY)
+				.then(title)
+					.color(ChatColor.GOLD)
+					.style(ChatColor.BOLD)
+				.then(" title!"));
+		
+		menu.show(getPlayer().getPlayer());
+	}
+	
 //	/**
 //	 * Returns the currently-stored information in a YamlConfiguration. <br />
 //	 * Output from this method should be expected to be used with {@link QuestPlayer#fromConfig(YamlConfiguration)}
@@ -549,6 +570,7 @@ public class QuestPlayer implements Participant, Listener {
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>(3);
 		map.put("title", title);
+		map.put("unlockedtitles", unlockedTitles);
 		map.put("fame", fame);
 		map.put("money", money);
 		map.put("id", getPlayer().getUniqueId().toString());
@@ -567,7 +589,8 @@ public class QuestPlayer implements Participant, Listener {
 	public static QuestPlayer valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("id") || !map.containsKey("fame") 
 				 || !map.containsKey("title") || !map.containsKey("completedquests")
-				 || !map.containsKey("portalloc") || !map.containsKey("money")) {
+				 || !map.containsKey("portalloc") || !map.containsKey("money")
+				 || !map.containsKey("unlockedtitles")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid Quest Player! "
 					+ (map.containsKey("id") ? ": " + map.get("id") : ""));
 			return null;
@@ -586,6 +609,7 @@ public class QuestPlayer implements Participant, Listener {
 		qp.fame = (int) map.get("fame");
 		qp.money = (int) map.get("money");
 		qp.title = (String) map.get("title");
+		qp.unlockedTitles = (List<String>) map.get("unlockedTitles");
 		qp.completedQuests = (List<String>) map.get("completedquests");
 		
 		if (qp.completedQuests == null) {

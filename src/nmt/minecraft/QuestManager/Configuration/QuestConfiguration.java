@@ -212,9 +212,12 @@ public class QuestConfiguration {
 		
 		//get fame and reward info
 		quest.setFame(config.getInt(QuestConfigurationField.FAME.getKey()));
+		quest.setTitleReward(config.getString(QuestConfigurationField.TITLEREWARD.getKey()));
+		quest.setMoneyReward(config.getInt(QuestConfigurationField.MONEYREWARD.getKey()));
 		
 		@SuppressWarnings("unchecked")
 		List<ItemStack> rewards = (List<ItemStack>) config.getList(QuestConfigurationField.REWARDS.getKey());
+
 		
 		if (rewards != null && !rewards.isEmpty())
 		for (ItemStack item : rewards) {

@@ -24,6 +24,8 @@ import nmt.minecraft.QuestManager.Quest.Goal;
  * <li> END | end | same </li>
  * <li> FAME | fame | 100 </li>
  * <li> REWARDS | rewards | <i>Empty List</i> </li>
+ * <li> MONEYREWARD | moneyreward | 0 </li>
+ * <li> TITLEREWARD | titlereward | <i>null</i> </li>
  * </ul>
  * </p>
  * @author Skyler
@@ -43,7 +45,9 @@ public enum QuestConfigurationField {
 	USEPARTY("useparty", false),
 	END("end", "same"),
 	FAME("fame", 100),
-	REWARDS("rewards", new LinkedList<ItemStack>());
+	REWARDS("rewards", new LinkedList<ItemStack>()),
+	MONEYREWARD("moneyreward", 0),
+	TITLEREWARD("titlereward", null);
 	
 	private Object def;
 	
