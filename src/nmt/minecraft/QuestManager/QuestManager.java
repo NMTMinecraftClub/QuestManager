@@ -72,10 +72,12 @@ public class QuestManager implements Listener {
 				}
 				
 				for (Entity e : w.getEntities()) 
-				if (e.getType() == EntityType.VILLAGER){
+				if (e.getType().equals(EntityType.VILLAGER)) {
 					e.getLocation().getChunk(); //load chunk
 					e.remove();
 				}
+				
+				System.out.println("purged " + worldName);
 			}
 			
 			QuestManagerPlugin.questManagerPlugin.getLogger().info("Purged villagers!");
