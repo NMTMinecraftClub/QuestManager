@@ -519,6 +519,9 @@ public class QuestPlayer implements Participant, Listener {
 	}
 	
 	public void addTitle(String title) {
+		if (this.unlockedTitles.contains(title)) {
+			return;
+		}
 		this.unlockedTitles.add(title);
 		
 		if (!getPlayer().isOnline()) {

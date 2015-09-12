@@ -18,13 +18,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scoreboard.Scoreboard;
@@ -457,6 +460,55 @@ public class QuestManager implements Listener {
 		
 		String msg = "[" + qp.getTitle() + "] " + e.getMessage();
 		e.setMessage(msg);
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onInventoryClick(InventoryClickEvent e){
+	
+		if (e.isCancelled() || !(e.getWhoClicked() instanceof Player)) {
+			return;
+		}
+		
+		if (!(e.getInventory() instanceof AnvilInventory)) {
+			return;
+		}
+		
+		Player p = (Player) e.getWhoClicked();
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(
+				p.getWorld().getName())) {
+			return;
+		}
+		AnvilInventory inv = (AnvilInventory) e.getInventory();
+		
+		int rawSlot = e.getSlot();
+		
+		if(rawSlot != 2){
+			return;
+		}
+		if (inv.getItem(2) == null) {
+			return;
+		}
+		//trying to finish it. Just compare name from slot 0 to slot 2 and make sure the same
+		ItemStack left = inv.getItem(0);
+		ItemStack right = inv.getItem(2);
+		
+		//first check: left has nothing, right should have nothing
+		if ( (!left.hasItemMeta() && right.hasItemMeta() && right.getItemMeta().hasDisplayName())) {
+			e.setCancelled(true);
+			return;
+		}
+		//second check: the name has changed
+		if (left.hasItemMeta() && left.getItemMeta().hasDisplayName()) { //we odn't need to make sure the right does cause it always will
+			if (!left.getItemMeta().getDisplayName().equals(right.getItemMeta().getDisplayName())) {
+				e.setCancelled(true);
+				return;
+			}
+		}
+		//last check: left has meta, no name but right does
+		if (left.hasItemMeta() && !left.getItemMeta().hasDisplayName() && right.getItemMeta().hasDisplayName()) {
+			e.setCancelled(true);
+			return;
+		}
 	}
 	
 }

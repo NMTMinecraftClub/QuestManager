@@ -158,6 +158,14 @@ public class PluginConfiguration {
 	}
 	
 	/**
+	 * Whether or not renaming of items, entities is allowed through anvils
+	 * @return
+	 */
+	public boolean getAllowNaming() {
+		return config.getBoolean("allowNaming");
+	}
+	
+	/**
 	 * Returns whether or not titles should be put into chat in all worlds
 	 * @return
 	 */
@@ -190,6 +198,7 @@ public class PluginConfiguration {
 		config.set("conservativeMode", true);
 		config.set("verboseMenus", false);
 		config.set("allowCrafting", false);
+		config.set("allowNaming", false);
 		config.set("villagerCleanup", false);
 		config.set("useXPMoney", true);
 		config.set("maxPartySize", 4);
