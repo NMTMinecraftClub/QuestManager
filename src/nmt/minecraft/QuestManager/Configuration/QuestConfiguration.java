@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
+import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
@@ -188,7 +189,7 @@ public class QuestConfiguration {
 	 * @return
 	 * @throws InvalidConfigurationException 
 	 */
-	public Quest instanceQuest() throws InvalidConfigurationException {
+	public Quest instanceQuest(Participant participant) throws InvalidConfigurationException {
 				
 		if (!config.contains(QuestConfigurationField.GOALS.getKey())) {
 			return null;
@@ -202,7 +203,7 @@ public class QuestConfiguration {
 			goalList.add(questSection.getConfigurationSection(key));
 		}
 			
-		Quest quest = new Quest(getName(), getDescription(), getSaveState(), getUseParty(), getRequireParty());
+		Quest quest = new Quest(getName(), getDescription(), participant, getSaveState(), getUseParty(), getRequireParty());
 		
 		for (ConfigurationSection section : goalList) {
 			Goal goal = Goal.fromConfig(quest, section);
