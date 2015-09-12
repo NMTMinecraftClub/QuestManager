@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -203,6 +204,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		ChatMenu messageChat = null;
 		boolean meetreqs = true;
 		
+		
 		List<String> reqs = quest.getRequiredQuests();
 		
 		if (reqs != null && !reqs.isEmpty()) {
@@ -213,6 +215,14 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 					break;
 				}
 			}
+		}
+		
+
+		if (quest.getRequireParty())
+		if (qp.getParty() == null) {
+			//TODO make prettier
+			player.sendMessage(ChatColor.YELLOW + "This quest requires a party...");
+			return;
 		}
 		
 		if (!meetreqs) {
