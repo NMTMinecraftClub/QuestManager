@@ -16,6 +16,8 @@ import nmt.minecraft.QuestManager.Quest.Goal;
  * <li>GOALS | goals | <i>Empty List</i></li>
  * <li>SAVESTATE | savestate | false</li>
  * <li>REPEATABLE | repeatable | false </li>
+ * <li>USEPARTY | useparty | false </li>
+ * <li>REQUIREPARTY | requireparty | false </li>
  * <li>NPCS | npcs | <i>Empty List</i></li>
  * <li>START | start | <i>null</i> </li>
  * <li>PREREQS | requiredquests | <i>Empty List</i></li>
@@ -37,6 +39,8 @@ public enum QuestConfigurationField {
 	NPCS("npcs", new LinkedList<Goal>()),
 	START("start", null),
 	PREREQS("requiredquests", new LinkedList<String>()),
+	REQUIREPARTY("requireparty", false),
+	USEPARTY("useparty", false),
 	END("end", "same"),
 	FAME("fame", 100),
 	REWARDS("rewards", new LinkedList<ItemStack>());
