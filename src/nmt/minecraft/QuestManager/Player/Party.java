@@ -333,6 +333,8 @@ public class Party implements Participant, Listener {
 	
 	public boolean removePlayer(QuestPlayer player) {
 		
+		player.leaveParty("You've left the party.");
+		
 		if (player.getIDString().equals(leader.getIDString())) {
 			
 			tLeader.removePlayer(leader.getPlayer());
@@ -387,6 +389,13 @@ public class Party implements Participant, Listener {
 		}
 		
 		return false;
+	}
+	
+	public void disband() {
+		for (QuestPlayer player : this.members) {
+			player.leaveParty("The party has disbanded.");
+		}
+		leader.leaveParty("The party has disbanded");
 	}
 	
 	public void tellMembers(String message) {

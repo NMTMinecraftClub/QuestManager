@@ -2,6 +2,7 @@ package nmt.minecraft.QuestManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -107,6 +108,14 @@ public class PlayerManager {
 		
 		//assume it's a player string
 		return getPlayer(UUID.fromString(idString));
+	}
+	
+	public Collection<Party> getParties() {
+		return parties.values();
+	}
+	
+	public Collection<QuestPlayer> getPlayers() {
+		return players.values();
 	}
 	
 	public void save(File saveFile) {
