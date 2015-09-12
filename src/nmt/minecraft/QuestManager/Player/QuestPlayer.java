@@ -49,6 +49,7 @@ import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.ChatMenuOption;
 import nmt.minecraft.QuestManager.UI.Menu.MultioptionChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Action.BootFromPartyAction;
 import nmt.minecraft.QuestManager.UI.Menu.Action.PartyInviteAction;
 import nmt.minecraft.QuestManager.UI.Menu.Action.ShowChatMenuAction;
 import nmt.minecraft.QuestManager.UI.Menu.Message.PlainMessage;
@@ -818,8 +819,23 @@ public class QuestPlayer implements Participant, Listener {
 		 */
 		FancyMessage msg = new FancyMessage(player.getPlayer().getName() + "  -  " + player.getTitle());
 		
-		ChatMenuOption opt1 = new ChatMenuOption(new PlainMessage("Invite to Party"), 
-				new PartyInviteAction(this, player));
+		ChatMenuOption opt1;
+		
+		if (party != null && player.party != null && player.getParty().getIDString().equals(party.getIDString())) {
+			//already in party, so give option to kick
+			if (party.getLeader().getIDString().equals(getIDString())) {
+				opt1 = new ChatMenuOption(new PlainMessage("Kick from Party"),
+						new BootFromPartyAction(party, player));
+			} else {
+				opt1 = new ChatMenuOption(new PlainMessage(new FancyMessage("Kick from Party").color(ChatColor.DARK_GRAY)),
+						new ShowChatMenuAction(
+								new SimpleChatMenu(new FancyMessage("Only the party leader can kick players!").color(ChatColor.DARK_RED))
+								, player.getPlayer().getPlayer()));
+			}
+		} else {
+			opt1 = new ChatMenuOption(new PlainMessage("Invite to Party"), 
+					new PartyInviteAction(this, player));
+		}
 		
 		
 		ChatMenuOption opt2 = new ChatMenuOption(new PlainMessage("Option 2"), 
