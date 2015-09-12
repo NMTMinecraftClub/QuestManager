@@ -107,6 +107,18 @@ public class QuestConfiguration {
 				
 	}
 	
+	public boolean getUseParty() {
+		return config.getBoolean(
+				QuestConfigurationField.USEPARTY.getKey(),
+				(Boolean) QuestConfigurationField.USEPARTY.getDefault());
+	}
+	
+	public boolean getRequireParty() {
+		return config.getBoolean(
+				QuestConfigurationField.REQUIREPARTY.getKey(),
+				(Boolean) QuestConfigurationField.REQUIREPARTY.getDefault());
+	}
+	
 	public Collection<NPC> getAuxNPCs() {
 		
 		List<NPC> npcs = new LinkedList<NPC>();
