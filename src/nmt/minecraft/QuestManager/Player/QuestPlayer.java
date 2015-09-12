@@ -867,8 +867,25 @@ public class QuestPlayer implements Participant, Listener {
 		}
 		
 		
-		ChatMenuOption opt2 = new ChatMenuOption(new PlainMessage("Option 2"), 
-				new ShowChatMenuAction(new SimpleChatMenu(new FancyMessage("lol2")), 
+		ChatMenuOption opt2 = new ChatMenuOption(new PlainMessage("View Info"), 
+				new ShowChatMenuAction(new SimpleChatMenu(
+						new FancyMessage(player.getPlayer().getName())
+							.color(ChatColor.DARK_PURPLE)
+						.then(" - ")
+							.color(ChatColor.WHITE)
+						.then(player.getTitle())
+						.then("\n\n")
+						.then("This player has ")
+						.then(player.money + "")
+							.color(ChatColor.GOLD)
+						.then(" gold.\nThis player has completed ")
+							.color(ChatColor.WHITE)
+						.then("" + player.completedQuests.size())
+							.color(ChatColor.GREEN)
+							.tooltip(player.completedQuests)
+						.then(" quests.")
+							.color(ChatColor.WHITE)
+					), 
 				this.getPlayer().getPlayer()));
 		
 		ChatMenu menu = new MultioptionChatMenu(new PlainMessage(msg), opt1, opt2);
