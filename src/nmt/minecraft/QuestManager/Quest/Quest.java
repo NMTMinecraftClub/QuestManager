@@ -338,8 +338,6 @@ public class Quest implements Listener {
 	 */
 	public void halt() {
 		
-		System.out.println(name + " calling halt!");
-		
 		HandlerList.unregisterAll(this);
 		
 		if (participant.getParticipants().isEmpty()) {

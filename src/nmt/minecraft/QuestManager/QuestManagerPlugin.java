@@ -42,6 +42,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.TimeRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 import nmt.minecraft.QuestManager.UI.InventoryGuiHandler;
+import nmt.minecraft.QuestManager.UI.Menu.Action.PartyInviteAction;
 import nmt.minecraft.QuestManager.UI.Menu.Inventory.GuiInventory;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
 import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
@@ -280,6 +281,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		if (cmd.getName().equals("party")) {
 			
 			if (args.length == 0 || !(sender instanceof Player)) {
+				sender.sendMessage("This command must be executed by a player!");
 				return false;
 			}
 			
@@ -297,6 +299,103 @@ public class QuestManagerPlugin extends JavaPlugin {
 			return true;
 		}
 		
+		if (cmd.getName().equals("leave")) {
+			
+			if (!(sender instanceof Player)) {
+				sender.sendMessage("This command must be executed by a player!");
+				return false;
+			}
+			
+			QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
+			
+			if (qp.getParty() == null) {
+				sender.sendMessage("You are not in a party!");
+				return true;
+			}
+			
+			qp.leaveParty(ChatColor.YELLOW + "You left the party"+ ChatColor.RESET);
+			return true;
+		}
+		
+		if (cmd.getName().equals("boot")) {
+			if (args.length == 0 || !(sender instanceof Player)) {
+				sender.sendMessage("This command must be executed by a player!");
+				return false;
+			}
+			
+			QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
+			
+			if (qp.getParty() == null) {
+				sender.sendMessage("You are not in a party!");
+				return true;
+			}
+			
+			Party party = qp.getParty();
+			
+			if (party.getLeader().getIDString().equals(qp.getIDString())) {
+				//can boot people
+				QuestPlayer other = null;
+				for (QuestPlayer op : party.getMembers()) {
+					if (op.getPlayer().getName().equals(args[0])) {
+						other = op;
+						break;
+					}
+				}
+				
+				if (other == null) {
+					sender.sendMessage(ChatColor.DARK_RED + "Unable to find the player " + ChatColor.BLUE + args[0]
+							+ ChatColor.DARK_RED + " in your party!" + ChatColor.RESET);
+					return true;
+				}
+				
+				party.removePlayer(other, ChatColor.DARK_RED + "You've been kicked from the party" + ChatColor.RESET);
+				return true;
+			} else {
+				//not leader, can't boot
+				sender.sendMessage(ChatColor.DARK_RED + "You are not the leader of the party, and cannot boot people!" + ChatColor.RESET);
+				return true;
+			}
+			
+		}
+		
+		if (cmd.getName().equals("invite")) {
+			if (args.length == 0 || !(sender instanceof Player)) {
+				sender.sendMessage("This command must be executed by a player!");
+				return false;
+			}
+			
+			QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
+			
+			if (qp.getParty() != null) {
+				
+				//are they the leader?
+				Party party = qp.getParty();
+				if (!party.getLeader().getIDString().equals(qp.getIDString())) {
+					//not the leader, can't invite people
+					sender.sendMessage(ChatColor.DARK_RED + "Only the party leader can invite new members!" + ChatColor.RESET);
+					return true;
+				}
+			}
+			
+			//to get here, either is leader or not in a party
+			QuestPlayer other = null;
+			for (QuestPlayer p : playerManager.getPlayers()) {
+				if (p.getPlayer().getName().equals(args[0])) {
+					other = p;
+					break;
+				}
+			}
+			
+			if (other == null) {
+				sender.sendMessage(ChatColor.DARK_RED + "Unable to find the player "
+						+ ChatColor.BLUE + args[0] + ChatColor.RESET);
+				return true;
+			}
+			
+			(new PartyInviteAction(qp, other)).onAction();
+			
+			return true;
+		}
 		return false;
 	}
 	

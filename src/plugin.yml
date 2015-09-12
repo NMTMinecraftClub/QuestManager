@@ -18,6 +18,15 @@ commands:
         usage: /party
         description: used to interface with the party menus
         aliases: p
+    leave:
+        usage: /leave
+        description: Used to leave a party
+    boot:
+        usage: /boot [party member]
+        description: Kicks a party member from the party
+    invite:
+        usage: /invite [player]
+        description: Invites a player to your party
     questmanager:
         usage: /questmanager [reload]
         description: QuestManager admin command

@@ -335,9 +335,9 @@ public class Party implements Participant, Listener {
 		}
 	}
 	
-	public boolean removePlayer(QuestPlayer player) {
+	public boolean removePlayer(QuestPlayer player, String exitMessage) {
 		
-		player.leaveParty("You've left the party.");
+		player.leaveParty(exitMessage);
 		
 		if (player.getIDString().equals(leader.getIDString())) {
 			

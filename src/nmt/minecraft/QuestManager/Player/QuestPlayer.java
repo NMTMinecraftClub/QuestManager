@@ -454,7 +454,7 @@ public class QuestPlayer implements Participant, Listener {
 		}
 	}
 	
-	protected void leaveParty(String message) {
+	public void leaveParty(String message) {
 		if (getPlayer().isOnline()) {
 			getPlayer().getPlayer().sendMessage(message);
 			getPlayer().getPlayer().setScoreboard(
@@ -775,7 +775,7 @@ public class QuestPlayer implements Participant, Listener {
 	 */
 	private void onPlayerQuit() {
 		if (party != null) {
-			party.removePlayer(this);
+			party.removePlayer(this, "You've been disconnected!");
 			party = null;
 		}
 	}
