@@ -167,7 +167,7 @@ public class QuestManager implements Listener {
 				QuestConfiguration template = getQuestTemplate(questName);
 				Quest quest;
 				try {
-					quest = template.instanceQuest();
+					quest = template.instanceQuest(null);
 					
 				} catch (InvalidConfigurationException e) {
 					e.printStackTrace();

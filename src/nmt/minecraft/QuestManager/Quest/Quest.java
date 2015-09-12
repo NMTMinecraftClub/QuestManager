@@ -110,6 +110,8 @@ public class Quest implements Listener {
 		
 //		players = new HashSet<QuestPlayer>();
 		this.participant = participant;
+		
+		if (participant != null)
 		for (QuestPlayer qp : participant.getParticipants()) {
 			qp.addQuest(this);
 		}
@@ -137,8 +139,8 @@ public class Quest implements Listener {
 			.info("[" + this.name + "] <-/-> [" + state.getName() + "]");
 		
 		}
-		Participant pant = state.getParticipant();
-		if (pant != null) {
+//		Participant pant = state.getParticipant();
+//		if (pant != null) {
 			
 //			if (pant instanceof Party) {
 //				players.add(((Party) pant).getLeader());
@@ -150,8 +152,13 @@ public class Quest implements Listener {
 //				players.add((QuestPlayer) pant);
 //				((QuestPlayer) pant).addQuest(this);
 //			}
-			this.participant = pant;
+		this.participant = state.getParticipant();
+		if (this.participant != null) {
+			for (QuestPlayer qp : participant.getParticipants()) {
+				qp.addQuest(this);
+			}
 		}
+		
 		
 		ListIterator<GoalState> states = state.getGoalState().listIterator();
 		
