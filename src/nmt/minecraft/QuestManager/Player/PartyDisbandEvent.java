@@ -33,7 +33,7 @@ public class PartyDisbandEvent extends Event {
 	 * Returns the party that disbanded.
 	 * @return
 	 */
-	public Party getRequirement() {
+	public Party getParty() {
 		return party;
 	}
 	

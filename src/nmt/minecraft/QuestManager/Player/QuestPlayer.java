@@ -461,6 +461,19 @@ public class QuestPlayer implements Participant, Listener {
 					Bukkit.getScoreboardManager().getNewScoreboard());
 		}
 		
+		if (!currentQuests.isEmpty()) {
+			for (Quest q : currentQuests) {
+				if (q.getRequireParty()) {
+					removeQuest(q);
+					if (getPlayer().isOnline()) {
+						getPlayer().getPlayer().sendMessage(ChatColor.YELLOW + "The quest " 
+								+ ChatColor.DARK_PURPLE + q.getName() + ChatColor.YELLOW
+								+ " has been failed because you left the party!");
+					}
+				}
+			}
+		}
+		
 		this.party = null;
 	}
 	

@@ -21,6 +21,7 @@ import nmt.minecraft.QuestManager.Configuration.State.GoalState;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Player.PartyDisbandEvent;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
@@ -511,6 +512,26 @@ public class Quest implements Listener {
 			}
 		}
 		System.out.println();
+	}
+	
+	@EventHandler
+	public void onPartyDisband(PartyDisbandEvent e) {
+		if (e.getParty().getID().equals(participant.getIDString())) {
+			if (this.requireParty) {
+				//stop the quest!
+				for (QuestPlayer qp : e.getParty().getParticipants()) {
+					qp.removeQuest(this);
+					if (qp.getPlayer().isOnline()) {
+						qp.getPlayer().getPlayer().sendMessage(ChatColor.YELLOW + "The quest " 
+					+ ChatColor.DARK_PURPLE + name + ChatColor.YELLOW
+					+ " has been failed because the party disbanded!");
+					}
+				}
+				
+				QuestManagerPlugin.questManagerPlugin.getManager().removeQuest(this);
+				halt();
+			}
+		}
 	}
 	
 	/**
