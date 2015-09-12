@@ -1,5 +1,6 @@
 package nmt.minecraft.QuestManager.UI.Menu;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -50,6 +51,21 @@ public class MultioptionChatMenu extends ChatMenu implements RespondableMenu {
 	}
 	
 	public MultioptionChatMenu(Message body, ChatMenuOption ... options) {
+		super(body.getFormattedMessage());
+
+		
+		this.options = new TreeMap<String, ChatMenuOption>();
+		
+		keyindex = 1;
+		
+		for (ChatMenuOption opt : options) {
+			addOption(opt);
+		}
+		
+		this.setMessage(formatMessage(body));
+	}
+	
+	public MultioptionChatMenu(Message body, Collection<ChatMenuOption> options) {
 		super(body.getFormattedMessage());
 
 		

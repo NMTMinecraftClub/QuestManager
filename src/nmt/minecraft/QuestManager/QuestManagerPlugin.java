@@ -280,7 +280,10 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		if (cmd.getName().equals("party")) {
 			
-			if (args.length == 0 || !(sender instanceof Player)) {
+			if (args.length == 0) {
+				return false;
+			}
+			if (!(sender instanceof Player)) {
 				sender.sendMessage("This command must be executed by a player!");
 				return false;
 			}
@@ -318,7 +321,10 @@ public class QuestManagerPlugin extends JavaPlugin {
 		}
 		
 		if (cmd.getName().equals("boot")) {
-			if (args.length == 0 || !(sender instanceof Player)) {
+			if (args.length == 0) {
+				return false;
+			}
+			if (!(sender instanceof Player)) {
 				sender.sendMessage("This command must be executed by a player!");
 				return false;
 			}
@@ -359,7 +365,10 @@ public class QuestManagerPlugin extends JavaPlugin {
 		}
 		
 		if (cmd.getName().equals("invite")) {
-			if (args.length == 0 || !(sender instanceof Player)) {
+			if (args.length == 0) {
+				return false;
+			}
+			if (!(sender instanceof Player)) {
 				sender.sendMessage("This command must be executed by a player!");
 				return false;
 			}
@@ -396,6 +405,24 @@ public class QuestManagerPlugin extends JavaPlugin {
 			
 			return true;
 		}
+		
+		if (cmd.getName().equals("player")) {
+			if (args.length == 0) {
+				return false;
+			}
+			if (!(sender instanceof Player)) {
+				sender.sendMessage("This command must be executed by a player!");
+				return false;
+			}
+			
+			QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
+			
+			if (args[0].equals("title")) {
+				qp.showTitleMenu();
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	

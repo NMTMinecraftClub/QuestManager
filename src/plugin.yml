@@ -31,3 +31,6 @@ commands:
         usage: /questmanager [reload]
         description: QuestManager admin command
         permission: questmanager.admin
+    player:
+        usage: /player [title]
+        description: Displays player menus

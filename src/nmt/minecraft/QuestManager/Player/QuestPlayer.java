@@ -50,6 +50,7 @@ import nmt.minecraft.QuestManager.UI.Menu.ChatMenuOption;
 import nmt.minecraft.QuestManager.UI.Menu.MultioptionChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Action.BootFromPartyAction;
+import nmt.minecraft.QuestManager.UI.Menu.Action.ChangeTitleAction;
 import nmt.minecraft.QuestManager.UI.Menu.Action.PartyInviteAction;
 import nmt.minecraft.QuestManager.UI.Menu.Action.ShowChatMenuAction;
 import nmt.minecraft.QuestManager.UI.Menu.Message.PlainMessage;
@@ -609,11 +610,15 @@ public class QuestPlayer implements Participant, Listener {
 		qp.fame = (int) map.get("fame");
 		qp.money = (int) map.get("money");
 		qp.title = (String) map.get("title");
-		qp.unlockedTitles = (List<String>) map.get("unlockedTitles");
+		qp.unlockedTitles = (List<String>) map.get("unlockedtitles");
 		qp.completedQuests = (List<String>) map.get("completedquests");
 		
 		if (qp.completedQuests == null) {
 			qp.completedQuests = new LinkedList<String>();
+		}
+		
+		if (qp.unlockedTitles == null) {
+			qp.unlockedTitles = new LinkedList<String>();
 		}
 		
 		
@@ -869,6 +874,36 @@ public class QuestPlayer implements Participant, Listener {
 		ChatMenu menu = new MultioptionChatMenu(new PlainMessage(msg), opt1, opt2);
 		
 		menu.show(this.getPlayer().getPlayer().getPlayer());
+		
+	}
+	
+	/**
+	 * Shows to this player their personal title menu, used to switch titles
+	 */
+	public void showTitleMenu() {		
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		if (this.unlockedTitles.isEmpty()) {
+			ChatMenu menu = new SimpleChatMenu(new FancyMessage("You have not unlocked any titles!").color(ChatColor.DARK_RED));
+			menu.show(getPlayer().getPlayer());
+			return;
+		}
+		
+		LinkedList<ChatMenuOption> opts = new LinkedList<ChatMenuOption>();
+		
+		for (String t : unlockedTitles) {
+			opts.add(new ChatMenuOption(
+					new PlainMessage(t),
+					new ChangeTitleAction(this, t)));
+		}
+		
+
+		MultioptionChatMenu menu = new MultioptionChatMenu(new PlainMessage("Choose your title:"), opts);
+		
+		menu.show(getPlayer().getPlayer());
+		
 		
 	}
 	
