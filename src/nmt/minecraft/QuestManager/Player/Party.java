@@ -106,6 +106,8 @@ public class Party implements Participant, Listener {
 		board.setDisplayName("Party");
 		board.setDisplaySlot(DisplaySlot.SIDEBAR);
 		
+		id = GUID.generateGUID();
+		
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 		
 		QuestManagerPlugin.questManagerPlugin.getPlayerManager().addParty(this);

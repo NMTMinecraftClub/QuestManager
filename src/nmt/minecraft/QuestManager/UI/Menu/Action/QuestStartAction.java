@@ -18,6 +18,8 @@ public class QuestStartAction implements MenuAction {
 	
 	private Player player;
 	
+	private static final String partyDenial = ChatColor.YELLOW + "This quest requires a party..." + ChatColor.RESET;
+	
 	public QuestStartAction(QuestConfiguration questTemplate, Player player) {
 		this.template = questTemplate;
 		this.player = player;
@@ -29,6 +31,15 @@ public class QuestStartAction implements MenuAction {
 		//Instantiate the template
 		Quest quest;
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player);
+		
+		//check to make sure this doesn't require a party
+		if (template.getRequireParty())
+			if (qp.getParty() == null) {
+				//TODO make prettier
+				player.sendMessage(QuestStartAction.partyDenial);
+				return;
+		}
+		
         Participant participant; 
         
 		if (template.getUseParty() && qp.getParty() != null) {
