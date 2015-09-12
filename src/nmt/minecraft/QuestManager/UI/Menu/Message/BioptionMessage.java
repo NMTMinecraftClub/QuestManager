@@ -3,11 +3,11 @@ package nmt.minecraft.QuestManager.UI.Menu.Message;
 import java.util.HashMap;
 import java.util.Map;
 
-import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
-
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 
 /**
  * Wrapping/formatting class for a message with two options.

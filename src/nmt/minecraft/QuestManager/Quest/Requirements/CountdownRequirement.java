@@ -3,6 +3,10 @@ package nmt.minecraft.QuestManager.Quest.Requirements;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import nmt.minecraft.QuestManager.Configuration.State.RequirementState;
 import nmt.minecraft.QuestManager.Configuration.State.StatekeepingRequirement;
 import nmt.minecraft.QuestManager.Player.Participant;
@@ -10,10 +14,6 @@ import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 import nmt.minecraft.QuestManager.Scheduling.IntervalScheduler;
 import nmt.minecraft.QuestManager.Scheduling.Tickable;
-
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Requires a certain amount of time to pass before satisfied

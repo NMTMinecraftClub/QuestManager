@@ -1,9 +1,9 @@
 package nmt.minecraft.QuestManager.UI.Menu;
 
+import org.bukkit.entity.Player;
+
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
-
-import org.bukkit.entity.Player;
 
 /**
  * A basic text-only menu.

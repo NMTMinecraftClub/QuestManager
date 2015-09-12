@@ -3,7 +3,6 @@ package nmt.minecraft.QuestManager.UI.Menu.Message;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
@@ -13,7 +12,7 @@ import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
  * @author Skyler
  *
  */
-public class SimpleMessage extends Message {
+public class PlainMessage extends Message {
 
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -21,7 +20,7 @@ public class SimpleMessage extends Message {
 	 */
 	public static void registerWithAliases() {
 		for (aliases alias : aliases.values()) {
-			ConfigurationSerialization.registerClass(SimpleMessage.class, alias.getAlias());
+			ConfigurationSerialization.registerClass(PlainMessage.class, alias.getAlias());
 		}
 	}
 	
@@ -29,13 +28,13 @@ public class SimpleMessage extends Message {
 	 * Registers this class as configuration serializable with only the default alias
 	 */
 	public static void registerWithoutAliases() {
-		ConfigurationSerialization.registerClass(SimpleMessage.class);
+		ConfigurationSerialization.registerClass(PlainMessage.class);
 	}
 	
 
 	private enum aliases {
-		DEFAULT(SimpleMessage.class.getName()),
-		SIMPLE("SimpleMessage");
+		DEFAULT(PlainMessage.class.getName()),
+		SIMPLE("PlainMessage");
 		
 		private String alias;
 		
@@ -51,18 +50,16 @@ public class SimpleMessage extends Message {
 	
 	private FancyMessage message;
 	
-	private FancyMessage label;
-	
-	private SimpleMessage() {
+	private PlainMessage() {
 		super();
 	}
 	
 	
-	public SimpleMessage(FancyMessage msg) {
+	public PlainMessage(FancyMessage msg) {
 		this.message = msg;
 	}
 	
-	public SimpleMessage(String msg) {
+	public PlainMessage(String msg) {
 		this.message = new FancyMessage(msg);
 	}
 	
@@ -76,10 +73,10 @@ public class SimpleMessage extends Message {
 		return map;
 	}
 	
-	public static SimpleMessage valueOf(Map<String, Object> map) {
+	public static PlainMessage valueOf(Map<String, Object> map) {
 		Object obj = map.get("text");
 		
-		SimpleMessage msg = new SimpleMessage();
+		PlainMessage msg = new PlainMessage();
 		
 		if (obj instanceof FancyMessage) {
 			msg.message = (FancyMessage) obj;
@@ -94,18 +91,12 @@ public class SimpleMessage extends Message {
 	
 	@Override
 	public void setSourceLabel(FancyMessage label) {
-		this.label = label;
+		;
 	}
 
 	@Override
 	public FancyMessage getFormattedMessage() {
-		return new FancyMessage("")
-		.then(label == null ? 
-				new FancyMessage("Unknown")	: label)
-			.color(ChatColor.DARK_GRAY)
-			.style(ChatColor.BOLD)
-		.then(":\n")
-		.then(message);	
+		return message;
 		
 	}
 	

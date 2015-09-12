@@ -1,9 +1,9 @@
 package nmt.minecraft.QuestManager.NPC;
 
-import nmt.minecraft.QuestManager.Scheduling.DispersedScheduler;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+
+import nmt.minecraft.QuestManager.Scheduling.DispersedScheduler;
 
 /**
  * Describes NPCs with simple movement pattern: they occasionally attempt to

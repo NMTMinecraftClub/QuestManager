@@ -3,9 +3,9 @@ package nmt.minecraft.QuestManager.Scheduling;
 import java.util.LinkedList;
 import java.util.List;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-
 import org.bukkit.Bukkit;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
 
 /**
  * Waits a prescribed amount of time, and then ticks all registered Tickables

@@ -2,27 +2,10 @@ package nmt.minecraft.QuestManager.Quest;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
-
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.Configuration.State.GoalState;
-import nmt.minecraft.QuestManager.Configuration.State.QuestState;
-import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-import nmt.minecraft.QuestManager.Player.Participant;
-import nmt.minecraft.QuestManager.Player.Party;
-import nmt.minecraft.QuestManager.Player.QuestPlayer;
-import nmt.minecraft.QuestManager.Quest.History.History;
-import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
-import nmt.minecraft.QuestManager.Quest.Requirements.RequirementUpdateEvent;
-import nmt.minecraft.QuestManager.UI.ChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,6 +15,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.State.GoalState;
+import nmt.minecraft.QuestManager.Configuration.State.QuestState;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Player.Party;
+import nmt.minecraft.QuestManager.Player.PartyDisbandEvent;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Quest.History.History;
+import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.RequirementUpdateEvent;
+import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 
 /**
  * Quest Interface!<br />
@@ -67,8 +64,10 @@ public class Quest implements Listener {
 	private String description;
 	
 	private boolean running;
+//	
+//	private Set<QuestPlayer> players;
 	
-	private Set<QuestPlayer> players;
+	private Participant participant;
 	
 	private List<Goal> goals;	
 	
@@ -76,7 +75,15 @@ public class Quest implements Listener {
 	
 	private List<ItemStack> itemRewards;
 	
+	private String titleReward;
+	
+	private int moneyReward;
+	
 	private History history;
+	
+	private boolean useParty;
+	
+	private boolean requireParty;
 	
 	private boolean ready;
 	
@@ -93,7 +100,7 @@ public class Quest implements Listener {
 	 */
 	private boolean keepState;
 	
-	public Quest(String name, String description, boolean keepState) {
+	public Quest(String name, String description, Participant participant, boolean keepState, boolean useParty, boolean requireParty) {
 		this.name = name;
 		this.description = description;
 		
@@ -104,8 +111,18 @@ public class Quest implements Listener {
 		this.history = new History();
 		ready = false;
 		this.keepState = keepState;
+		this.useParty = useParty;
+		this.requireParty = requireParty;
 		
-		players = new HashSet<QuestPlayer>();
+//		players = new HashSet<QuestPlayer>();
+		this.participant = participant;
+		
+		if (participant != null)
+		for (QuestPlayer qp : participant.getParticipants()) {
+			qp.addQuest(this);
+		}
+		
+		
 		itemRewards = new LinkedList<ItemStack>();
 		
 		this.ID = (int) (Math.random() * Integer.MAX_VALUE);
@@ -128,20 +145,26 @@ public class Quest implements Listener {
 			.info("[" + this.name + "] <-/-> [" + state.getName() + "]");
 		
 		}
-		Participant pant = state.getParticipant();
-		if (pant != null) {
+//		Participant pant = state.getParticipant();
+//		if (pant != null) {
 			
-			if (pant instanceof Party) {
-				players.add(((Party) pant).getLeader());
-				for (QuestPlayer p : ((Party) pant).getMembers()) {
-					players.add(p);
-					p.addQuest(this);
-				}
-			} else {
-				players.add((QuestPlayer) pant);
-				((QuestPlayer) pant).addQuest(this);
+//			if (pant instanceof Party) {
+//				players.add(((Party) pant).getLeader());
+//				for (QuestPlayer p : ((Party) pant).getMembers()) {
+//					players.add(p);
+//					p.addQuest(this);
+//				}
+//			} else {
+//				players.add((QuestPlayer) pant);
+//				((QuestPlayer) pant).addQuest(this);
+//			}
+		this.participant = state.getParticipant();
+		if (this.participant != null) {
+			for (QuestPlayer qp : participant.getParticipants()) {
+				qp.addQuest(this);
 			}
 		}
+		
 		
 		ListIterator<GoalState> states = state.getGoalState().listIterator();
 		
@@ -228,6 +251,10 @@ public class Quest implements Listener {
 				
 				//fame reward
 				qp.addFame(fame);
+				if (moneyReward > 0) {
+					qp.addMoney(moneyReward);
+				}
+				
 				
 				qp.completeQuest(this);
 				
@@ -252,7 +279,11 @@ public class Quest implements Listener {
 						);
 			    
 			    menu.show(player);
-			    
+
+				if (titleReward != null && !titleReward.trim().isEmpty()) {
+					qp.addTitle(titleReward);
+				}
+				
 			    QuestManagerPlugin.questManagerPlugin.getManager().removeQuest(this);
 			    
 			    halt();
@@ -271,36 +302,37 @@ public class Quest implements Listener {
 		
 		HandlerList.unregisterAll(this);
 		
-		//get config location!
-		File saveLoc = new File(QuestManagerPlugin.questManagerPlugin.getManager()
-				.getSaveLocation(), name + "_" + ID + ".yml");
-		
-		QuestState state = getState();
+		if (!(participant instanceof Party)) {
+			//get config location!
+			File saveLoc = new File(QuestManagerPlugin.questManagerPlugin.getManager()
+					.getSaveLocation(), name + "_" + ID + ".yml");
 			
+			QuestState state = getState();
+
+			QuestManagerPlugin.questManagerPlugin.getLogger().info("Saving quest state: " + 
+					saveLoc.getAbsolutePath());
+			try {
+				state.save(saveLoc);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		if (!goals.isEmpty()) {	
 			for (Goal goal : goals) {
 				goal.stop();
 			}
 		}
 		
-		QuestManagerPlugin.questManagerPlugin.getLogger().info("Saving quest state: " + 
-				saveLoc.getAbsolutePath());
-		try {
-			state.save(saveLoc);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		if (players.isEmpty()) {
+		if (participant.getParticipants().isEmpty()) {
 			return;
 		}
 		
 		//do player stuff
-		if (!players.isEmpty())
-		for (QuestPlayer player : players) {
-			removePlayer(player);
-		}
+//		for (QuestPlayer player : players) {
+//			removePlayer(player);
+//		}
 		
 		//remove NPCs
 //		if (!npcs.isEmpty()) 
@@ -317,17 +349,17 @@ public class Quest implements Listener {
 	 * <b>Quests must immediately stop execution when asked to halt.<b>
 	 */
 	public void halt() {
-
+		
 		HandlerList.unregisterAll(this);
 		
-		if (players.isEmpty()) {
+		if (participant.getParticipants().isEmpty()) {
 			return;
 		}
 		
-		//just remove players
-		for (QuestPlayer player : players) {
-			removePlayer(player);
-		}
+//		//just remove players
+//		for (QuestPlayer player : players) {
+//			removePlayer(player);
+//		}
 		
 		//remove NPCs
 //		if (!npcs.isEmpty()) 
@@ -343,47 +375,52 @@ public class Quest implements Listener {
 		}
 		
 	}
+
+//	/**
+//	 * Return all players involved in this quests.<br />
+//	 * Involved players are those participating in any way in the quest. For
+//	 * example, if a player is marked as a pvp target in a quest then they are
+//	 * involved in the quest.
+//	 * @return
+//	 */
+//	public Collection<QuestPlayer> getPlayers() {
+//		return players;
+//	}
 	
-	/**
-	 * Return all players involved in this quests.<br />
-	 * Involved players are those participating in any way in the quest. For
-	 * example, if a player is marked as a pvp target in a quest then they are
-	 * involved in the quest.
-	 * @return
-	 */
-	public Collection<QuestPlayer> getPlayers() {
-		return players;
-	}
-	
-	/**
-	 * Add a player to the quest.<br />
-	 * This typically involves moving the player to a starting location or giving them
-	 * starting equipment?
-	 * @param player
-	 */
-	public void addPlayer(QuestPlayer player) {
-		players.add(player);
-		
-		if (!goals.isEmpty())
-		for (Goal goal : goals) {
-			goal.sync();
-		}
-		
-		//TODO starting location, etc?
-	}
-	
-	/**
-	 * Removes a player from the quest.<br />
-	 * This might involve removing them from a dungeon, etc;
-	 * @param player Which player to remove
-	 * @return Whether or not the player was successfully removed
-	 */
-	public boolean removePlayer(QuestPlayer player) {
-		
-		//TODO get them out of a dungeon, etc?
-		
-		return players.remove(player);
-	}
+//	/**
+//	 * Add a player to the quest.<br />
+//	 * This typically involves moving the player to a starting location or giving them
+//	 * starting equipment?
+//	 * @param player
+//	 */
+//	public void addPlayer(QuestPlayer player) {
+//		
+//		if (!useParty && players.size() == 1) {
+//			; //don't add them! we only support 1 player!
+//		} else {
+//			players.add(player);
+//		}
+//		
+//		if (!goals.isEmpty())
+//		for (Goal goal : goals) {
+//			goal.sync();
+//		}
+//		
+//		//TODO starting location, etc?
+//	}
+//	
+//	/**
+//	 * Removes a player from the quest.<br />
+//	 * This might involve removing them from a dungeon, etc;
+//	 * @param player Which player to remove
+//	 * @return Whether or not the player was successfully removed
+//	 */
+//	public boolean removePlayer(QuestPlayer player) {
+//		
+//		//TODO get them out of a dungeon, etc?
+//		
+//		return players.remove(player);
+//	}
 	
 	/**
 	 * Returns the name of the quest, including text formatters and colors.
@@ -433,6 +470,14 @@ public class Quest implements Listener {
 		return history;
 	}
 		
+	public boolean getUseParty() {
+		return useParty;
+	}
+
+	public boolean getRequireParty() {
+		return requireParty;
+	}
+
 	/**
 	 * @return the fame
 	 */
@@ -466,6 +511,22 @@ public class Quest implements Listener {
 		itemRewards.add(reward);
 	}
 
+	public String getTitleReward() {
+		return titleReward;
+	}
+
+	public void setTitleReward(String titleReward) {
+		this.titleReward = titleReward;
+	}
+
+	public int getMoneyReward() {
+		return moneyReward;
+	}
+
+	public void setMoneyReward(int moneyReward) {
+		this.moneyReward = moneyReward;
+	}
+
 	@EventHandler
 	public void onRequirementUpdate(RequirementUpdateEvent e) {
 		if (e.getRequirement() == null || e.getRequirement().getGoal().getQuest().equals(this)) {
@@ -476,12 +537,34 @@ public class Quest implements Listener {
 			
 			update();
 
-			for (QuestPlayer p : players) {
+			for (QuestPlayer p : participant.getParticipants()) {
 				p.addQuestBook();
 				p.updateQuestBook();
 			}
 		}
 		System.out.println();
+	}
+	
+	@EventHandler
+	public void onPartyDisband(PartyDisbandEvent e) {
+		System.out.println("catch");
+		if (e.getParty().getIDString().equals(participant.getIDString())) {
+			if (this.requireParty) {
+				System.out.println("gonna quit!");
+				//stop the quest!
+				for (QuestPlayer qp : e.getParty().getParticipants()) {
+					qp.removeQuest(this);
+					if (qp.getPlayer().isOnline()) {
+						qp.getPlayer().getPlayer().sendMessage(ChatColor.YELLOW + "The quest " 
+					+ ChatColor.DARK_PURPLE + name + ChatColor.YELLOW
+					+ " has been failed because the party disbanded!");
+					}
+				}
+				
+				QuestManagerPlugin.questManagerPlugin.getManager().removeQuest(this);
+				halt();
+			}
+		}
 	}
 	
 	/**
@@ -512,25 +595,7 @@ public class Quest implements Listener {
 	}
 	
 	public Participant getParticipants() {
-		Participant part = null;
-		if (players.size() == 1) {
-			part = players.iterator().next();
-		} else if (players.size() == 0) {
-			return null;
-		} else {
-			QuestPlayer leader;
-			List<QuestPlayer> members = new LinkedList<QuestPlayer>();
-			Iterator<QuestPlayer> it = players.iterator();
-			
-			leader = it.next();
-			
-			while (it.hasNext()) {
-				members.add(it.next());
-			}
-			
-			part = new Party("quest_created_temp_quest[" + name + "]", leader, members);
-		}
-		return part;
+		return participant;
 	}
 	
 	@Override

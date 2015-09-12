@@ -3,6 +3,10 @@ main: nmt.minecraft.QuestManager.QuestManagerPlugin
 version: 1.0
 softdepend: [Fanciful, Multiverse-Core]
 loadfirst:
+permissions:
+    questmanager.admin:
+        description: The permission to do plugin-critical things like reload
+        default: op
 commands:
     questlog:
         usage: /questlog
@@ -10,3 +14,23 @@ commands:
     qmchatmenu:
         usage: This command is not meant to be called directly.
         description: Internal interface command for quest menus - chat
+    party:
+        usage: /party
+        description: used to interface with the party menus
+        aliases: p
+    leave:
+        usage: /leave
+        description: Used to leave a party
+    boot:
+        usage: /boot [party member]
+        description: Kicks a party member from the party
+    invite:
+        usage: /invite [player]
+        description: Invites a player to your party
+    questmanager:
+        usage: /questmanager [reload]
+        description: QuestManager admin command
+        permission: questmanager.admin
+    player:
+        usage: /player [title]
+        description: Displays player menus

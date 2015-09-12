@@ -10,13 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
-import nmt.minecraft.QuestManager.Quest.Goal;
-import nmt.minecraft.QuestManager.Quest.Quest;
-import nmt.minecraft.QuestManager.Quest.History.History;
-import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Instrument;
@@ -33,7 +26,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -43,6 +38,23 @@ import com.onarandombox.MultiversePortals.MultiversePortals;
 import com.onarandombox.MultiversePortals.PortalPlayerSession;
 import com.onarandombox.MultiversePortals.event.MVPortalEvent;
 
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.Quest;
+import nmt.minecraft.QuestManager.Quest.History.History;
+import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
+import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.ChatMenuOption;
+import nmt.minecraft.QuestManager.UI.Menu.MultioptionChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Action.BootFromPartyAction;
+import nmt.minecraft.QuestManager.UI.Menu.Action.ChangeTitleAction;
+import nmt.minecraft.QuestManager.UI.Menu.Action.PartyInviteAction;
+import nmt.minecraft.QuestManager.UI.Menu.Action.ShowChatMenuAction;
+import nmt.minecraft.QuestManager.UI.Menu.Message.PlainMessage;
+
 /**
  * Player wrapper to store questing information and make saving player quest status
  * easier
@@ -50,8 +62,8 @@ import com.onarandombox.MultiversePortals.event.MVPortalEvent;
  *
  */
 public class QuestPlayer implements Participant, Listener {
-
-	private OfflinePlayer player;
+	
+	private UUID playerID;
 	
 	private History history;
 	
@@ -65,7 +77,11 @@ public class QuestPlayer implements Participant, Listener {
 	
 	private String title;
 	
+	private List<String> unlockedTitles;
+	
 	private Location questPortal;
+	
+	private Party party;
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -146,8 +162,8 @@ public class QuestPlayer implements Participant, Listener {
 		this.fame = 0;
 		this.money = 0;
 		this.title = "The Unknown";
+		this.unlockedTitles = new LinkedList<String>();
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
-		; //do nothing. This is for non-redundant defining of QuestPlayers from config
 	}
 	
 	/**
@@ -158,7 +174,7 @@ public class QuestPlayer implements Participant, Listener {
 	 */
 	public QuestPlayer(OfflinePlayer player) {
 		this();
-		this.player = player;
+		this.playerID = player.getUniqueId();
 		this.currentQuests = new LinkedList<Quest>();
 		this.completedQuests = new LinkedList<String>();
 		this.history = new History();
@@ -179,11 +195,11 @@ public class QuestPlayer implements Participant, Listener {
 	 * This method will produce a fully updated quest book in the players inventory.
 	 */
 	public void addQuestBook() {
-		if (!player.isOnline()) {
+		if (!getPlayer().isOnline()) {
 			return;
 		}
 		
-		Player play = player.getPlayer();
+		Player play = getPlayer().getPlayer();
 		Inventory inv = play.getInventory();
 		
 		if (inv.firstEmpty() == -1) {
@@ -231,11 +247,11 @@ public class QuestPlayer implements Participant, Listener {
 	 * If the user does not have abook already or has discarded it, this method will do nothing.
 	 */
 	public void updateQuestBook() {
-		if (!player.isOnline()) {
+		if (!getPlayer().isOnline()) {
 			return;
 		}
 		
-		Player play = player.getPlayer();
+		Player play = getPlayer().getPlayer();
 		Inventory inv = play.getInventory();
 		ItemStack book = null;
 		
@@ -266,7 +282,7 @@ public class QuestPlayer implements Participant, Listener {
 						+ "  This book details your current quest progress & history.");
 		
 		//generate the stats page
-		bookMeta.addPage(ChatColor.DARK_PURPLE + " " + player.getName() + " - "
+		bookMeta.addPage(ChatColor.DARK_PURPLE + " " + getPlayer().getName() + " - "
 				+ ChatColor.DARK_RED + title
 				+ "\n-----\n  " + ChatColor.GOLD + "Fame: " + fame
 				+ "\n  "			+ ChatColor.GOLD + "Gold: " + money
@@ -290,6 +306,24 @@ public class QuestPlayer implements Participant, Listener {
 				page += ChatColor.GOLD + quest.getName() + "\n";
 				
 				page += ChatColor.DARK_BLUE + quest.getDescription() + "\n";
+				
+				page += ChatColor.BLACK + "Party: ";
+				
+				if (quest.getUseParty()) {
+					page += ChatColor.DARK_GREEN;
+				} else {
+					page += ChatColor.GRAY;
+				}
+				
+				page += "Uses  ";
+				
+				if (quest.getRequireParty()) {
+					page += ChatColor.DARK_GREEN;
+				} else {
+					page += ChatColor.GRAY;
+				}
+				
+				page += "Require\n";
 				
 				page += ChatColor.RESET + "Objectives:\n";
 				
@@ -394,10 +428,6 @@ public class QuestPlayer implements Participant, Listener {
 				new HistoryEvent("Completed the quest \"" + quest.getName() + "\""));
 	}
 	
-	public OfflinePlayer getPlayer() {
-		return player;
-	}
-	
 	public int getFame() {
 		return fame;
 	}
@@ -414,6 +444,44 @@ public class QuestPlayer implements Participant, Listener {
 		this.fame = fame;
 	}
 	
+	public Party getParty() {
+		return party;
+	}
+	
+	public Party createParty() {
+		this.party = new Party(this);
+		return party;
+	}
+	
+	public void joinParty(Party party) {
+		if (party.addMember(this))	{
+			this.party = party;
+		}
+	}
+	
+	public void leaveParty(String message) {
+		if (getPlayer().isOnline()) {
+			getPlayer().getPlayer().sendMessage(message);
+			getPlayer().getPlayer().setScoreboard(
+					Bukkit.getScoreboardManager().getNewScoreboard());
+		}
+		
+		if (!currentQuests.isEmpty()) {
+			for (Quest q : currentQuests) {
+				if (q.getRequireParty()) {
+					removeQuest(q);
+					if (getPlayer().isOnline()) {
+						getPlayer().getPlayer().sendMessage(ChatColor.YELLOW + "The quest " 
+								+ ChatColor.DARK_PURPLE + q.getName() + ChatColor.YELLOW
+								+ " has been failed because you left the party!");
+					}
+				}
+			}
+		}
+		
+		this.party = null;
+	}
+	
 	/**
 	 * @return the money
 	 */
@@ -426,10 +494,10 @@ public class QuestPlayer implements Participant, Listener {
 	 */
 	public void setMoney(int money) {
 		this.money = money;
-		if (player.isOnline())
+		if (getPlayer().isOnline())
 		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
-					.getWorlds().contains(player.getPlayer().getWorld().getName())) {
-			player.getPlayer().setLevel(this.money);
+					.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
+			getPlayer().getPlayer().setLevel(this.money);
 		}
 	}
 	
@@ -439,15 +507,33 @@ public class QuestPlayer implements Participant, Listener {
 	 */
 	public void addMoney(int money) {
 		this.money += money;
-		if (player.isOnline())
+		if (getPlayer().isOnline())
 			if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
-						.getWorlds().contains(player.getPlayer().getWorld().getName())) {
-				player.getPlayer().setLevel(this.money);
+						.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
+				getPlayer().getPlayer().setLevel(this.money);
 			}
 	}
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	
+	public void addTitle(String title) {
+		this.unlockedTitles.add(title);
+		
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		ChatMenu menu = new SimpleChatMenu(
+				new FancyMessage("You've unlocked the ")
+					.color(ChatColor.DARK_GRAY)
+				.then(title)
+					.color(ChatColor.GOLD)
+					.style(ChatColor.BOLD)
+				.then(" title!"));
+		
+		menu.show(getPlayer().getPlayer());
 	}
 	
 //	/**
@@ -485,9 +571,10 @@ public class QuestPlayer implements Participant, Listener {
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>(3);
 		map.put("title", title);
+		map.put("unlockedtitles", unlockedTitles);
 		map.put("fame", fame);
 		map.put("money", money);
-		map.put("id", player.getUniqueId().toString());
+		map.put("id", getPlayer().getUniqueId().toString());
 		map.put("portalloc", this.questPortal);
 		map.put("completedquests", completedQuests);
 		
@@ -503,7 +590,8 @@ public class QuestPlayer implements Participant, Listener {
 	public static QuestPlayer valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("id") || !map.containsKey("fame") 
 				 || !map.containsKey("title") || !map.containsKey("completedquests")
-				 || !map.containsKey("portalloc") || !map.containsKey("money")) {
+				 || !map.containsKey("portalloc") || !map.containsKey("money")
+				 || !map.containsKey("unlockedtitles")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid Quest Player! "
 					+ (map.containsKey("id") ? ": " + map.get("id") : ""));
 			return null;
@@ -522,10 +610,15 @@ public class QuestPlayer implements Participant, Listener {
 		qp.fame = (int) map.get("fame");
 		qp.money = (int) map.get("money");
 		qp.title = (String) map.get("title");
+		qp.unlockedTitles = (List<String>) map.get("unlockedtitles");
 		qp.completedQuests = (List<String>) map.get("completedquests");
 		
 		if (qp.completedQuests == null) {
 			qp.completedQuests = new LinkedList<String>();
+		}
+		
+		if (qp.unlockedTitles == null) {
+			qp.unlockedTitles = new LinkedList<String>();
 		}
 		
 		
@@ -534,7 +627,7 @@ public class QuestPlayer implements Participant, Listener {
 
 	@Override
 	public String getIDString() {
-		return player.getUniqueId().toString();
+		return getPlayer().getUniqueId().toString();
 	}
 
 	/**
@@ -553,49 +646,60 @@ public class QuestPlayer implements Participant, Listener {
 	
 	@EventHandler
 	public void onPortal(MVPortalEvent e) {
-		if (!player.isOnline() || e.isCancelled()) {
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getUsePortals()) {
+			return;
+		}
+		
+		if (!getPlayer().isOnline() || e.isCancelled()) {
 			return;
 		}
 			
-		if (e.getTeleportee().equals(player)) {			
+		if (e.getTeleportee().equals(getPlayer())) {			
 			
 			List<String> qworlds = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 					.getWorlds();
 			if (qworlds.contains(e.getFrom().getWorld().getName())) {
 				
 				//check that we aren't going TO antoher quest world
-				if (qworlds.contains(e.getDestination().getLocation(player.getPlayer()).getWorld().getName())) {
+				if (qworlds.contains(e.getDestination().getLocation(getPlayer().getPlayer()).getWorld().getName())) {
 					//we are! Don't interfere here
 					return;
 				}
 				
 				//we're leaving a quest world, so save the portal!
 				this.questPortal = e.getFrom();
+				
+				//player quit
+				onPlayerQuit();
 				return;
 			}
-			if (qworlds.contains(e.getDestination().getLocation(player.getPlayer()).getWorld().getName())) {
+			if (qworlds.contains(e.getDestination().getLocation(getPlayer().getPlayer()).getWorld().getName())) {
 				//Before we warp to our old location, we need to make sure we HAVE one
 				if (this.questPortal == null) {
 					//this is our first time coming in, so just let the portal take us
 					//and save where it plops us out at
-					this.questPortal = e.getDestination().getLocation(player.getPlayer());
+					this.questPortal = e.getDestination().getLocation(getPlayer().getPlayer());
 					return;
 				}
 				
 				//we're moving TO a quest world, so actually go to our saved location
 				e.setCancelled(true);
-				player.getPlayer().teleport(questPortal);
+				getPlayer().getPlayer().teleport(questPortal);
 			}
 		}
 	}
 
 	@EventHandler
 	public void onExp(PlayerExpChangeEvent e) {
-		if (!player.isOnline()) {
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getXPMoney()) {
+			return;
+		}
+		if (!getPlayer().isOnline()) {
 			return;
 		}
 		
-		Player p = player.getPlayer().getPlayer();
+		Player p = getPlayer().getPlayer();
 		
 		if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
 			return;
@@ -605,7 +709,7 @@ public class QuestPlayer implements Participant, Listener {
 				.getWorlds().contains(p.getWorld().getName())) {
 			return;
 		}
-		
+
 		money += e.getAmount();
 		p.setLevel(money);
 		
@@ -615,11 +719,11 @@ public class QuestPlayer implements Participant, Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		
-		if (!player.isOnline()) {
+		if (!getPlayer().isOnline()) {
 			return;
 		}
 		
-		Player p = player.getPlayer().getPlayer();
+		Player p = getPlayer().getPlayer();
 		
 		if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
 			return;
@@ -640,11 +744,11 @@ public class QuestPlayer implements Participant, Listener {
 	
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent e) {
-		if (!player.isOnline()) {
+		if (!getPlayer().isOnline()) {
 			return;
 		}
 		
-		Player p = player.getPlayer().getPlayer();
+		Player p = getPlayer().getPlayer();
 		
 		if (!p.getUniqueId().equals(e.getEntity().getUniqueId())) {
 			return;
@@ -663,7 +767,7 @@ public class QuestPlayer implements Participant, Listener {
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent e) {
 
-		if (!player.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+		if (!getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
 			return;
 		}
 
@@ -689,5 +793,139 @@ public class QuestPlayer implements Participant, Listener {
 		
 	}
 	
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent e) {
+		if (e.getPlayer().getUniqueId().equals(getPlayer().getUniqueId())) {
+			onPlayerQuit();
+		}
+	}
+	
+	/**
+	 * Internal helper method to house what happens when a player quits (by leaving, logging out, etc)
+	 */
+	private void onPlayerQuit() {
+		if (party != null) {
+			party.removePlayer(this, "You've been disconnected!");
+			party = null;
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerInteractWithPlayer(PlayerInteractEntityEvent e) {
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		Player p = getPlayer().getPlayer();
+		
+		if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			return;
+		}
+		
+		//did interact with another player?
+		if (e.getRightClicked() instanceof Player) {
+			QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
+					(Player) e.getRightClicked());
+			
+			showPlayerMenu(qp);
+			return;
+		}
+	
+	}
+	
+	/**
+	 * Displays for this quest player a player menu for the given player.
+	 * @param player
+	 */
+	private void showPlayerMenu(QuestPlayer player) {
+		/*
+		 * ++++++++++++++++++++++++++++++
+		 *     Name - Title
+		 *     
+		 *  Send Message    View Info      Trade
+		 *  Invite To Party
+		 * ++++++++++++++++++++++++++++++
+		 */
+		FancyMessage msg = new FancyMessage(player.getPlayer().getName() + "  -  " + player.getTitle());
+		
+		ChatMenuOption opt1;
+		
+		if (party != null && player.party != null && player.getParty().getIDString().equals(party.getIDString())) {
+			//already in party, so give option to kick
+			if (party.getLeader().getIDString().equals(getIDString())) {
+				opt1 = new ChatMenuOption(new PlainMessage("Kick from Party"),
+						new BootFromPartyAction(party, player));
+			} else {
+				opt1 = new ChatMenuOption(new PlainMessage(new FancyMessage("Kick from Party").color(ChatColor.DARK_GRAY)),
+						new ShowChatMenuAction(
+								new SimpleChatMenu(new FancyMessage("Only the party leader can kick players!").color(ChatColor.DARK_RED))
+								, getPlayer().getPlayer()));
+			}
+		} else {
+			opt1 = new ChatMenuOption(new PlainMessage("Invite to Party"), 
+					new PartyInviteAction(this, player));
+		}
+		
+		
+		ChatMenuOption opt2 = new ChatMenuOption(new PlainMessage("View Info"), 
+				new ShowChatMenuAction(new SimpleChatMenu(
+						new FancyMessage(player.getPlayer().getName())
+							.color(ChatColor.DARK_PURPLE)
+						.then(" - ")
+							.color(ChatColor.WHITE)
+						.then(player.getTitle())
+						.then("\n\n")
+						.then("This player has ")
+						.then(player.money + "")
+							.color(ChatColor.GOLD)
+						.then(" gold.\nThis player has completed ")
+							.color(ChatColor.WHITE)
+						.then("" + player.completedQuests.size())
+							.color(ChatColor.GREEN)
+							.tooltip(player.completedQuests)
+						.then(" quests.")
+							.color(ChatColor.WHITE)
+					), 
+				this.getPlayer().getPlayer()));
+		
+		ChatMenu menu = new MultioptionChatMenu(new PlainMessage(msg), opt1, opt2);
+		
+		menu.show(this.getPlayer().getPlayer().getPlayer());
+		
+	}
+	
+	/**
+	 * Shows to this player their personal title menu, used to switch titles
+	 */
+	public void showTitleMenu() {		
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		if (this.unlockedTitles.isEmpty()) {
+			ChatMenu menu = new SimpleChatMenu(new FancyMessage("You have not unlocked any titles!").color(ChatColor.DARK_RED));
+			menu.show(getPlayer().getPlayer());
+			return;
+		}
+		
+		LinkedList<ChatMenuOption> opts = new LinkedList<ChatMenuOption>();
+		
+		for (String t : unlockedTitles) {
+			opts.add(new ChatMenuOption(
+					new PlainMessage(t),
+					new ChangeTitleAction(this, t)));
+		}
+		
+
+		MultioptionChatMenu menu = new MultioptionChatMenu(new PlainMessage("Choose your title:"), opts);
+		
+		menu.show(getPlayer().getPlayer());
+		
+		
+	}
+	
+	public OfflinePlayer getPlayer() {
+		return Bukkit.getOfflinePlayer(playerID);
+	}
 	
 }

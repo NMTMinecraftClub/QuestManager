@@ -2,14 +2,6 @@ package nmt.minecraft.QuestManager.Quest.Requirements;
 
 import java.util.UUID;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
-import nmt.minecraft.QuestManager.Configuration.State.RequirementState;
-import nmt.minecraft.QuestManager.Configuration.State.StatekeepingRequirement;
-import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
-import nmt.minecraft.QuestManager.Quest.Goal;
-import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -25,6 +17,14 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.EntityEquipment;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
+import nmt.minecraft.QuestManager.Configuration.State.RequirementState;
+import nmt.minecraft.QuestManager.Configuration.State.StatekeepingRequirement;
+import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
 /**
  * Requirement that a given entity must be slain.<br />
@@ -206,7 +206,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 				break;
 			}
 		}
-		
+		System.out.println("removing");
 		foe.remove();
 	}
 	

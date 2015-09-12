@@ -4,17 +4,18 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.NPC.NPC;
-import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
-import nmt.minecraft.QuestManager.Quest.Goal;
-import nmt.minecraft.QuestManager.Quest.Quest;
-import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
-
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.NPC.NPC;
+import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
+import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Quest.Goal;
+import nmt.minecraft.QuestManager.Quest.Quest;
+import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
 /**
  * Wrapper for quest configuration
@@ -107,6 +108,18 @@ public class QuestConfiguration {
 				
 	}
 	
+	public boolean getUseParty() {
+		return config.getBoolean(
+				QuestConfigurationField.USEPARTY.getKey(),
+				(Boolean) QuestConfigurationField.USEPARTY.getDefault());
+	}
+	
+	public boolean getRequireParty() {
+		return config.getBoolean(
+				QuestConfigurationField.REQUIREPARTY.getKey(),
+				(Boolean) QuestConfigurationField.REQUIREPARTY.getDefault());
+	}
+	
 	public Collection<NPC> getAuxNPCs() {
 		
 		List<NPC> npcs = new LinkedList<NPC>();
@@ -176,7 +189,7 @@ public class QuestConfiguration {
 	 * @return
 	 * @throws InvalidConfigurationException 
 	 */
-	public Quest instanceQuest() throws InvalidConfigurationException {
+	public Quest instanceQuest(Participant participant) throws InvalidConfigurationException {
 				
 		if (!config.contains(QuestConfigurationField.GOALS.getKey())) {
 			return null;
@@ -190,7 +203,7 @@ public class QuestConfiguration {
 			goalList.add(questSection.getConfigurationSection(key));
 		}
 			
-		Quest quest = new Quest(getName(), getDescription(), getSaveState());
+		Quest quest = new Quest(getName(), getDescription(), participant, getSaveState(), getUseParty(), getRequireParty());
 		
 		for (ConfigurationSection section : goalList) {
 			Goal goal = Goal.fromConfig(quest, section);
@@ -199,9 +212,12 @@ public class QuestConfiguration {
 		
 		//get fame and reward info
 		quest.setFame(config.getInt(QuestConfigurationField.FAME.getKey()));
+		quest.setTitleReward(config.getString(QuestConfigurationField.TITLEREWARD.getKey()));
+		quest.setMoneyReward(config.getInt(QuestConfigurationField.MONEYREWARD.getKey()));
 		
 		@SuppressWarnings("unchecked")
 		List<ItemStack> rewards = (List<ItemStack>) config.getList(QuestConfigurationField.REWARDS.getKey());
+
 		
 		if (rewards != null && !rewards.isEmpty())
 		for (ItemStack item : rewards) {

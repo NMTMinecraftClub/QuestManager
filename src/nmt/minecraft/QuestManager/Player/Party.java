@@ -5,29 +5,41 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import nmt.minecraft.QuestManager.Configuration.Utils.GUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Instrument;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.Utils.GUID;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 
 /**
  * A group of players who work together on 
  * @author Skyler
  *
  */
-public class Party implements Participant {
+public class Party implements Participant, Listener {
 	
 	
 	//private List<QuestPlayer> players;
+	
+	public static int maxSize = 4;
 	
 	private List<QuestPlayer> members;
 	
@@ -38,8 +50,6 @@ public class Party implements Participant {
 	private String name;
 	
 	private Team tLeader, tMembers;
-	
-	private Objective hover;
 	
 	private Objective board;
 	
@@ -89,14 +99,18 @@ public class Party implements Participant {
 		tLeader = partyBoard.registerNewTeam("Leader");
 		tMembers = partyBoard.registerNewTeam("members");
 		
-		tLeader.setPrefix(ChatColor.BOLD.toString());
+		tLeader.setPrefix(ChatColor.GOLD.toString());
+		tMembers.setPrefix(ChatColor.DARK_GREEN.toString());
 		
-		hover = partyBoard.registerNewObjective("hover", "health");
-		hover.setDisplaySlot(DisplaySlot.BELOW_NAME);
-		hover.setDisplayName(" / 20");
-		
-		board = partyBoard.registerNewObjective("board", "health");
+		board = partyBoard.registerNewObjective("side", "dummy");
+		board.setDisplayName("Party");
 		board.setDisplaySlot(DisplaySlot.SIDEBAR);
+		
+		id = GUID.generateGUID();
+		
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
+		
+		QuestManagerPlugin.questManagerPlugin.getPlayerManager().addParty(this);
 		
 	}
 	
@@ -115,6 +129,7 @@ public class Party implements Participant {
 	
 	public Party(String name, QuestPlayer leader, Collection<QuestPlayer> players) {
 		this(name, leader);
+		
 		members.addAll(players);
 		
 		for (QuestPlayer p : players) {
@@ -131,25 +146,25 @@ public class Party implements Participant {
 		}
 		
 		if (leader.getPlayer().isOnline()) {
-			((Player) leader.getPlayer()).setScoreboard(partyBoard);
+			(leader.getPlayer().getPlayer()).setScoreboard(partyBoard);
 		}
 		if (!members.isEmpty())
 		for (QuestPlayer member : members) {
 			if (member.getPlayer().isOnline()) {
-				((Player) member.getPlayer()).setScoreboard(partyBoard);
+				( member.getPlayer().getPlayer()).setScoreboard(partyBoard);
 			}
 		}
 		
 		//now that everyone's registered, let's update health
-		
+		Objective side = partyBoard.getObjective(DisplaySlot.SIDEBAR);
 		if (leader.getPlayer().isOnline()) {
-			((Player) leader.getPlayer()).setHealth(leader.getPlayer().getPlayer().getHealth());
-		}
+			side.getScore(leader.getPlayer().getName()).setScore((int) leader.getPlayer().getPlayer().getHealth());
+			}
 		if (!members.isEmpty())
 		for (QuestPlayer member : members) {
 			if (member.getPlayer().isOnline()) {
-				((Player) member.getPlayer()).setHealth(member.getPlayer().getPlayer().getHealth());
-			}
+				side.getScore(member.getPlayer().getName()).setScore((int) member.getPlayer().getPlayer().getHealth());
+				}
 		}
 	}
 	
@@ -231,7 +246,197 @@ public class Party implements Participant {
 		return id;
 	}
 	
+	/**
+	 * Adds the player to the party, returning true if successful. If the player cannot be added,
+	 * false is returned instead.
+	 * @param player
+	 * @return true if successful
+	 */
+	public boolean addMember(QuestPlayer player) {
+		if (members.size() < Party.maxSize) {
+			tellMembers(
+					new FancyMessage(player.getPlayer().getName())
+						.color(ChatColor.DARK_BLUE)
+						.then(" has joined the party")
+					);
+			members.add(player);
+			tMembers.addPlayer(player.getPlayer());
+			updateScoreboard();
+			return true;
+		} else {
+			tellMembers(
+					new FancyMessage("Unable to add ")
+						.then(player.getPlayer().getName())
+						.color(ChatColor.DARK_BLUE)
+						.then(" becuase the party is full!")
+					);
+		}
+		
+		return false;
+	}
 	
+	public int getSize() {
+		return members.size();
+	}
 	
+	public boolean isFull() {
+		return (members.size() >= Party.maxSize);
+	}
+	
+	@EventHandler
+	public void onPlayerDamage(EntityDamageEvent e) {
+		if (e.isCancelled() || !(e.getEntity() instanceof Player)) {
+			return;
+		}
+		
+		Player p = (Player) e.getEntity();
+		if (leader.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+			double old = p.getHealth();
+			p.setHealth(old - e.getFinalDamage());
+			updateScoreboard();
+			p.setHealth(old);
+			return;
+		}
+		if (!members.isEmpty())
+		for (QuestPlayer qp : members) {
+			if (qp.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+				double old = p.getHealth();
+				p.setHealth(old - e.getFinalDamage());
+				updateScoreboard();
+				p.setHealth(old);
+				return;
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerRegen(EntityRegainHealthEvent e) {
+		if (e.isCancelled() || !(e.getEntity() instanceof Player)) {
+			return;
+		}
+		
+		Player p = (Player) e.getEntity();
+		if (leader.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+			double old = p.getHealth();
+			p.setHealth(old + e.getAmount());
+			updateScoreboard();
+			p.setHealth(old);
+			return;
+		}
+		if (!members.isEmpty())
+		for (QuestPlayer qp : members) {
+			if (qp.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+				double old = p.getHealth();
+				p.setHealth(old + e.getAmount());
+				updateScoreboard();
+				p.setHealth(old);
+				return;
+			}
+		}
+	}
+	
+	public boolean removePlayer(QuestPlayer player, String exitMessage) {
+		
+		player.leaveParty(exitMessage);
+		
+		if (player.getIDString().equals(leader.getIDString())) {
+			
+			tLeader.removePlayer(leader.getPlayer());
+			partyBoard.resetScores(leader.getPlayer().getName());
+			
+			if (members.size() == 1) {
+				//close party
+				members.get(0).leaveParty("The party has been closed");
+				clean();
+				return true;
+			}
+			
+			leader = members.get(0);
+			tMembers.removePlayer(leader.getPlayer());
+			members.remove(0);
+			updateScoreboard();
+			tellMembers(
+					new FancyMessage(player.getPlayer().getName())
+						.color(ChatColor.DARK_BLUE)
+						.then(" has left the party")
+					);
+			return true;
+		}
+		
+		if (members.isEmpty()) {
+			return false;
+		}
+		
+		ListIterator<QuestPlayer> it = members.listIterator();
+		QuestPlayer qp;
+		
+		while (it.hasNext()) {
+			qp = it.next();
+			if (qp.getIDString().equals(player.getIDString())) {
+				tMembers.removePlayer(qp.getPlayer());
+				partyBoard.resetScores(qp.getPlayer().getName());
+				it.remove();
+				tellMembers(
+						new FancyMessage(player.getPlayer().getName())
+							.color(ChatColor.DARK_BLUE)
+							.then(" has left the party")
+						);
+				
+				//make sure leader isn't the only one left
+				if (members.isEmpty()) {
+					leader.leaveParty("The party has been closed.");
+					clean();
+				} else {
+					updateScoreboard();
+				}
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public void disband() {
+		for (QuestPlayer player : this.members) {
+			player.leaveParty("The party has disbanded.");
+		}
+		leader.leaveParty("The party has disbanded");
+		
+		clean();
+	}
+	
+	private void clean() {
+		QuestManagerPlugin.questManagerPlugin.getPlayerManager().removeParty(this);
+		Bukkit.getPluginManager().callEvent(
+				new PartyDisbandEvent(this));
+	}
+	
+	public void tellMembers(String message) {
+		tellMembers(new FancyMessage(message));
+	}
+	
+	public void tellMembers(FancyMessage message) {
+		if (leader != null) {
+			Player l = leader.getPlayer().getPlayer();
+			message.send(l);
+			l.playNote(l.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
+			l.playNote(l.getLocation(), Instrument.PIANO, Note.natural(1, Tone.G));
+			l.playNote(l.getLocation(), Instrument.PIANO, Note.natural(1, Tone.E));
+		}
+		if (members.isEmpty()) {
+			return;
+		}
+		for (QuestPlayer qp : members) {
+			if (!qp.getPlayer().isOnline()) {
+				continue;
+			}
+			Player p = qp.getPlayer().getPlayer();
+			message.send(qp.getPlayer().getPlayer());
+			p.playNote(p.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
+			p.playNote(p.getLocation(), Instrument.PIANO, Note.natural(1, Tone.G));
+			p.playNote(p.getLocation(), Instrument.PIANO, Note.natural(1, Tone.E));
+		}
+	}
 	
 }

@@ -4,14 +4,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.State.GoalState;
 import nmt.minecraft.QuestManager.Configuration.State.RequirementState;
 import nmt.minecraft.QuestManager.Configuration.State.StatekeepingRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
-
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 
 /**
  * Tracks objectives in a quest.<br />

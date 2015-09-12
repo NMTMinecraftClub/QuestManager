@@ -1,19 +1,21 @@
 package nmt.minecraft.QuestManager.UI.Menu.Action;
 
 
-import nmt.minecraft.QuestManager.Player.QuestPlayer;
-import nmt.minecraft.QuestManager.UI.ChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
-
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import de.inventivegames.util.tellraw.TellrawConverterLite;
 import de.inventivegames.util.title.TitleManager;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
 /**
  * Rests a player, restoring health and hunger
@@ -53,7 +55,12 @@ public class InnAction implements MenuAction {
 			player.addMoney(-cost);
 			
 			Player p = player.getPlayer().getPlayer();
-			p.setHealth(p.getMaxHealth());
+			double amount = p.getMaxHealth() - p.getHealth();
+			EntityRegainHealthEvent e = new EntityRegainHealthEvent(p, amount, RegainReason.CUSTOM);
+			Bukkit.getPluginManager().callEvent(e);
+			if (!e.isCancelled()) {
+				p.setHealth(p.getMaxHealth());
+			}
 			p.setFoodLevel(20);
 			p.setExhaustion(0f);
 			p.setSaturation(20f);

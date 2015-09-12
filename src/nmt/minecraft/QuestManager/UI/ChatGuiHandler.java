@@ -1,14 +1,11 @@
 package nmt.minecraft.QuestManager.UI;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.UUID;
-
-import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-import nmt.minecraft.QuestManager.UI.Menu.RespondableMenu;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +14,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.UI.Menu.RespondableMenu;
 
 /**
  * Organizes, catches, and dispatches chat click events to the responsible menus
@@ -113,7 +113,7 @@ public class ChatGuiHandler implements CommandExecutor, UITickable {
 			plugin.getCommand(command.getCommand()).setExecutor(this);
 		}
 		
-		menus = new HashMap<UUID, MenuRecord>();
+		menus = new TreeMap<UUID, MenuRecord>();
 		if (ChatGuiHandler.rand == null) {
 			ChatGuiHandler.rand = new Random();
 		}
@@ -228,18 +228,19 @@ public class ChatGuiHandler implements CommandExecutor, UITickable {
 			return;
 		}
 		
-		Iterator<Entry<UUID, MenuRecord>> it = menus.entrySet().iterator();
+		Iterator<UUID> it = (new ArrayList<UUID>(menus.keySet())).iterator();
+		
 		while (it.hasNext()) {
-			Entry<UUID, MenuRecord> entry = it.next();
-			
+			UUID key = it.next();
+			MenuRecord record = menus.get(key);
 			
 			//check if they've already been ticked
-			if (entry.getValue().isTicked()) {
-				menus.remove(entry.getKey());
-				Bukkit.getPlayer(entry.getKey()).sendMessage(
+			if (record.isTicked()) {
+				menus.remove(key);
+				Bukkit.getPlayer(key).sendMessage(
 						ChatColor.GRAY + "Your menu has expired.");
 			} else {
-				entry.getValue().tick();
+				record.tick();
 			}
 		}
 	}

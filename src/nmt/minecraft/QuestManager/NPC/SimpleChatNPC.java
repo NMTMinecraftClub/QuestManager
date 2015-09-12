@@ -3,15 +3,6 @@ package nmt.minecraft.QuestManager.NPC;
 import java.util.HashMap;
 import java.util.Map;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
-import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
-import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-import nmt.minecraft.QuestManager.UI.ChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
-import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
-
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,6 +11,15 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
+import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
+import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
 
 /**
  * NPC that offers a simple message to those that interact with it.<br />

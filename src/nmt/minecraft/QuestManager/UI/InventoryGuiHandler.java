@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.UI.Menu.InventoryMenu;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.UI.Menu.InventoryMenu;
 
 /**
  * Gui handler for inventory menus

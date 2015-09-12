@@ -2,19 +2,20 @@ package nmt.minecraft.QuestManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import nmt.minecraft.QuestManager.Configuration.Utils.GUID;
-import nmt.minecraft.QuestManager.Player.Participant;
-import nmt.minecraft.QuestManager.Player.Party;
-import nmt.minecraft.QuestManager.Player.QuestPlayer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import nmt.minecraft.QuestManager.Configuration.Utils.GUID;
+import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Player.Party;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
 
 /**
  * Stores a database of QuestPlayers for lookup and loading
@@ -99,6 +100,14 @@ public class PlayerManager {
 		return parties.get(id);
 	}
 	
+	public void addParty(Party party) {
+		parties.put(party.getID(), party);
+	}
+	
+	public void removeParty(Party party) {
+		parties.remove(party.getID());
+	}
+	
 	public Participant getParticipant(String idString) {
 		
 		if (GUID.valueOf(idString) != null) {
@@ -107,6 +116,14 @@ public class PlayerManager {
 		
 		//assume it's a player string
 		return getPlayer(UUID.fromString(idString));
+	}
+	
+	public Collection<Party> getParties() {
+		return parties.values();
+	}
+	
+	public Collection<QuestPlayer> getPlayers() {
+		return players.values();
 	}
 	
 	public void save(File saveFile) {
@@ -126,6 +143,9 @@ public class PlayerManager {
 		ConfigurationSection gSex = config.createSection("parties");
 		if (!parties.isEmpty()) {
 			for (GUID key : parties.keySet()) {
+				if (key == null) {
+					continue;
+				}
 				gSex.set(key.toString(), getParty(key));
 			}
 		}

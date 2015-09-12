@@ -1,11 +1,11 @@
 package nmt.minecraft.QuestManager.Quest.Requirements;
 
-import nmt.minecraft.QuestManager.Player.Participant;
-import nmt.minecraft.QuestManager.Quest.Goal;
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+
+import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Quest.Goal;
 
 /**
  * Represents a specific requirement needed to achieve a goal in a quest.<br />

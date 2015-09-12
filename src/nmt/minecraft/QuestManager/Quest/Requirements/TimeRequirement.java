@@ -1,15 +1,15 @@
 package nmt.minecraft.QuestManager.Quest.Requirements;
 
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.entity.Player;
+
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 import nmt.minecraft.QuestManager.Scheduling.IntervalScheduler;
 import nmt.minecraft.QuestManager.Scheduling.Tickable;
-
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.Player;
 
 /**
  * Requirement that a specific time range be current. This is not a stateful requirement, and can be used

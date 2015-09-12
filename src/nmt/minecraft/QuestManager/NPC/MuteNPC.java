@@ -3,10 +3,6 @@ package nmt.minecraft.QuestManager.NPC;
 import java.util.HashMap;
 import java.util.Map;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
-import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
-
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,6 +11,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
+import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 
 /**
  * Basic NPC with no interactivity.

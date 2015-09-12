@@ -2,9 +2,9 @@ package nmt.minecraft.QuestManager.Configuration;
 
 import java.util.LinkedList;
 
-import nmt.minecraft.QuestManager.Quest.Goal;
-
 import org.bukkit.inventory.ItemStack;
+
+import nmt.minecraft.QuestManager.Quest.Goal;
 
 /**
  * Holds key and default information for defined quest config fields.
@@ -16,12 +16,16 @@ import org.bukkit.inventory.ItemStack;
  * <li>GOALS | goals | <i>Empty List</i></li>
  * <li>SAVESTATE | savestate | false</li>
  * <li>REPEATABLE | repeatable | false </li>
+ * <li>USEPARTY | useparty | false </li>
+ * <li>REQUIREPARTY | requireparty | false </li>
  * <li>NPCS | npcs | <i>Empty List</i></li>
  * <li>START | start | <i>null</i> </li>
  * <li>PREREQS | requiredquests | <i>Empty List</i></li>
  * <li> END | end | same </li>
  * <li> FAME | fame | 100 </li>
  * <li> REWARDS | rewards | <i>Empty List</i> </li>
+ * <li> MONEYREWARD | moneyreward | 0 </li>
+ * <li> TITLEREWARD | titlereward | <i>null</i> </li>
  * </ul>
  * </p>
  * @author Skyler
@@ -37,9 +41,13 @@ public enum QuestConfigurationField {
 	NPCS("npcs", new LinkedList<Goal>()),
 	START("start", null),
 	PREREQS("requiredquests", new LinkedList<String>()),
+	REQUIREPARTY("requireparty", false),
+	USEPARTY("useparty", false),
 	END("end", "same"),
 	FAME("fame", 100),
-	REWARDS("rewards", new LinkedList<ItemStack>());
+	REWARDS("rewards", new LinkedList<ItemStack>()),
+	MONEYREWARD("moneyreward", 0),
+	TITLEREWARD("titlereward", null);
 	
 	private Object def;
 	

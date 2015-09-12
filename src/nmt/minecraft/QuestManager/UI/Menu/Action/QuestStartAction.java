@@ -1,21 +1,24 @@
 package nmt.minecraft.QuestManager.UI.Menu.Action;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
-import nmt.minecraft.QuestManager.Quest.Quest;
-
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 
 import de.inventivegames.util.tellraw.TellrawConverterLite;
 import de.inventivegames.util.title.TitleManager;
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
+import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Quest.Quest;
 
 public class QuestStartAction implements MenuAction {
 
 	private QuestConfiguration template;
 	
 	private Player player;
+	
+	private static final String partyDenial = ChatColor.YELLOW + "This quest requires a party..." + ChatColor.RESET;
 	
 	public QuestStartAction(QuestConfiguration questTemplate, Player player) {
 		this.template = questTemplate;
@@ -27,8 +30,26 @@ public class QuestStartAction implements MenuAction {
 		
 		//Instantiate the template
 		Quest quest;
+		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player);
+		
+		//check to make sure this doesn't require a party
+		if (template.getRequireParty())
+			if (qp.getParty() == null) {
+				//TODO make prettier
+				player.sendMessage(QuestStartAction.partyDenial);
+				return;
+		}
+		
+        Participant participant; 
+        
+		if (template.getUseParty() && qp.getParty() != null) {
+        	participant = qp.getParty();
+        } else {
+			participant = qp;
+        }
+		
 		try {
-			quest = template.instanceQuest();
+			quest = template.instanceQuest(participant);
 		} catch (InvalidConfigurationException e) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning(
 					"Could not instance quest for player " + player.getName());
@@ -45,10 +66,7 @@ public class QuestStartAction implements MenuAction {
 
         TitleManager.sendTitle(player, TellrawConverterLite.convertToJSON(
         		ChatColor.DARK_RED + template.getName()));
-
-		quest.addPlayer(
-				QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player));
-		QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player).addQuest(quest);
+        
 		QuestManagerPlugin.questManagerPlugin.getManager().registerQuest(quest);
 		
 	}

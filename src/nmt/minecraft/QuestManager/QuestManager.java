@@ -7,26 +7,34 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
-import nmt.minecraft.QuestManager.Configuration.State.QuestState;
-import nmt.minecraft.QuestManager.NPC.NPC;
-import nmt.minecraft.QuestManager.Quest.Quest;
-
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scoreboard.Scoreboard;
+
+import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
+import nmt.minecraft.QuestManager.Configuration.State.QuestState;
+import nmt.minecraft.QuestManager.NPC.NPC;
+import nmt.minecraft.QuestManager.Player.Party;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Quest.Quest;
 
 public class QuestManager implements Listener {
 	
@@ -52,6 +60,32 @@ public class QuestManager implements Listener {
 		questTemplates = new LinkedList<QuestConfiguration>();
 		questNPCs = new HashSet<NPC>();
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
+		
+		//purge villagers, if enabled
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getVillagerCleanup()) {
+			//go through worlds, kill them!
+			World w;
+			for (String worldName : QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()) {
+				w = Bukkit.getWorld(worldName);
+				if (w == null) {
+					continue;
+				}
+				
+				for (Entity e : w.getEntities()) 
+				if (e.getType().equals(EntityType.VILLAGER)) {
+					e.getLocation().getChunk(); //load chunk
+					e.remove();
+				}
+				
+				System.out.println("purged " + worldName);
+			}
+			
+			QuestManagerPlugin.questManagerPlugin.getLogger().info("Purged villagers!");
+		}
+		
+		Party.maxSize = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMaxPartySize();
 		
 		this.saveDirectory = saveDirectory;
 		
@@ -135,7 +169,7 @@ public class QuestManager implements Listener {
 				QuestConfiguration template = getQuestTemplate(questName);
 				Quest quest;
 				try {
-					quest = template.instanceQuest();
+					quest = template.instanceQuest(null);
 					
 				} catch (InvalidConfigurationException e) {
 					e.printStackTrace();
@@ -183,7 +217,6 @@ public class QuestManager implements Listener {
 						
 			}
 			
-			Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 
 			QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager finished!");	
 			
@@ -336,6 +369,11 @@ public class QuestManager implements Listener {
 	
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent e) {
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getAdjustXP()) {
+			return;
+		}
+		
 		String world = e.getEntity().getWorld().getName();
 		
 		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
@@ -374,6 +412,51 @@ public class QuestManager implements Listener {
 			
 			e.setDroppedExp(level);
 		}
+	}
+	
+	@EventHandler
+	public void onTame(EntityTameEvent e) {
+		if (e.isCancelled()) {
+			return;
+		}
+		
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getAllowTaming()) {
+			return;
+		}
+		
+		String worldname = e.getEntity().getWorld().getName();
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(worldname)) {
+			return;
+		}
+		
+		if (e.getOwner() instanceof Player) {
+			((Player) e.getOwner()).sendMessage(ChatColor.DARK_PURPLE + "Taming is not allowed here!" + ChatColor.RESET);
+		}
+		e.setCancelled(true);
+		
+	}
+	
+	@EventHandler
+	public void onChat(AsyncPlayerChatEvent e) {
+		if (e.isCancelled()) {
+			return;
+		}
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getChatTitle()) {
+			//if no, check worlds
+			if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
+					.contains(e.getPlayer().getWorld().getName())) {
+				return;
+			}
+		}
+		
+		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(e.getPlayer());
+		if (qp.getTitle() == null || qp.getTitle().trim().isEmpty()) {
+			return;
+		}
+		
+		String msg = "[" + qp.getTitle() + "] " + e.getMessage();
+		e.setMessage(msg);
 	}
 	
 }

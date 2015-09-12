@@ -1,9 +1,9 @@
 package nmt.minecraft.QuestManager.UI.Menu.Action;
 
-import nmt.minecraft.QuestManager.Player.QuestPlayer;
-
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
 
 /**
  * The action of purchasing an item or service from an NPC.

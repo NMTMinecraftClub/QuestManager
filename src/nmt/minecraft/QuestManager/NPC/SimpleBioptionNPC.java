@@ -3,14 +3,6 @@ package nmt.minecraft.QuestManager.NPC;
 import java.util.HashMap;
 import java.util.Map;
 
-import nmt.minecraft.QuestManager.QuestManagerPlugin;
-import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
-import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
-import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-import nmt.minecraft.QuestManager.UI.ChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
-
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,6 +11,14 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
+
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
+import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.UI.ChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
+import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
 
 /**
  * Provides a simple two-option menu when interacted with. This NPC also supports simple response
