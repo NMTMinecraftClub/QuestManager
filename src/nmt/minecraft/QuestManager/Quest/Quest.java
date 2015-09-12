@@ -21,6 +21,7 @@ import nmt.minecraft.QuestManager.Configuration.State.GoalState;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.PartyDisbandEvent;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.History.History;
@@ -289,25 +290,27 @@ public class Quest implements Listener {
 		
 		HandlerList.unregisterAll(this);
 		
-		//get config location!
-		File saveLoc = new File(QuestManagerPlugin.questManagerPlugin.getManager()
-				.getSaveLocation(), name + "_" + ID + ".yml");
-		
-		QuestState state = getState();
+		if (!(participant instanceof Party)) {
+			//get config location!
+			File saveLoc = new File(QuestManagerPlugin.questManagerPlugin.getManager()
+					.getSaveLocation(), name + "_" + ID + ".yml");
 			
+			QuestState state = getState();
+
+			QuestManagerPlugin.questManagerPlugin.getLogger().info("Saving quest state: " + 
+					saveLoc.getAbsolutePath());
+			try {
+				state.save(saveLoc);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		if (!goals.isEmpty()) {	
 			for (Goal goal : goals) {
 				goal.stop();
 			}
-		}
-		
-		QuestManagerPlugin.questManagerPlugin.getLogger().info("Saving quest state: " + 
-				saveLoc.getAbsolutePath());
-		try {
-			state.save(saveLoc);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		if (participant.getParticipants().isEmpty()) {
@@ -334,7 +337,9 @@ public class Quest implements Listener {
 	 * <b>Quests must immediately stop execution when asked to halt.<b>
 	 */
 	public void halt() {
-
+		
+		System.out.println(name + " calling halt!");
+		
 		HandlerList.unregisterAll(this);
 		
 		if (participant.getParticipants().isEmpty()) {
@@ -516,8 +521,10 @@ public class Quest implements Listener {
 	
 	@EventHandler
 	public void onPartyDisband(PartyDisbandEvent e) {
-		if (e.getParty().getID().equals(participant.getIDString())) {
+		System.out.println("catch");
+		if (e.getParty().getIDString().equals(participant.getIDString())) {
 			if (this.requireParty) {
+				System.out.println("gonna quit!");
 				//stop the quest!
 				for (QuestPlayer qp : e.getParty().getParticipants()) {
 					qp.removeQuest(this);

@@ -206,7 +206,7 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 				break;
 			}
 		}
-		
+		System.out.println("removing");
 		foe.remove();
 	}
 	

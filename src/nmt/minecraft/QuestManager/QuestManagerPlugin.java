@@ -197,13 +197,15 @@ public class QuestManagerPlugin extends JavaPlugin {
 		//unregister our scheduler
 		Bukkit.getScheduler().cancelTasks(this);
 		
+		for (Party party : playerManager.getParties()) {
+			party.disband();
+		}
+		
 		//save user database
 		playerManager.save(new File(getDataFolder(), playerConfigFileName));
 		stopAllQuests();
 		
-		for (Party party : playerManager.getParties()) {
-			party.disband();
-		}
+		
 	}
 	
 	public void onReload() {
