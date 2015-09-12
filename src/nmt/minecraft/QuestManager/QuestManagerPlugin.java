@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,6 +14,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import nmt.minecraft.QuestManager.Configuration.PluginConfiguration;
@@ -200,6 +202,15 @@ public class QuestManagerPlugin extends JavaPlugin {
 		stopAllQuests();
 	}
 	
+	public void onReload() {
+		onDisable();
+		
+		HandlerList.unregisterAll(this);
+		
+		onLoad();
+		onEnable();
+	}
+	
 	
 	/**
 	 * Attempts to softly stop all running quest managers and quests.<br />
@@ -233,6 +244,21 @@ public class QuestManagerPlugin extends JavaPlugin {
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (cmd.getName().equalsIgnoreCase("QuestManager")) {
+			if (args.length == 0) {
+				return false;
+			}
+			
+			if (args[0].equals("reload")) {
+				getLogger().info("Reloading QuestManager...");
+				sender.sendMessage(ChatColor.DARK_BLUE + "Reloading QuestManager..." + ChatColor.RESET);
+				onReload();
+				getLogger().info("Done");
+				sender.sendMessage(ChatColor.DARK_BLUE + "Done" + ChatColor.RESET);
+				return true;
+			}
+		}
+		
 		if (cmd.getName().equals("questlog")) {
 			if (!(sender instanceof Player)) {
 				sender.sendMessage("Only players can use this command!");

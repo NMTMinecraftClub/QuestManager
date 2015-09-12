@@ -634,11 +634,9 @@ public class QuestPlayer implements Participant, Listener {
 		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getXPMoney()) {
 			return;
 		}
-		
 		if (!getPlayer().isOnline()) {
 			return;
 		}
-			
 		
 		Player p = getPlayer().getPlayer();
 		
@@ -650,7 +648,7 @@ public class QuestPlayer implements Participant, Listener {
 				.getWorlds().contains(p.getWorld().getName())) {
 			return;
 		}
-		
+
 		money += e.getAmount();
 		p.setLevel(money);
 		

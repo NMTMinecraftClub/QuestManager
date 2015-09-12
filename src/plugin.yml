@@ -3,6 +3,10 @@ main: nmt.minecraft.QuestManager.QuestManagerPlugin
 version: 1.0
 softdepend: [Fanciful, Multiverse-Core]
 loadfirst:
+permissions:
+    questmanager.admin:
+        description: The permission to do plugin-critical things like reload
+        default: op
 commands:
     questlog:
         usage: /questlog
@@ -14,3 +18,7 @@ commands:
         usage: /party
         description: used to interface with the party menus
         aliases: p
+    questmanager:
+        usage: /questmanager [reload]
+        description: QuestManager admin command
+        permission: questmanager.admin
