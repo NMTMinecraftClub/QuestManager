@@ -202,7 +202,7 @@ public class QuestConfiguration {
 			goalList.add(questSection.getConfigurationSection(key));
 		}
 			
-		Quest quest = new Quest(getName(), getDescription(), getSaveState());
+		Quest quest = new Quest(getName(), getDescription(), getSaveState(), getUseParty(), getRequireParty());
 		
 		for (ConfigurationSection section : goalList) {
 			Goal goal = Goal.fromConfig(quest, section);

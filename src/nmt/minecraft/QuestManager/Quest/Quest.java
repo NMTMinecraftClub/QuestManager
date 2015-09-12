@@ -78,6 +78,10 @@ public class Quest implements Listener {
 	
 	private History history;
 	
+	private boolean useParty;
+	
+	private boolean requireParty;
+	
 	private boolean ready;
 	
 	//private Set<NPC> npcs;
@@ -93,7 +97,7 @@ public class Quest implements Listener {
 	 */
 	private boolean keepState;
 	
-	public Quest(String name, String description, boolean keepState) {
+	public Quest(String name, String description, boolean keepState, boolean useParty, boolean requireParty) {
 		this.name = name;
 		this.description = description;
 		
@@ -104,6 +108,8 @@ public class Quest implements Listener {
 		this.history = new History();
 		ready = false;
 		this.keepState = keepState;
+		this.useParty = useParty;
+		this.requireParty = requireParty;
 		
 		players = new HashSet<QuestPlayer>();
 		itemRewards = new LinkedList<ItemStack>();
@@ -433,6 +439,14 @@ public class Quest implements Listener {
 		return history;
 	}
 		
+	public boolean getUseParty() {
+		return useParty;
+	}
+
+	public boolean getRequireParty() {
+		return requireParty;
+	}
+
 	/**
 	 * @return the fame
 	 */

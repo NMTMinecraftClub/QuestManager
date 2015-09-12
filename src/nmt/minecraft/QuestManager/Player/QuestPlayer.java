@@ -302,6 +302,22 @@ public class QuestPlayer implements Participant, Listener {
 				
 				page += ChatColor.DARK_BLUE + quest.getDescription() + "\n";
 				
+				if (quest.getUseParty()) {
+					page += ChatColor.DARK_GREEN;
+				} else {
+					page += ChatColor.STRIKETHROUGH + "" + ChatColor.DARK_RED;
+				}
+				
+				page += "Uses Party  " + ChatColor.RESET + "|  ";
+				
+				if (quest.getRequireParty()) {
+					page += ChatColor.DARK_GREEN;
+				} else {
+					page += ChatColor.STRIKETHROUGH + "" + ChatColor.DARK_RED;
+				}
+				
+				page += "Requires Party\n";
+				
 				page += ChatColor.RESET + "Objectives:\n";
 				
 				page += ChatColor.DARK_GRAY;
