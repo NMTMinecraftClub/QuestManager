@@ -11,8 +11,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,6 +31,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
 import nmt.minecraft.QuestManager.NPC.NPC;
+import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Quest.Quest;
 
 public class QuestManager implements Listener {
@@ -56,6 +60,28 @@ public class QuestManager implements Listener {
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
+		
+		//purge villagers, if enabled
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getVillagerCleanup()) {
+			//go through worlds, kill them!
+			World w;
+			for (String worldName : QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()) {
+				w = Bukkit.getWorld(worldName);
+				if (w == null) {
+					continue;
+				}
+				
+				for (Entity e : w.getEntities()) 
+				if (e.getType() == EntityType.VILLAGER){
+					e.getLocation().getChunk(); //load chunk
+					e.remove();
+				}
+			}
+			
+			QuestManagerPlugin.questManagerPlugin.getLogger().info("Purged villagers!");
+		}
+		
+		Party.maxSize = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMaxPartySize();
 		
 		this.saveDirectory = saveDirectory;
 		
@@ -339,6 +365,11 @@ public class QuestManager implements Listener {
 	
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent e) {
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getAdjustXP()) {
+			return;
+		}
+		
 		String world = e.getEntity().getWorld().getName();
 		
 		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
@@ -382,6 +413,10 @@ public class QuestManager implements Listener {
 	@EventHandler
 	public void onTame(EntityTameEvent e) {
 		if (e.isCancelled()) {
+			return;
+		}
+		
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getAllowTaming()) {
 			return;
 		}
 		

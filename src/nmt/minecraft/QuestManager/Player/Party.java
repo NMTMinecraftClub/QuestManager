@@ -39,7 +39,7 @@ public class Party implements Participant, Listener {
 	
 	//private List<QuestPlayer> players;
 	
-	private static final int maxSize = 4;
+	public static int maxSize = 4;
 	
 	private List<QuestPlayer> members;
 	

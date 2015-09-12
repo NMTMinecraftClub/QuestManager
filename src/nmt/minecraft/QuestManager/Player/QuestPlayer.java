@@ -159,7 +159,6 @@ public class QuestPlayer implements Participant, Listener {
 		this.money = 0;
 		this.title = "The Unknown";
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
-		; //do nothing. This is for non-redundant defining of QuestPlayers from config
 	}
 	
 	/**
@@ -586,6 +585,11 @@ public class QuestPlayer implements Participant, Listener {
 	
 	@EventHandler
 	public void onPortal(MVPortalEvent e) {
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getUsePortals()) {
+			return;
+		}
+		
 		if (!getPlayer().isOnline() || e.isCancelled()) {
 			return;
 		}
@@ -627,9 +631,14 @@ public class QuestPlayer implements Participant, Listener {
 
 	@EventHandler
 	public void onExp(PlayerExpChangeEvent e) {
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getXPMoney()) {
+			return;
+		}
+		
 		if (!getPlayer().isOnline()) {
 			return;
 		}
+			
 		
 		Player p = getPlayer().getPlayer();
 		
