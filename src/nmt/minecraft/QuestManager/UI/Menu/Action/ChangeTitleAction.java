@@ -25,7 +25,8 @@ public class ChangeTitleAction implements MenuAction {
 		new SimpleChatMenu(
 				new FancyMessage("You changed your title to ")
 					.color(ChatColor.GRAY)
-				.then(newTitle)).show(player.getPlayer().getPlayer());
+				.then(newTitle))
+		.show(player.getPlayer().getPlayer());
 	}
 
 }
