@@ -313,7 +313,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 				return true;
 			}
 			
-			qp.leaveParty(ChatColor.YELLOW + "You left the party"+ ChatColor.RESET);
+			qp.getParty().removePlayer(qp, ChatColor.YELLOW + "You left the party"+ ChatColor.RESET);
 			return true;
 		}
 		

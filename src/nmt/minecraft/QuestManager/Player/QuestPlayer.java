@@ -830,7 +830,7 @@ public class QuestPlayer implements Participant, Listener {
 				opt1 = new ChatMenuOption(new PlainMessage(new FancyMessage("Kick from Party").color(ChatColor.DARK_GRAY)),
 						new ShowChatMenuAction(
 								new SimpleChatMenu(new FancyMessage("Only the party leader can kick players!").color(ChatColor.DARK_RED))
-								, player.getPlayer().getPlayer()));
+								, getPlayer().getPlayer()));
 			}
 		} else {
 			opt1 = new ChatMenuOption(new PlainMessage("Invite to Party"), 
