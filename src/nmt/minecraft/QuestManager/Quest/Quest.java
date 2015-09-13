@@ -547,7 +547,6 @@ public class Quest implements Listener {
 	
 	@EventHandler
 	public void onPartyDisband(PartyDisbandEvent e) {
-		System.out.println("catch");
 		if (e.getParty().getIDString().equals(participant.getIDString())) {
 			if (this.requireParty) {
 				System.out.println("gonna quit!");

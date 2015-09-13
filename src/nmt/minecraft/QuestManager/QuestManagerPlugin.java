@@ -257,13 +257,24 @@ public class QuestManagerPlugin extends JavaPlugin {
 			}
 			
 			if (args[0].equals("reload")) {
-				getLogger().info("Reloading QuestManager...");
-				sender.sendMessage(ChatColor.DARK_BLUE + "Reloading QuestManager..." + ChatColor.RESET);
-				onReload();
-				getLogger().info("Done");
-				sender.sendMessage(ChatColor.DARK_BLUE + "Done" + ChatColor.RESET);
-				return true;
+				if (args.length == 1) {
+					getLogger().info("Reloading QuestManager...");
+					sender.sendMessage(ChatColor.DARK_BLUE + "Reloading QuestManager..." + ChatColor.RESET);
+					onReload();
+					getLogger().info("Done");
+					sender.sendMessage(ChatColor.DARK_BLUE + "Done" + ChatColor.RESET);
+					return true;
+				}
+				if (args[1].equals("villager") || args[1].equals("villagers")) {
+					
+					sender.sendMessage(ChatColor.DARK_GRAY + "Resetting villagers..." + ChatColor.RESET);
+					getManager().resetNPCs();
+					sender.sendMessage(ChatColor.DARK_GRAY + "Done!" + ChatColor.RESET);
+					return true;
+				}
+				
 			}
+			
 		}
 		
 		if (cmd.getName().equals("questlog")) {
@@ -294,7 +305,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 				return true;
 			}
 			
-			String msg = "[Party] <" + sender.getName() + "> ";
+			String msg = ChatColor.DARK_GREEN + "[Party]" + ChatColor.RESET +  "<" + sender.getName() + "> ";
 			for (String part : args) {
 				msg += part + " ";
 			}

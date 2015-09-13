@@ -44,6 +44,8 @@ public abstract class SimpleNPC extends NPC {
 				|| e.getLocation().distance(startingLoc) > range) {
 			//if we're in a different world (whut?) or range is too big,
 			//teleport them back!
+			e.getLocation().getChunk();
+			startingLoc.getChunk();
 			e.teleport(startingLoc);
 		}
 	}

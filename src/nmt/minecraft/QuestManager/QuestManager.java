@@ -317,6 +317,46 @@ public class QuestManager implements Listener {
 		return null;
 	}
 	
+	public List<QuestConfiguration> getQuestTemplates() {
+		return this.questTemplates;
+	}
+	
+	protected void resetNPCs() {
+		for (String worldName : QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()) {
+			World w = Bukkit.getWorld(worldName);
+			if (w == null) {
+				continue;
+			}
+			
+			for (Entity e : w.getEntities()) 
+			if (e.getType().equals(EntityType.VILLAGER)) {
+				e.getLocation().getChunk(); //load chunk
+				e.remove();
+			}
+			
+			System.out.println("purged " + worldName);
+		}
+		
+		this.questNPCs.clear();
+		System.out.println("Adding villagers...");
+		
+		for (QuestConfiguration questTemplate : questTemplates) {
+			System.out.println("processing " + questTemplate.getName());
+			if (!questTemplate.getAuxNPCs().isEmpty())
+				for (NPC np : questTemplate.getAuxNPCs()) {
+					questNPCs.add(np);
+					System.out.println("adding!");
+				}
+				
+				//now instantiate starting NPC associated ot this quest
+				NPC npc = questTemplate.GetStartingNPCInstance();
+				if (npc != null) {
+					questNPCs.add(npc);
+					System.out.println("tadding!");
+				}
+		}
+	}
+	
 	@EventHandler
 	public void onItemPickup(PlayerPickupItemEvent e) {
 		
@@ -454,7 +494,7 @@ public class QuestManager implements Listener {
 		}
 		
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(e.getPlayer());
-		if (qp.getTitle() == null || qp.getTitle().trim().isEmpty()) {
+		if (qp.getTitle() == null || qp.getTitle().trim().isEmpty() || qp.getTitle().trim().equalsIgnoreCase("The Unknown")) {
 			return;
 		}
 		

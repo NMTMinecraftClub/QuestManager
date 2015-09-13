@@ -318,7 +318,8 @@ public class Party implements Participant, Listener {
 		Player p = (Player) e.getEntity();
 		if (leader.getPlayer().getUniqueId().equals(p.getUniqueId())) {
 			double old = p.getHealth();
-			p.setHealth(old + e.getAmount());
+			double to = Math.max(20.0, old + e.getAmount());
+			p.setHealth(to);
 			updateScoreboard();
 			p.setHealth(old);
 			return;
@@ -327,7 +328,8 @@ public class Party implements Participant, Listener {
 		for (QuestPlayer qp : members) {
 			if (qp.getPlayer().getUniqueId().equals(p.getUniqueId())) {
 				double old = p.getHealth();
-				p.setHealth(old + e.getAmount());
+				double to = Math.max(20.0, old + e.getAmount());
+				p.setHealth(to);
 				updateScoreboard();
 				p.setHealth(old);
 				return;
