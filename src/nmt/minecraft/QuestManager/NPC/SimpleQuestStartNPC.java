@@ -111,7 +111,6 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 					+ (map.containsKey("name") ? ": " + map.get("name") : ""));
 			return null;
 		}
-		System.out.println("point 6");
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
 			YamlConfiguration tmp = new YamlConfiguration();
@@ -135,7 +134,6 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		
 		//load the chunk
 		loc.getChunk();
-		System.out.println("point 7");
 		npc.setEntity(loc.getWorld().spawnEntity(loc, type));
 		npc.getEntity().setCustomName((String) map.get("name"));
 

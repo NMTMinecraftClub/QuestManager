@@ -221,8 +221,12 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 		if (!config.contains("type") || !config.getString("type").equals("slayr")) {
 			throw new InvalidConfigurationException();
 		}
-			
-		this.type = EntityType.valueOf(config.getString("entitytype"));
+		
+		String type = config.getString("entityType");
+		if (type == null) {
+			type = config.getString("entitytype");
+		}
+		this.type = EntityType.valueOf(type);
 		this.count = config.getInt("count");
 		
 		String tmp = config.getString("name", "");

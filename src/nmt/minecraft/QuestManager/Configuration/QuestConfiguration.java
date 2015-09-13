@@ -152,9 +152,7 @@ public class QuestConfiguration {
 			QuestManagerPlugin.questManagerPlugin.getLogger().info(
 					  "Quest has no starting npc specified: " + getName());
 		} else {
-			System.out.println("point 8");
 			startingNPC = (SimpleQuestStartNPC) config.get(QuestConfigurationField.START.getKey());
-			System.out.println("point 8.5");
 			startingNPC.setQuestTemplate(this);
 			
 			if (config.contains(QuestConfigurationField.END.getKey())) {

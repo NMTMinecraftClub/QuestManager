@@ -166,6 +166,9 @@ public class QuestManager implements Listener {
 			
 			//files are [name]_[id]
 			for (File stateFile : saveDirectory.listFiles()) {
+				if (stateFile.isDirectory()) {
+					continue;
+				}
 				String questName = stateFile.getName().substring(0, 
 						stateFile.getName().indexOf("_"));
 				
@@ -345,14 +348,12 @@ public class QuestManager implements Listener {
 			if (!questTemplate.getAuxNPCs().isEmpty())
 				for (NPC np : questTemplate.getAuxNPCs()) {
 					questNPCs.add(np);
-					System.out.println("adding!");
 				}
 				
 				//now instantiate starting NPC associated ot this quest
 				NPC npc = questTemplate.GetStartingNPCInstance();
 				if (npc != null) {
 					questNPCs.add(npc);
-					System.out.println("tadding!");
 				}
 		}
 	}

@@ -4,12 +4,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.State.RequirementState;
+import nmt.minecraft.QuestManager.Configuration.State.StatekeepingRequirement;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
@@ -23,7 +26,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
  * @author Skyler
  * @see {@link PositionRequirement}
  */
-public class ArriveRequirement extends Requirement implements Listener {
+public class ArriveRequirement extends Requirement implements Listener, StatekeepingRequirement {
 	
 	public static class ArriveFactory extends RequirementFactory<ArriveRequirement> {
 
@@ -149,6 +152,33 @@ public class ArriveRequirement extends Requirement implements Listener {
 		this.targetRange = config.getDouble("range", 1.0);
 		this.destination = ((LocationState) config.get("destination")).getLocation();
 		
+	}
+
+	@Override
+	public RequirementState getState() {
+		YamlConfiguration config = new YamlConfiguration();
+		config.set("state", state);
+		
+		RequirementState image = new RequirementState(config);
+		
+		return image;
+	}
+
+	@Override
+	public void loadState(RequirementState state) throws InvalidConfigurationException {
+		ConfigurationSection config = state.getConfig();
+		if (!config.contains("state")) {
+			throw new InvalidConfigurationException();
+		}
+		
+		this.state = config.getBoolean("state");
+		
+	}
+	
+
+	@Override
+	public void stop() {
+		; //do nothing, nothing to clean
 	}
 	
 	

@@ -198,6 +198,10 @@ public class QuestPlayer implements Participant, Listener {
 		if (!getPlayer().isOnline()) {
 			return;
 		}
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+				.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
+			return;
+		}
 		
 		Player play = getPlayer().getPlayer();
 		Inventory inv = play.getInventory();
@@ -250,6 +254,10 @@ public class QuestPlayer implements Participant, Listener {
 		if (!getPlayer().isOnline()) {
 			return;
 		}
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+				.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
+			return;
+		}
 		
 		Player play = getPlayer().getPlayer();
 		Inventory inv = play.getInventory();
@@ -276,6 +284,7 @@ public class QuestPlayer implements Participant, Listener {
 		BookMeta bookMeta = (BookMeta) book.getItemMeta();
 		bookMeta.setPages(new LinkedList<String>());
 		
+		
 		//generate the first page
 		bookMeta.addPage("      Quest Log\n  " 
 				+ ChatColor.RESET + "\n\n"
@@ -289,6 +298,7 @@ public class QuestPlayer implements Participant, Listener {
 				+ ChatColor.DARK_GREEN + "\n\n  Current Quests: " + currentQuests.size()
 				+ ChatColor.DARK_BLUE + "\n\n  Completed Quests: " + completedQuests.size()
 				+ ChatColor.RESET);	
+			
 		
 		
 		//now do quest info
@@ -495,7 +505,7 @@ public class QuestPlayer implements Participant, Listener {
 	public void setMoney(int money) {
 		this.money = money;
 		if (getPlayer().isOnline())
-		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 					.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
 			getPlayer().getPlayer().setLevel(this.money);
 		}
