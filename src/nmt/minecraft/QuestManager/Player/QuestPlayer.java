@@ -181,7 +181,10 @@ public class QuestPlayer implements Participant, Listener {
 		
 		if (player.isOnline()) {
 			Player p = player.getPlayer();
-			questPortal = p.getWorld().getSpawnLocation();
+			if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
+					.contains(p.getWorld().getName())) {
+				questPortal = p.getWorld().getSpawnLocation();
+			}
 		}
 	}
 	
@@ -668,8 +671,7 @@ public class QuestPlayer implements Participant, Listener {
 			return;
 		}
 			
-		if (e.getTeleportee().equals(getPlayer())) {			
-			
+		if (e.getTeleportee().equals(getPlayer())) {
 			List<String> qworlds = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 					.getWorlds();
 			if (qworlds.contains(e.getFrom().getWorld().getName())) {
