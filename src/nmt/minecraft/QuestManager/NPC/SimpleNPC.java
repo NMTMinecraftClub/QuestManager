@@ -39,13 +39,18 @@ public abstract class SimpleNPC extends NPC {
 			return;
 		}
 		
+
+		if (!e.getLocation().getChunk().isLoaded() || !startingLoc.getChunk().isLoaded()) {
+			return;
+		}
+		
 		if (!e.getLocation().getWorld().getName().equals(
 				startingLoc.getWorld().getName()) 
 				|| e.getLocation().distance(startingLoc) > range) {
 			//if we're in a different world (whut?) or range is too big,
 			//teleport them back!
-			e.getLocation().getChunk();
-			startingLoc.getChunk();
+			e.getLocation().getChunk().load();
+			startingLoc.getChunk().load();
 			e.teleport(startingLoc);
 		}
 	}
