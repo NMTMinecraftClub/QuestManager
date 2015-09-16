@@ -49,7 +49,8 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 		
 		//try and load last chunk the entity was in
 		if (entity != null) {
-			entity.getLocation().getChunk();
+			entity.getLocation().getChunk().load();
+			
 		} else {
 			System.out.println("entity is null: " + name);
 		}
@@ -116,6 +117,23 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 		if (e.getDamage() >= l.getHealth()){
 			e.setDamage(0.0);
 		}
+	}
+	
+	public void removeEntity() {
+		final Entity e = getEntity();
+		
+		e.getLocation().getChunk().load();
+
+		Bukkit.getScheduler().runTaskLater(QuestManagerPlugin.questManagerPlugin, 
+				new Runnable(){
+
+					@Override
+					public void run() {
+						e.remove();
+					}
+				
+				}, 1
+		);
 	}
 	
 	protected abstract void interact(Player player);

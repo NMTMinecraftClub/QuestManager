@@ -77,7 +77,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>(4);
-		
+		System.out.println("point 1");
 		map.put("name", name);
 		map.put("type", getEntity().getType());
 		map.put("location", new LocationState(getEntity().getLocation()));
@@ -111,7 +111,6 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 					+ (map.containsKey("name") ? ": " + map.get("name") : ""));
 			return null;
 		}
-		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
 			YamlConfiguration tmp = new YamlConfiguration();

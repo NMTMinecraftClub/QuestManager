@@ -26,6 +26,7 @@ import nmt.minecraft.QuestManager.Quest.Goal;
  * <li> REWARDS | rewards | <i>Empty List</i> </li>
  * <li> MONEYREWARD | moneyreward | 0 </li>
  * <li> TITLEREWARD | titlereward | <i>null</i> </li>
+ * <li> ENDHINT | turninhint | "Turn In"</li>
  * </ul>
  * </p>
  * @author Skyler
@@ -47,7 +48,8 @@ public enum QuestConfigurationField {
 	FAME("fame", 100),
 	REWARDS("rewards", new LinkedList<ItemStack>()),
 	MONEYREWARD("moneyreward", 0),
-	TITLEREWARD("titlereward", null);
+	TITLEREWARD("titlereward", null),
+	ENDHINT("turninhint", "Turn In");
 	
 	private Object def;
 	

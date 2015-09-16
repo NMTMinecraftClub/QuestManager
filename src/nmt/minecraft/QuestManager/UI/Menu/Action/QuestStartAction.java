@@ -59,7 +59,7 @@ public class QuestStartAction implements MenuAction {
 		}
 
 		
-		TitleManager.sendTimings(player, 20, 40, 20);
+		TitleManager.sendTimings(player, 30, 80, 30);
 
         TitleManager.sendSubTitle(player, TellrawConverterLite.convertToJSON(
         		ChatColor.GOLD + template.getDescription()));

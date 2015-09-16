@@ -83,6 +83,14 @@ public class QuestConfiguration {
 		return config.getString(QuestConfigurationField.DESCRIPTION.getKey(), (String) QuestConfigurationField.DESCRIPTION.getDefault());
 	}
 	
+	/**
+	 * Returns the end hint for this quest.<br /.
+	 * This usually denotes which NPC to turn it into, in a slightly more custimized fashion than just subbing in the name
+	 * @return
+	 */
+	public String getEndHint() {
+		return config.getString(QuestConfigurationField.ENDHINT.getKey(), (String) QuestConfigurationField.ENDHINT.getDefault());
+	}
 	
 	/**
 	 * Gets whether or not the embedded quest has {@link nmt.minecraft.QuestManager.Quest.Quest#keepState save-state} enabled
@@ -203,7 +211,7 @@ public class QuestConfiguration {
 			goalList.add(questSection.getConfigurationSection(key));
 		}
 			
-		Quest quest = new Quest(getName(), getDescription(), participant, getSaveState(), getUseParty(), getRequireParty());
+		Quest quest = new Quest(this, participant);
 		
 		for (ConfigurationSection section : goalList) {
 			Goal goal = Goal.fromConfig(quest, section);

@@ -25,7 +25,7 @@ import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
  */
 public class ForgeAction implements MenuAction {
 	
-	private enum Repairable {
+	public enum Repairable {
 		SWORD,
 		BOW,
 		PICKAXE,

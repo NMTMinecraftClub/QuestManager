@@ -51,6 +51,7 @@ import nmt.minecraft.QuestManager.UI.Menu.MultioptionChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Action.BootFromPartyAction;
 import nmt.minecraft.QuestManager.UI.Menu.Action.ChangeTitleAction;
+import nmt.minecraft.QuestManager.UI.Menu.Action.ForgeAction;
 import nmt.minecraft.QuestManager.UI.Menu.Action.PartyInviteAction;
 import nmt.minecraft.QuestManager.UI.Menu.Action.ShowChatMenuAction;
 import nmt.minecraft.QuestManager.UI.Menu.Message.PlainMessage;
@@ -181,7 +182,10 @@ public class QuestPlayer implements Participant, Listener {
 		
 		if (player.isOnline()) {
 			Player p = player.getPlayer();
-			questPortal = p.getWorld().getSpawnLocation();
+			if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
+					.contains(p.getWorld().getName())) {
+				questPortal = p.getWorld().getSpawnLocation();
+			}
 		}
 	}
 	
@@ -196,6 +200,10 @@ public class QuestPlayer implements Participant, Listener {
 	 */
 	public void addQuestBook() {
 		if (!getPlayer().isOnline()) {
+			return;
+		}
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+				.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
 			return;
 		}
 		
@@ -250,6 +258,10 @@ public class QuestPlayer implements Participant, Listener {
 		if (!getPlayer().isOnline()) {
 			return;
 		}
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+				.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
+			return;
+		}
 		
 		Player play = getPlayer().getPlayer();
 		Inventory inv = play.getInventory();
@@ -276,6 +288,7 @@ public class QuestPlayer implements Participant, Listener {
 		BookMeta bookMeta = (BookMeta) book.getItemMeta();
 		bookMeta.setPages(new LinkedList<String>());
 		
+		
 		//generate the first page
 		bookMeta.addPage("      Quest Log\n  " 
 				+ ChatColor.RESET + "\n\n"
@@ -289,6 +302,7 @@ public class QuestPlayer implements Participant, Listener {
 				+ ChatColor.DARK_GREEN + "\n\n  Current Quests: " + currentQuests.size()
 				+ ChatColor.DARK_BLUE + "\n\n  Completed Quests: " + completedQuests.size()
 				+ ChatColor.RESET);	
+			
 		
 		
 		//now do quest info
@@ -323,7 +337,7 @@ public class QuestPlayer implements Participant, Listener {
 					page += ChatColor.GRAY;
 				}
 				
-				page += "Require\n";
+				page += "Requires\n";
 				
 				page += ChatColor.RESET + "Objectives:\n";
 				
@@ -335,6 +349,9 @@ public class QuestPlayer implements Participant, Listener {
 					} else {
 						page += ChatColor.DARK_RED + " -" + goal.getDescription() + "\n";
 					}
+				}
+				if (quest.isReady()) {
+					page += ChatColor.DARK_PURPLE + "\n  =" + quest.getTemplate().getEndHint();
 				}
 				
 				bookMeta.addPage(page);
@@ -495,7 +512,7 @@ public class QuestPlayer implements Participant, Listener {
 	public void setMoney(int money) {
 		this.money = money;
 		if (getPlayer().isOnline())
-		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 					.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
 			getPlayer().getPlayer().setLevel(this.money);
 		}
@@ -658,8 +675,7 @@ public class QuestPlayer implements Participant, Listener {
 			return;
 		}
 			
-		if (e.getTeleportee().equals(getPlayer())) {			
-			
+		if (e.getTeleportee().equals(getPlayer())) {
 			List<String> qworlds = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 					.getWorlds();
 			if (qworlds.contains(e.getFrom().getWorld().getName())) {
@@ -764,6 +780,38 @@ public class QuestPlayer implements Participant, Listener {
 		
 		e.setDroppedExp(0);
 		e.setNewLevel(money);
+		e.setKeepInventory(true);
+		
+		boolean trip = false;
+		
+		//step through inventory, reduce durability of equipment
+		for (ItemStack item : p.getInventory()) {
+			if (item == null || item.getType() == Material.AIR) {
+				continue;
+			}
+			
+			if (ForgeAction.Repairable.isRepairable(item.getType())) {
+				trip = true;
+				item.setDurability((short) Math.min(item.getType().getMaxDurability() - 1, 
+						item.getDurability() + item.getType().getMaxDurability() / 2));
+			}
+		}
+		
+		for (ItemStack item : p.getEquipment().getArmorContents()) {
+			if (item == null || item.getType() == Material.AIR) {
+				continue;
+			}
+			
+			if (ForgeAction.Repairable.isRepairable(item.getType())) {
+				trip = true;
+				item.setDurability((short) Math.min(item.getType().getMaxDurability() - 1, 
+						item.getDurability() + item.getType().getMaxDurability() / 2));
+			}
+		}
+		
+		if (trip) {
+			p.sendMessage(ChatColor.DARK_RED + "Your equipment has been damaged!" + ChatColor.RESET);
+		}
 		
 	}
 	
@@ -822,6 +870,11 @@ public class QuestPlayer implements Participant, Listener {
 		Player p = getPlayer().getPlayer();
 		
 		if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+			return;
+		}
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
+				.contains(p.getWorld().getName())) {
 			return;
 		}
 		
