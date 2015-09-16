@@ -15,6 +15,7 @@ import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
+import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
 /**
@@ -224,6 +225,11 @@ public class QuestConfiguration {
 		for (ConfigurationSection section : goalList) {
 			Goal goal = Goal.fromConfig(quest, section);
 			quest.addGoal(goal);
+		}
+		
+		//activate first goal
+		for (Requirement req : quest.getGoals().get(0).getRequirements()) {
+			req.activate();
 		}
 		
 		//get fame and reward info

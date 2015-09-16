@@ -412,8 +412,8 @@ public class QuestPlayer implements Participant, Listener {
 	public void addQuest(Quest quest) {
 		currentQuests.add(quest);
 		history.addHistoryEvent(new HistoryEvent("Accepted the quest \"" + quest.getName() +"\""));
-		addQuestBook();
-		updateQuestBook();
+		//addQuestBook();
+		//updateQuestBook();
 	}
 	
 	public boolean removeQuest(Quest quest) {

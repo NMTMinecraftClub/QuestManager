@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -18,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
-import nmt.minecraft.QuestManager.Configuration.State.GoalState;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Player.Participant;
@@ -155,11 +153,13 @@ public class Quest implements Listener {
 			}
 		}
 		
+		this.goalIndex = state.getGoalIndex();
 		
-		ListIterator<GoalState> states = state.getGoalState().listIterator();
+		Goal goal = goals.get(goalIndex);
+		goal.loadState(state.getGoalState());
 		
-		for (Goal goal : goals) {
-			goal.loadState(states.next());
+		for (Requirement req : goal.getRequirements()) {
+			req.activate();
 		}
 		
 		
@@ -176,13 +176,8 @@ public class Quest implements Listener {
 			return state;
 		}
 		
-		for (Goal goal : goals) {
-			state.addGoalState(
-					goal.getState());
-		}
-		
-		
-		
+		state.setGoalState(goals.get(goalIndex).getState());
+				
 		state.setParticipant(getParticipants());
 		
 		return state;

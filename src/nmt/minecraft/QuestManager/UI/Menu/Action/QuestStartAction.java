@@ -69,6 +69,10 @@ public class QuestStartAction implements MenuAction {
         
 		QuestManagerPlugin.questManagerPlugin.getManager().registerQuest(quest);
 		
+		for (QuestPlayer qpe : participant.getParticipants()) {
+			qpe.updateQuestBook();
+		}
+		
 	}
 
 }
