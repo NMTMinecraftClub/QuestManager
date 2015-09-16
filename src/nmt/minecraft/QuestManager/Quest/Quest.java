@@ -399,6 +399,14 @@ public class Quest implements Listener {
 	 */
 	public String getDescription() {
 		String builder = ChatColor.GOLD + template.getName();
+		Goal goal;
+		
+		if (goalIndex >= goals.size()) {
+			goal = goals.get(goals.size() - 1); //get the last one
+		} else {
+			goal = goals.get(goalIndex);
+		}
+		
 		builder += "\n" + ChatColor.DARK_BLUE + template.getDescription();
 		
 		builder += "\n" + ChatColor.BLACK + "Party: ";
@@ -420,7 +428,7 @@ public class Quest implements Listener {
 		
 		builder += "Objective:\n";
 		
-		for (Requirement req : goals.get(goalIndex).getRequirements()) {
+		for (Requirement req : goal.getRequirements()) {
 			builder += req.isCompleted() ? ChatColor.GREEN + "  =" : ChatColor.DARK_RED + "  -";
 			builder += req.getDescription() + "\n";
 		}
@@ -448,8 +456,14 @@ public class Quest implements Listener {
 				.tooltip(ChatColor.DARK_BLUE + "Click to view this quest's history")
 				.command("/qhistory " + this.ID)
 			.then("Objective:\n");
+		Goal goal;
 		
-		for (Requirement req : goals.get(goalIndex).getRequirements()) {
+		if (goalIndex >= goals.size()) {
+			goal = goals.get(goals.size() - 1); //get the last one
+		} else {
+			goal = goals.get(goalIndex);
+		}
+		for (Requirement req : goal.getRequirements()) {
 			builder.then((req.isCompleted() ? "  =" : "  -") + req.getDescription() + "\n")
 				.color(req.isCompleted() ? ChatColor.GREEN : ChatColor.DARK_RED);
 		}
@@ -583,7 +597,12 @@ public class Quest implements Listener {
 			return;
 		}
 		
-		Goal goal = goals.get(goalIndex);
+		Goal goal;
+		if (goalIndex >= goals.size()) {
+			goal = goals.get(goals.size() - 1);
+		} else {
+			goal = goals.get(goalIndex);
+		}
 			//as soon as a single goal isn't ready, the quest is not ready
 //		if (!goal.isComplete()) {
 //			ready = false;

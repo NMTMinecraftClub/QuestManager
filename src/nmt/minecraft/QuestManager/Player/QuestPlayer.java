@@ -41,7 +41,6 @@ import com.onarandombox.MultiversePortals.event.MVPortalEvent;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
-import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
@@ -313,49 +312,8 @@ public class QuestPlayer implements Participant, Listener {
 		if (currentQuests.isEmpty()) {
 			bookMeta.addPage("\nYou do not have any active quests!");
 		} else {
-			for (Quest quest : currentQuests) {
-				
-				String page = "";
-				
-				page += ChatColor.GOLD + quest.getName() + "\n";
-				
-				page += ChatColor.DARK_BLUE + quest.getDescription() + "\n";
-				
-				page += ChatColor.BLACK + "Party: ";
-				
-				if (quest.getUseParty()) {
-					page += ChatColor.DARK_GREEN;
-				} else {
-					page += ChatColor.GRAY;
-				}
-				
-				page += "Uses  ";
-				
-				if (quest.getRequireParty()) {
-					page += ChatColor.DARK_GREEN;
-				} else {
-					page += ChatColor.GRAY;
-				}
-				
-				page += "Requires\n";
-				
-				page += ChatColor.RESET + "Objectives:\n";
-				
-				page += ChatColor.DARK_GRAY;
-				
-				for (Goal goal : quest.getGoals()) {
-					if (goal.isComplete()) {
-						page += ChatColor.GREEN + " =" + goal.getDescription() + "\n"; 
-					} else {
-						page += ChatColor.DARK_RED + " -" + goal.getDescription() + "\n";
-					}
-				}
-				if (quest.isReady()) {
-					page += ChatColor.DARK_PURPLE + "\n  =" + quest.getTemplate().getEndHint();
-				}
-				
-				bookMeta.addPage(page);
-				
+			for (Quest quest : currentQuests)  {
+				bookMeta.addPage(quest.getDescription());
 			}
 		}
 		

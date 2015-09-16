@@ -44,7 +44,7 @@ public class QuestState {
 		this.goalIndex = config.getInt("goalindex");
 		
 		this.goalState =  new GoalState();
-		this.goalState.load(config.getConfigurationSection("goals").getConfigurationSection("goalstate"));
+		this.goalState.load(config.getConfigurationSection("goalstate"));
 		
 		System.out.println("loading participants:");
 		this.participant = (Participant) QuestManagerPlugin.questManagerPlugin.getPlayerManager()
