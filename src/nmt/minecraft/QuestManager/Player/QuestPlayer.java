@@ -837,6 +837,11 @@ public class QuestPlayer implements Participant, Listener {
 			return;
 		}
 		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
+				.contains(p.getWorld().getName())) {
+			return;
+		}
+		
 		//did interact with another player?
 		if (e.getRightClicked() instanceof Player) {
 			QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
