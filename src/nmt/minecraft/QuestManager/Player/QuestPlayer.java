@@ -51,6 +51,7 @@ import nmt.minecraft.QuestManager.UI.Menu.MultioptionChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Action.BootFromPartyAction;
 import nmt.minecraft.QuestManager.UI.Menu.Action.ChangeTitleAction;
+import nmt.minecraft.QuestManager.UI.Menu.Action.ForgeAction;
 import nmt.minecraft.QuestManager.UI.Menu.Action.PartyInviteAction;
 import nmt.minecraft.QuestManager.UI.Menu.Action.ShowChatMenuAction;
 import nmt.minecraft.QuestManager.UI.Menu.Message.PlainMessage;
@@ -779,6 +780,38 @@ public class QuestPlayer implements Participant, Listener {
 		
 		e.setDroppedExp(0);
 		e.setNewLevel(money);
+		e.setKeepInventory(true);
+		
+		boolean trip = false;
+		
+		//step through inventory, reduce durability of equipment
+		for (ItemStack item : p.getInventory()) {
+			if (item == null || item.getType() == Material.AIR) {
+				continue;
+			}
+			
+			if (ForgeAction.Repairable.isRepairable(item.getType())) {
+				trip = true;
+				item.setDurability((short) Math.min(item.getType().getMaxDurability() - 1, 
+						item.getDurability() + item.getType().getMaxDurability() / 2));
+			}
+		}
+		
+		for (ItemStack item : p.getEquipment().getArmorContents()) {
+			if (item == null || item.getType() == Material.AIR) {
+				continue;
+			}
+			
+			if (ForgeAction.Repairable.isRepairable(item.getType())) {
+				trip = true;
+				item.setDurability((short) Math.min(item.getType().getMaxDurability() - 1, 
+						item.getDurability() + item.getType().getMaxDurability() / 2));
+			}
+		}
+		
+		if (trip) {
+			p.sendMessage(ChatColor.DARK_RED + "Your equipment has been damaged!" + ChatColor.RESET);
+		}
 		
 	}
 	
