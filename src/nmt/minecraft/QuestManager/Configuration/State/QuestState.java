@@ -21,6 +21,8 @@ public class QuestState {
 	
 	private String name;
 	
+	private int goalIndex;
+	
 	private List<GoalState> goalState;
 	
 	private Participant participant;
@@ -39,6 +41,8 @@ public class QuestState {
 		}
 		
 		this.name = config.getString("name");
+		
+		this.goalIndex = config.getInt("goalindex");
 		
 		this.goalState = new LinkedList<GoalState>();
 		
@@ -60,6 +64,8 @@ public class QuestState {
 		config.set("saveTime", (new Date()).getTime());
 		
 		config.set("name", name);
+		
+		config.set("goalindex", goalIndex);
 		
 		int i = 1;
 		for (GoalState conf : goalState) {
@@ -106,5 +112,12 @@ public class QuestState {
 		this.goalState.add(goalState);
 	}
 	
+	public int getGoalIndex() {
+		return goalIndex;
+	}
+	
+	public void setGoalIndex(int index) {
+		this.goalIndex = index;
+	}
 	
 }

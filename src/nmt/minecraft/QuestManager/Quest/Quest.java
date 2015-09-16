@@ -70,6 +70,8 @@ public class Quest implements Listener {
 	
 	private List<Goal> goals;	
 	
+	private int goalIndex;
+	
 	private int fame;
 	
 	private List<ItemStack> itemRewards;
@@ -110,6 +112,7 @@ public class Quest implements Listener {
 		
 		this.running = false;
 		this.goals = new LinkedList<Goal>();
+		this.goalIndex = 0;
 		
 		this.history = new History();
 		ready = false;
@@ -144,19 +147,7 @@ public class Quest implements Listener {
 			.info("[" + template.getName() + "] <-/-> [" + state.getName() + "]");
 		
 		}
-//		Participant pant = state.getParticipant();
-//		if (pant != null) {
-			
-//			if (pant instanceof Party) {
-//				players.add(((Party) pant).getLeader());
-//				for (QuestPlayer p : ((Party) pant).getMembers()) {
-//					players.add(p);
-//					p.addQuest(this);
-//				}
-//			} else {
-//				players.add((QuestPlayer) pant);
-//				((QuestPlayer) pant).addQuest(this);
-//			}
+
 		this.participant = state.getParticipant();
 		if (this.participant != null) {
 			for (QuestPlayer qp : participant.getParticipants()) {
@@ -179,6 +170,7 @@ public class Quest implements Listener {
 		//and... that's kind of it actually
 		QuestState state = new QuestState();
 		state.setName(template.getName());
+		state.setGoalIndex(goalIndex);
 		
 		if (goals.isEmpty()) {
 			return state;
@@ -405,14 +397,75 @@ public class Quest implements Listener {
 	}
 	
 	/**
-	 * Returns a (possibly multilined) description of the quest that will be made
-	 * visible to players to aid in the quest selection process.<br />
-	 * Descriptions should have a list of stakes and rewards, as well as either
-	 * a hint or outline of/to objectives.
+	 * Returns a multilined description of the quest and its current objective.<br />
+	 * This method does not support JSON and the fancyness that comes with it. 
+	 * @see getJSONDescription()
 	 * @return
 	 */
 	public String getDescription() {
-		return template.getDescription();
+		String builder = ChatColor.GOLD + template.getName();
+		builder += "\n" + ChatColor.DARK_BLUE + template.getDescription();
+		
+		builder += "\n" + ChatColor.BLACK + "Party: ";
+		if (template.getUseParty()) {
+			builder += ChatColor.DARK_GREEN;
+		} else {
+			builder += ChatColor.GRAY;
+		}
+		
+		builder += "Uses  ";
+		
+		if (template.getRequireParty()) {
+			builder += ChatColor.DARK_GREEN;
+		} else {
+			builder += ChatColor.GRAY;
+		}
+		
+		builder += "Requires\n" + ChatColor.BLACK;
+		
+		builder += "Objective:\n";
+		
+		for (Requirement req : goals.get(goalIndex).getRequirements()) {
+			builder += req.isCompleted() ? ChatColor.GREEN + "  =" : ChatColor.DARK_RED + "  -";
+			builder += req.getDescription() + "\n";
+		}
+		
+		if (isReady()) {
+			builder += ChatColor.DARK_PURPLE + "\n  =" + template.getEndHint();
+		}
+		
+		
+		return builder;
+	}
+	
+	public String getJSONDescription() {
+		FancyMessage builder = new FancyMessage(template.getName())
+				.color(ChatColor.GOLD)
+			.then("\n" + template.getDescription() + "\n")
+				.color(ChatColor.DARK_BLUE)
+			.then("Party: ")
+			.then("Uses  ")
+				.color(template.getUseParty() ? ChatColor.DARK_GREEN : ChatColor.GRAY)
+			.then("Requires\n")
+				.color(template.getRequireParty() ? ChatColor.DARK_GREEN : ChatColor.GRAY)
+			.then("History")
+				.color(ChatColor.DARK_PURPLE)
+				.tooltip(ChatColor.DARK_BLUE + "Click to view this quest's history")
+				.command("/qhistory " + this.ID)
+			.then("Objective:\n");
+		
+		for (Requirement req : goals.get(goalIndex).getRequirements()) {
+			builder.then((req.isCompleted() ? "  =" : "  -") + req.getDescription() + "\n")
+				.color(req.isCompleted() ? ChatColor.GREEN : ChatColor.DARK_RED);
+		}
+		
+		if (isReady()) {
+			builder.then("\n  =" + template.getEndHint())
+				.color(ChatColor.DARK_PURPLE);
+		}
+		
+		
+		return builder.toJSONString();		
 	}
 	
 	/**
@@ -535,15 +588,47 @@ public class Quest implements Listener {
 			return;
 		}
 		
-		for (Goal goal : goals) {
+		Goal goal = goals.get(goalIndex);
 			//as soon as a single goal isn't ready, the quest is not ready
-			if (!goal.isComplete()) {
-				ready = false;
-				return;
-			}
+//		if (!goal.isComplete()) {
+//			ready = false;
+//			return;
+//		}
+		
+		if (goal.isComplete()) {
+			nextGoal();			
+		}
+	}
+	
+	/**
+	 * Loads the next goal and starts its requirements for listening
+	 */
+	private void nextGoal() {
+		goalIndex++;
+		if (goals.size() <= goalIndex) {
+			this.ready = true;
+			tellParticipants("The quest " + ChatColor.GOLD + getName() + ChatColor.RESET + " is ready to turn in!");
+			return;
 		}
 		
-		ready = true;
+		Goal goal = goals.get(goalIndex);
+		for (Requirement req : goal.getRequirements()) {
+			req.activate();
+		}
+		
+		tellParticipants("You've completed your current objective for the quest " + ChatColor.GOLD + this.getName() + ChatColor.RESET);
+	}
+	
+	private void tellParticipants(String message) {
+		if (participant == null || participant.getParticipants().isEmpty()) {
+			return;
+		}
+		
+		for (QuestPlayer qp : participant.getParticipants()) {
+			if (qp.getPlayer().isOnline()) {
+				qp.getPlayer().getPlayer().sendMessage(message);
+			}
+		}
 	}
 	
 	public Participant getParticipants() {

@@ -70,15 +70,6 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 	 */
 	private SlayRequirement(Goal goal) {
 		super(goal);	
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
-	}
-	
-	public SlayRequirement(Goal goal, Participant participants, EntityType type, int count) {
-		this(goal, "", participants, type, null, count);
-	}
-	
-	public SlayRequirement(Goal goal, Participant participants, EntityType type, String name, int count) {
-		this(goal, "", participants, type, name, count);
 	}
 	
 	public SlayRequirement(Goal goal, String description, Participant participants, EntityType type, String name, int count) {
@@ -91,6 +82,11 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 		this.count = count;
 		this.progress = 0;
 		
+	}
+	
+	@Override
+	public void activate() {
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
@@ -237,6 +233,9 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 			this.name = tmp;
 		}
 		
+		this.desc = config.getString("description", "Slay " + count + " " + 
+				this.name == null ? this.type.toString() : this.name);
+		
 	}
 
 	@Override
@@ -269,6 +268,9 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 		; //do nothing!		
 	}
 	
-	
+	@Override
+	public String getDescription() {
+		return this.desc + " (" + this.progress + "/" + this.count + ")";
+	}
 	
 }

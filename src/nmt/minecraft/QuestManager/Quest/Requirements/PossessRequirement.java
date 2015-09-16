@@ -47,11 +47,6 @@ public class PossessRequirement extends Requirement implements Listener {
 	
 	private PossessRequirement(Goal goal) {
 		super(goal);
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
-	}
-	
-	public PossessRequirement(Participant participants, Goal goal, Material itemType) {
-		this(participants, goal, "", itemType, 1);
 	}
 	
 	public PossessRequirement(Participant participants, Goal goal, String description, Material itemType) {
@@ -74,6 +69,11 @@ public class PossessRequirement extends Requirement implements Listener {
 		if (itemName.trim().isEmpty()) {
 			this.itemName = null;
 		}
+	}
+	
+	@Override
+	public void activate() {
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
@@ -198,6 +198,7 @@ public class PossessRequirement extends Requirement implements Listener {
 			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'pr' but got " + config.getString("type", "null"));
 		}
 		
+		
 		this.itemType = Material.valueOf(
 				config.getString("itemType", "AIR"));
 		
@@ -207,9 +208,15 @@ public class PossessRequirement extends Requirement implements Listener {
 		if (itemName.trim().isEmpty()) {
 			itemName = null;
 		}
+		this.desc = config.getString("description", "Collect " + itemCount + " " +
+				itemName == null ? itemType.toString() : itemName);
 		
 	}
 	
+	@Override
+	public String getDescription() {
+		return this.desc;
+	}
 	
 	
 }

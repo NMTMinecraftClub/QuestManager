@@ -51,11 +51,6 @@ public class PositionRequirement extends Requirement implements Listener {
 	
 	private PositionRequirement(Goal goal) {
 		super(goal);
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
-	}
-	
-	public PositionRequirement(Goal goal, Participant participants, Location destination, double range) {
-		this(goal, "", participants, destination, range);
 	}
 	
 	public PositionRequirement(Goal goal, String description, Participant participants, Location destination, double range) {
@@ -65,6 +60,11 @@ public class PositionRequirement extends Requirement implements Listener {
 		this.targetRange = range;
 		this.state = false;
 		
+	}
+	
+	@Override
+	public void activate() {
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
@@ -136,7 +136,13 @@ public class PositionRequirement extends Requirement implements Listener {
 			throw new InvalidConfigurationException();
 		}
 		
+		this.desc = config.getString("description", "Be in the target area");
 		this.targetRange = config.getDouble("range", 1.0);
 		this.destination = ((LocationState) config.get("destination")).getLocation();
+	}
+	
+	@Override
+	public String getDescription() {
+		return desc;
 	}
 }

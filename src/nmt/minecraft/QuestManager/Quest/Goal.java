@@ -164,6 +164,9 @@ public class Goal {
 		requirements.add(requirement);
 	}
 	
+	public List<Requirement> getRequirements() {
+		return requirements;
+	}
 	
 	/**
 	 * Assesses and reports whether the goal has been completed.<br />

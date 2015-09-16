@@ -39,7 +39,6 @@ public class TimeRequirement extends Requirement implements Tickable {
 	
 	private TimeRequirement(Goal goal) {
 		super(goal);
-		IntervalScheduler.getScheduler().register(this);
 	}
 	
 	public TimeRequirement(Participant participants, Goal goal, String description, long start, long end) {
@@ -48,8 +47,12 @@ public class TimeRequirement extends Requirement implements Tickable {
 		this.startTime = start;
 		this.endTime = end;
 		this.participants = participants;
-		IntervalScheduler.getScheduler().register(this);
 		
+	}
+	
+	@Override
+	public void activate() {
+		IntervalScheduler.getScheduler().register(this);
 	}
 	
 	/**
@@ -132,6 +135,8 @@ public class TimeRequirement extends Requirement implements Tickable {
 		this.startTime = config.getLong("startTime");
 		this.endTime = config.getLong("endTime");
 		
+		this.desc = config.getString("description", "Wait until between " + startTime + " and " + endTime);
+		
 	}
 
 	@Override
@@ -139,6 +144,9 @@ public class TimeRequirement extends Requirement implements Tickable {
 		update();
 	}
 	
-	
+	@Override
+	public String getDescription() {
+		return this.desc;
+	}
 	
 }

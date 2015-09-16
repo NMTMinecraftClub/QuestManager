@@ -60,20 +60,21 @@ public class ArriveRequirement extends Requirement implements Listener, Statekee
 	 */
 	private ArriveRequirement(Goal goal) {
 		super(goal);	
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
-	}
-	
-	public ArriveRequirement(Goal goal, Participant participants, Location location, double range) {
-		this(goal, "", participants, location, range);
+		//Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	public ArriveRequirement(Goal goal, String description, Participant participants, Location location, double range) {
-		super(goal, description);
+		this(goal);
 		
 		this.participants = participants;
 		this.destination = location;
 		this.targetRange = range;
 		
+	}
+	
+	@Override
+	public void activate() {
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
@@ -148,7 +149,8 @@ public class ArriveRequirement extends Requirement implements Listener, Statekee
 		if (!config.contains("type") || !config.getString("type").equals("arrr")) {
 			throw new InvalidConfigurationException();
 		}
-			
+		
+		this.desc = config.getString("description", "Arrive at the location");
 		this.targetRange = config.getDouble("range", 1.0);
 		this.destination = ((LocationState) config.get("destination")).getLocation();
 		
@@ -179,6 +181,11 @@ public class ArriveRequirement extends Requirement implements Listener, Statekee
 	@Override
 	public void stop() {
 		; //do nothing, nothing to clean
+	}
+
+	@Override
+	public String getDescription() {
+		return this.desc;
 	}
 	
 	

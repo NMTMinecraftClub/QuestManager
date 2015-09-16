@@ -56,6 +56,14 @@ public class QuestConfiguration {
 	 */
 	private void checkConfig() {
 		
+		if (config.getDouble("configversion", 0.0) - configVersion > .001) {
+			String name = config.getString(QuestConfigurationField.NAME.getKey(), "NO NAME");
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning("The quest [" + name + "] has an invalid version!\n"
+					+ "QuestManager Configuration Version: " + configVersion + " doesn't match quest's: " 
+					+ config.getDouble("configversion", 0.0));
+			
+		}
+		
 		//Check each field and put in defaults if they aren't there (niave approach)
 		for (QuestConfigurationField field : QuestConfigurationField.values()) {
 			if (!config.contains(field.getKey())) {

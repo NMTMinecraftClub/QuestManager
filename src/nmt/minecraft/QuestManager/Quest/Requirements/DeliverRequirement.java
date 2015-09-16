@@ -50,7 +50,6 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 	
 	private DeliverRequirement(Goal goal) {
 		super(goal);
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	public DeliverRequirement(Participant participants, Goal goal, Material itemType) {
@@ -77,6 +76,11 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 		if (itemName.trim().isEmpty()) {
 			this.itemName = null;
 		}
+	}
+	
+	@Override
+	public void activate() {
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
@@ -281,6 +285,9 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 		if (itemName.trim().isEmpty()) {
 			itemName = null;
 		}
+		
+		this.desc = config.getString("description", "Collect " + itemCount + " " +
+				itemName == null ? itemType.toString() : itemName);
 	}
 
 	@Override
@@ -314,6 +321,9 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 		;
 	}
 	
-	
+	@Override
+	public String getDescription() {
+		return desc;
+	}
 	
 }
