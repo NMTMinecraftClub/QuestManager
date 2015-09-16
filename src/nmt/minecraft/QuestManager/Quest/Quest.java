@@ -17,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
 import nmt.minecraft.QuestManager.Configuration.State.GoalState;
 import nmt.minecraft.QuestManager.Configuration.State.QuestState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
@@ -57,11 +58,9 @@ import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
  */
 public class Quest implements Listener {
 	
+	private static int NEXTID;
+	
 	private int ID;
-	
-	private String name;
-	
-	private String description;
 	
 	private boolean running;
 //	
@@ -81,11 +80,9 @@ public class Quest implements Listener {
 	
 	private History history;
 	
-	private boolean useParty;
-	
-	private boolean requireParty;
-	
 	private boolean ready;
+	
+	private QuestConfiguration template;
 	
 	//private Set<NPC> npcs;
 	
@@ -100,21 +97,23 @@ public class Quest implements Listener {
 	 */
 	private boolean keepState;
 	
-	public Quest(String name, String description, Participant participant, boolean keepState, boolean useParty, boolean requireParty) {
-		this.name = name;
-		this.description = description;
+	public static void resetIDs() {
+		NEXTID = 0;
+	}
+	
+	private static int nextID() {
+		return NEXTID++;
+	}
+	
+	public Quest(QuestConfiguration template, Participant participant) {
+		this.template = template;
 		
 		this.running = false;
 		this.goals = new LinkedList<Goal>();
-		//this.npcs = new HashSet<NPC>();
 		
 		this.history = new History();
 		ready = false;
-		this.keepState = keepState;
-		this.useParty = useParty;
-		this.requireParty = requireParty;
 		
-//		players = new HashSet<QuestPlayer>();
 		this.participant = participant;
 		
 		if (participant != null)
@@ -125,7 +124,7 @@ public class Quest implements Listener {
 		
 		itemRewards = new LinkedList<ItemStack>();
 		
-		this.ID = (int) (Math.random() * Integer.MAX_VALUE);
+		this.ID = Quest.nextID();
 		
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
@@ -138,11 +137,11 @@ public class Quest implements Listener {
 	 */
 	public void loadState(QuestState state) throws InvalidConfigurationException {
 		
-		if (!this.name.equals(state.getName())) {
+		if (!template.getName().equals(state.getName())) {
 			QuestManagerPlugin.questManagerPlugin.getLogger()
 				.warning("Attempting to load state information from a mismatched quest!");
 			QuestManagerPlugin.questManagerPlugin.getLogger()
-			.info("[" + this.name + "] <-/-> [" + state.getName() + "]");
+			.info("[" + template.getName() + "] <-/-> [" + state.getName() + "]");
 		
 		}
 //		Participant pant = state.getParticipant();
@@ -179,7 +178,7 @@ public class Quest implements Listener {
 		//we need to definitely save goal state information (and requirement state). We also
 		//and... that's kind of it actually
 		QuestState state = new QuestState();
-		state.setName(name);
+		state.setName(template.getName());
 		
 		if (goals.isEmpty()) {
 			return state;
@@ -265,7 +264,7 @@ public class Quest implements Listener {
 						  .then("You've just completed the quest: ")
 						  	.color(ChatColor.DARK_PURPLE)
 						  	.style(ChatColor.BOLD)
-						  .then(name)
+						  .then(template.getName())
 						    .color(ChatColor.LIGHT_PURPLE)
 						  .then("\nYou received ")
 						    .color(ChatColor.DARK_PURPLE)
@@ -305,7 +304,7 @@ public class Quest implements Listener {
 		if (!(participant instanceof Party)) {
 			//get config location!
 			File saveLoc = new File(QuestManagerPlugin.questManagerPlugin.getManager()
-					.getSaveLocation(), name + "_" + ID + ".yml");
+					.getSaveLocation(), template.getName() + "_" + ID + ".yml");
 			
 			QuestState state = getState();
 
@@ -375,52 +374,10 @@ public class Quest implements Listener {
 		}
 		
 	}
-
-//	/**
-//	 * Return all players involved in this quests.<br />
-//	 * Involved players are those participating in any way in the quest. For
-//	 * example, if a player is marked as a pvp target in a quest then they are
-//	 * involved in the quest.
-//	 * @return
-//	 */
-//	public Collection<QuestPlayer> getPlayers() {
-//		return players;
-//	}
 	
-//	/**
-//	 * Add a player to the quest.<br />
-//	 * This typically involves moving the player to a starting location or giving them
-//	 * starting equipment?
-//	 * @param player
-//	 */
-//	public void addPlayer(QuestPlayer player) {
-//		
-//		if (!useParty && players.size() == 1) {
-//			; //don't add them! we only support 1 player!
-//		} else {
-//			players.add(player);
-//		}
-//		
-//		if (!goals.isEmpty())
-//		for (Goal goal : goals) {
-//			goal.sync();
-//		}
-//		
-//		//TODO starting location, etc?
-//	}
-//	
-//	/**
-//	 * Removes a player from the quest.<br />
-//	 * This might involve removing them from a dungeon, etc;
-//	 * @param player Which player to remove
-//	 * @return Whether or not the player was successfully removed
-//	 */
-//	public boolean removePlayer(QuestPlayer player) {
-//		
-//		//TODO get them out of a dungeon, etc?
-//		
-//		return players.remove(player);
-//	}
+	public QuestConfiguration getTemplate() {
+		return template;
+	}
 	
 	/**
 	 * Returns the name of the quest, including text formatters and colors.
@@ -428,7 +385,7 @@ public class Quest implements Listener {
 	 * @see {@link org.bukkit.ChatColor ChatColor}
 	 */
 	public String getName() {
-		return name;
+		return template.getName();
 	}
 	
 	/**
@@ -447,10 +404,6 @@ public class Quest implements Listener {
 		goals.add(goal);
 	}
 	
-//	public void addNPC(NPC npc) {
-//		npcs.add(npc);
-//	}
-	
 	/**
 	 * Returns a (possibly multilined) description of the quest that will be made
 	 * visible to players to aid in the quest selection process.<br />
@@ -459,7 +412,7 @@ public class Quest implements Listener {
 	 * @return
 	 */
 	public String getDescription() {
-		return description;
+		return template.getDescription();
 	}
 	
 	/**
@@ -471,11 +424,11 @@ public class Quest implements Listener {
 	}
 		
 	public boolean getUseParty() {
-		return useParty;
+		return template.getUseParty();
 	}
 
 	public boolean getRequireParty() {
-		return requireParty;
+		return template.getRequireParty();
 	}
 
 	/**
@@ -548,14 +501,14 @@ public class Quest implements Listener {
 	@EventHandler
 	public void onPartyDisband(PartyDisbandEvent e) {
 		if (e.getParty().getIDString().equals(participant.getIDString())) {
-			if (this.requireParty) {
+			if (template.getRequireParty()) {
 				System.out.println("gonna quit!");
 				//stop the quest!
 				for (QuestPlayer qp : e.getParty().getParticipants()) {
 					qp.removeQuest(this);
 					if (qp.getPlayer().isOnline()) {
 						qp.getPlayer().getPlayer().sendMessage(ChatColor.YELLOW + "The quest " 
-					+ ChatColor.DARK_PURPLE + name + ChatColor.YELLOW
+					+ ChatColor.DARK_PURPLE + template.getName() + ChatColor.YELLOW
 					+ " has been failed because the party disbanded!");
 					}
 				}
@@ -614,6 +567,6 @@ public class Quest implements Listener {
 	
 	@Override
 	public String toString() {
-		return this.name;
+		return template.getName();
 	}
 }
