@@ -336,7 +336,7 @@ public class QuestPlayer implements Participant, Listener {
 					page += ChatColor.GRAY;
 				}
 				
-				page += "Require\n";
+				page += "Requires\n";
 				
 				page += ChatColor.RESET + "Objectives:\n";
 				
@@ -348,6 +348,9 @@ public class QuestPlayer implements Participant, Listener {
 					} else {
 						page += ChatColor.DARK_RED + " -" + goal.getDescription() + "\n";
 					}
+				}
+				if (quest.isReady()) {
+					page += ChatColor.DARK_PURPLE + "\n  =" + quest.getTemplate().getEndHint();
 				}
 				
 				bookMeta.addPage(page);
