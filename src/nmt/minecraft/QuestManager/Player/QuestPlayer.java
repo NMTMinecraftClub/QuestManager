@@ -12,11 +12,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Note;
-import org.bukkit.Note.Tone;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -30,7 +27,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
@@ -41,6 +37,7 @@ import com.onarandombox.MultiversePortals.event.MVPortalEvent;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Player.Utils.QuestLog;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
@@ -198,55 +195,7 @@ public class QuestPlayer implements Participant, Listener {
 	 * This method will produce a fully updated quest book in the players inventory.
 	 */
 	public void addQuestBook() {
-		if (!getPlayer().isOnline()) {
-			return;
-		}
-		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
-				.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
-			return;
-		}
-		
-		Player play = getPlayer().getPlayer();
-		Inventory inv = play.getInventory();
-		
-		if (inv.firstEmpty() == -1) {
-			//no room!
-			return;
-		}
-		
-		ItemStack book = null;
-		
-		for (ItemStack item : inv.all(Material.WRITTEN_BOOK).values()) {
-			if (item.hasItemMeta()) {
-				BookMeta meta = (BookMeta) item.getItemMeta();
-				if (meta.getTitle().equals("Quest Log")
-						&& meta.getAuthor().equals(play.getName())) {
-					book = item;
-					break;
-				}
-			}
-		}
-		
-		if (book == null) {
-		
-			book = new ItemStack(Material.WRITTEN_BOOK);
-			BookMeta bookMeta = (BookMeta) book.getItemMeta();
-			
-			bookMeta.setTitle("Quest Log");
-			bookMeta.setAuthor(play.getName());
-			
-			book.setItemMeta(bookMeta);
-			
-			book.addUnsafeEnchantment(Enchantment.LUCK, 5);
-			
-			inv.addItem(book);
-			
-			play.sendMessage(ChatColor.GRAY + "A " + ChatColor.DARK_GREEN 
-					+ "Quest Log" + ChatColor.GRAY + " has been added to your inventory."
-					 + ChatColor.RESET);
-		}
-		
-		updateQuestBook();
+		QuestLog.addQuestlog(this);
 	}
 	
 	/**
@@ -254,79 +203,7 @@ public class QuestPlayer implements Participant, Listener {
 	 * If the user does not have abook already or has discarded it, this method will do nothing.
 	 */
 	public void updateQuestBook() {
-		if (!getPlayer().isOnline()) {
-			return;
-		}
-		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
-				.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
-			return;
-		}
-		
-		Player play = getPlayer().getPlayer();
-		Inventory inv = play.getInventory();
-		ItemStack book = null;
-		
-		for (ItemStack item : inv.all(Material.WRITTEN_BOOK).values()) {
-			if (item.hasItemMeta()) {
-				BookMeta meta = (BookMeta) item.getItemMeta();
-				if (meta.getTitle().equals("Quest Log")
-						&& meta.getAuthor().equals(play.getName())) {
-					book = item;
-					break;
-				}
-			}
-		}
-		
-		if (book == null) {
-			//they don't have a quest log
-			return;
-		}
-		
-		
-		
-		BookMeta bookMeta = (BookMeta) book.getItemMeta();
-		bookMeta.setPages(new LinkedList<String>());
-		
-		
-		//generate the first page
-		bookMeta.addPage("      Quest Log\n  " 
-				+ ChatColor.RESET + "\n\n"
-						+ "  This book details your current quest progress & history.");
-		
-		//generate the stats page
-		bookMeta.addPage(ChatColor.DARK_PURPLE + " " + getPlayer().getName() + " - "
-				+ ChatColor.DARK_RED + title
-				+ "\n-----\n  " + ChatColor.GOLD + "Fame: " + fame
-				+ "\n  "			+ ChatColor.GOLD + "Gold: " + money
-				+ ChatColor.DARK_GREEN + "\n\n  Current Quests: " + currentQuests.size()
-				+ ChatColor.DARK_BLUE + "\n\n  Completed Quests: " + completedQuests.size()
-				+ ChatColor.RESET);	
-			
-		
-		
-		//now do quest info
-		//Quest Name
-		//Quest Description
-			//Goal Description? :S
-		
-		if (currentQuests.isEmpty()) {
-			bookMeta.addPage("\nYou do not have any active quests!");
-		} else {
-			for (Quest quest : currentQuests)  {
-				bookMeta.addPage(quest.getDescription());
-			}
-		}
-		
-		
-		
-		book.setItemMeta(bookMeta);
-		play.sendMessage(ChatColor.GRAY + "Your "
-				+ ChatColor.DARK_GREEN + "Quest Log" + ChatColor.GRAY + " has been"
-				+ " updated!" + ChatColor.RESET);
-		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
-		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
-		
-		play.setLevel(money);
+		QuestLog.updateQuestlog(this);
 	}
 	
 	public List<Quest> getCurrentQuests() {
