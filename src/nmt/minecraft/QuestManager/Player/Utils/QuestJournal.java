@@ -173,6 +173,9 @@ public class QuestJournal {
 		
 		if (qp.getPlayerNotes() != null && !qp.getPlayerNotes().isEmpty()) {
 			for (String page : qp.getPlayerNotes()) {
+				if (page.trim().isEmpty()) {
+					continue;
+				}
 				builder += ",";
 				builder += generatePage(page);
 			}
@@ -181,7 +184,6 @@ public class QuestJournal {
 		//bind
 		builder += "], title:\"Journal\",author:" + play.getName() + ",ench:[{id:61s,lvl:5s}]}";
 
-		System.out.println(builder);
 		Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), builder);
 		
 

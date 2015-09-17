@@ -459,6 +459,7 @@ public class QuestPlayer implements Participant, Listener {
 		map.put("id", getPlayer().getUniqueId().toString());
 		map.put("portalloc", this.questPortal);
 		map.put("completedquests", completedQuests);
+		map.put("notes", journalNotes);
 		
 		return map;
 	}
@@ -494,6 +495,7 @@ public class QuestPlayer implements Participant, Listener {
 		qp.title = (String) map.get("title");
 		qp.unlockedTitles = (List<String>) map.get("unlockedtitles");
 		qp.completedQuests = (List<String>) map.get("completedquests");
+		qp.journalNotes = (List<String>) map.get("notes");
 		
 		if (qp.completedQuests == null) {
 			qp.completedQuests = new LinkedList<String>();
@@ -503,6 +505,9 @@ public class QuestPlayer implements Participant, Listener {
 			qp.unlockedTitles = new LinkedList<String>();
 		}
 		
+		if (qp.journalNotes == null) {
+			qp.journalNotes = new LinkedList<String>();
+		}
 		
 		return qp;
 	}
