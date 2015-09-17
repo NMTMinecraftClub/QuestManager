@@ -38,6 +38,7 @@ import com.onarandombox.MultiversePortals.event.MVPortalEvent;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Player.Utils.QuestJournal;
 import nmt.minecraft.QuestManager.Player.Utils.QuestLog;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
@@ -205,6 +206,13 @@ public class QuestPlayer implements Participant, Listener {
 	}
 	
 	/**
+	 * Adds a journal to the player's inventory if there's space. Also updates immediately.
+	 */
+	public void addJournal() {
+		QuestJournal.addQuestJournal(this);
+	}
+	
+	/**
 	 * Updates the players quest book, if they have it in their inventory.<br />
 	 * If the user does not have abook already or has discarded it, this method will do nothing.
 	 */
@@ -252,9 +260,10 @@ public class QuestPlayer implements Participant, Listener {
 	
 	public void addQuest(Quest quest) {
 		currentQuests.add(quest);
-		history.addHistoryEvent(new HistoryEvent("Accepted the quest \"" + quest.getName() +"\""));
+		history.addHistoryEvent(new HistoryEvent("Accepted the quest " + ChatColor.DARK_PURPLE + quest.getName()));
 		if (focusQuest == null) {
 			focusQuest = quest;
+			QuestJournal.updateQuestlog(this);
 		}
 		//addQuestBook();
 		//updateQuestBook();
@@ -275,8 +284,10 @@ public class QuestPlayer implements Participant, Listener {
 				if (focusQuest.equals(quest)) {
 					if (currentQuests.isEmpty()) {
 						focusQuest = null;
+						QuestJournal.addQuestJournal(this);
 					} else {
 						focusQuest = currentQuests.get(0);
+						QuestJournal.addQuestJournal(this);
 					}
 				}
 				return true;
@@ -293,7 +304,7 @@ public class QuestPlayer implements Participant, Listener {
 		removeQuest(quest);
 		
 		history.addHistoryEvent(
-				new HistoryEvent("Completed the quest \"" + quest.getName() + "\""));
+				new HistoryEvent("Completed the quest " + ChatColor.DARK_PURPLE + quest.getName()));
 	}
 	
 	public int getFame() {

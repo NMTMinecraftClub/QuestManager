@@ -1,6 +1,5 @@
 package nmt.minecraft.QuestManager.Player.Utils;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -52,8 +51,8 @@ public class QuestJournal {
 		for (ItemStack item : inv.all(Material.BOOK_AND_QUILL).values()) {
 			if (item.hasItemMeta()) {
 				BookMeta meta = (BookMeta) item.getItemMeta();
-				if (meta.getTitle().equals("Journal")
-						&& meta.getAuthor().equals(play.getName())
+				if (meta.hasTitle() && meta.getTitle().equals("Journal")
+						&& meta.hasAuthor() && meta.getAuthor().equals(play.getName())
 						&& item.getEnchantmentLevel(Enchantment.LUCK) == 5) {
 					book = item;
 					break;
@@ -99,10 +98,13 @@ public class QuestJournal {
 		
 		for (slot = 0; slot <= 35; slot++) {
 			ItemStack item = inv.getItem(slot);
+			if (item == null || item.getType() == Material.AIR) {
+				continue;
+			}
 			if (item.hasItemMeta() && item.getType() == Material.BOOK_AND_QUILL) {
 				BookMeta meta = (BookMeta) item.getItemMeta();
-				if (meta.getTitle().equals("Journal")
-						&& meta.getAuthor().equals(play.getName())
+				if (meta.hasTitle() && meta.getTitle().equals("Journal")
+						&& meta.hasAuthor() && meta.getAuthor().equals(play.getName())
 						&& item.getEnchantmentLevel(Enchantment.LUCK) == 5) {
 					book = item;
 					break;
@@ -126,12 +128,12 @@ public class QuestJournal {
 		//get title page
 		FancyMessage title = new FancyMessage("      Journal\n  " + play.getName() + "\n\n  My own journal with details about my active quest")
 				.color(ChatColor.BLACK);
-		builder += generatePageJSON(title.toJSONString().replace("\"", escq));
+		builder += generatePage(title.toOldMessageFormat());
 		
 		builder += ",";
 		
 		//get recent page
-		title = new FancyMessage(" Recent events:\n" + qp.getPlayer().getName())
+		title = new FancyMessage(" Recent events:\n")
 					.color(ChatColor.BLACK);
 		List<HistoryEvent> events;
 		
@@ -140,13 +142,13 @@ public class QuestJournal {
 		if (events == null || events.isEmpty()) {
 			title.then(" Nothing recent!");
 		} else {
-			for (HistoryEvent event : events.subList(events.size() - 6, events.size() - 1)) {
-				title.then("-" + event.getDescription())
+			for (HistoryEvent event : events.subList(Math.max(0, events.size() - 6), events.size() - 1)) {
+				title.then("-" + event.getDescription() + "\n")
 					.color(ChatColor.BLACK);
 			}
 		}
 		
-		builder += generatePageJSON(title.toJSONString().replace("\"", escq));
+		builder += generatePage(title.toOldMessageFormat());
 		
 		//add quests
 		if (qp.getFocusQuest() == null) {
@@ -167,7 +169,7 @@ public class QuestJournal {
 			.then("  Notes left after this page will be kept")
 				.color(ChatColor.BLACK);
 		
-		builder += generatePageJSON(title.toJSONString().replace("\"", escq));
+		builder += generatePage(title.toOldMessageFormat());
 		
 		if (qp.getPlayerNotes() != null && qp.getPlayerNotes().isEmpty()) {
 			for (String page : qp.getPlayerNotes()) {
@@ -201,62 +203,21 @@ public class QuestJournal {
 		return "slot.inventory." + (rawslot - 9);
 	}
 	
-	
-	private static String generatePageJSON(String JSON) {
-		String ret = "\"[" + escq + escq + ",";
-		
-		if (JSON != null) {
-			ret += JSON;
-		}
-		
-		ret += "]\"";
-		
-		return ret;
-	}
-	
 	/**
 	 * Used to build pages for primitive strings
 	 * @param line
 	 * @return
 	 */
 	private static String generatePage(String line) {
-		String ret = "\"[" + escq + escq + ",";
+		String ret = "\"";
 		
 		if (line != null) {
-			ret += formatText(line);
+			ret += line;
 		}
 		
-		ret += "]\"";
+		ret += "\"";
 		
 		return ret;
 	}
-	
-	@SuppressWarnings("unused")
-	private static String generatePage(List<String> lines) {
-		String ret = "\"[" + escq + escq + ",";
-		
-		String line = "";
-		
-		if (lines != null && !lines.isEmpty()) {
-			Iterator<String> it = lines.iterator();
-			
-			while (it.hasNext()) {
-				line += (it.next());
-				if (it.hasNext()) {
-					line += "\n";
-				}
-			}
-		}
-			
-		ret += formatText(line);
-		ret += "]\"";
-		
-		return ret;
-		
-		//"[\"\",{\"text\":\"Title Page\"},{\"text\":\"page1\"}]"
-	}
-		
-	private static String formatText(String str) {
-		return "{" + escq + "text" + escq + ": " + escq + str + escq + "}";
-	}
+
 }

@@ -99,6 +99,9 @@ public class QuestLog {
 		
 		for (slot = 0; slot <= 35; slot++) {
 			ItemStack item = inv.getItem(slot);
+			if (item == null || item.getType() == Material.AIR) {
+				continue;
+			}
 			if (item.hasItemMeta() && item.getType() == Material.WRITTEN_BOOK) {
 				BookMeta meta = (BookMeta) item.getItemMeta();
 				if (meta.getTitle().equals("Quest Log")

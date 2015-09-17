@@ -286,6 +286,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 			QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
 			
 			qp.addQuestBook();
+			qp.addJournal();
 			return true;
 		}
 		
