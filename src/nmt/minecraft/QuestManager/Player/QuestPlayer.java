@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerEditBookEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -67,6 +68,10 @@ public class QuestPlayer implements Participant, Listener {
 	private List<Quest> currentQuests;
 	
 	private List<String> completedQuests;
+	
+	private Quest focusQuest;
+	
+	private List<String> journalNotes;
 	
 	private int fame;
 	
@@ -160,6 +165,7 @@ public class QuestPlayer implements Participant, Listener {
 		this.money = 0;
 		this.title = "The Unknown";
 		this.unlockedTitles = new LinkedList<String>();
+		this.journalNotes = new LinkedList<String>();
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
@@ -247,6 +253,9 @@ public class QuestPlayer implements Participant, Listener {
 	public void addQuest(Quest quest) {
 		currentQuests.add(quest);
 		history.addHistoryEvent(new HistoryEvent("Accepted the quest \"" + quest.getName() +"\""));
+		if (focusQuest == null) {
+			focusQuest = quest;
+		}
 		//addQuestBook();
 		//updateQuestBook();
 	}
@@ -263,6 +272,13 @@ public class QuestPlayer implements Participant, Listener {
 			Quest q = it.next();
 			if (q.equals(quest)) {
 				it.remove();
+				if (focusQuest.equals(quest)) {
+					if (currentQuests.isEmpty()) {
+						focusQuest = null;
+					} else {
+						focusQuest = currentQuests.get(0);
+					}
+				}
 				return true;
 			}
 		}
@@ -724,6 +740,11 @@ public class QuestPlayer implements Participant, Listener {
 	
 	}
 	
+	@EventHandler
+	public void onPlayerRuinJournal(PlayerEditBookEvent e) {
+		//TODO
+	}
+	
 	/**
 	 * Displays for this quest player a player menu for the given player.
 	 * @param player
@@ -817,6 +838,14 @@ public class QuestPlayer implements Participant, Listener {
 	
 	public OfflinePlayer getPlayer() {
 		return Bukkit.getOfflinePlayer(playerID);
+	}
+	
+	public Quest getFocusQuest() {
+		return this.focusQuest;
+	}
+	
+	public List<String> getPlayerNotes() {
+		return this.journalNotes;
 	}
 	
 }

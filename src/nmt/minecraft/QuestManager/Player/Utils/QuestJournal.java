@@ -18,19 +18,19 @@ import org.bukkit.inventory.meta.BookMeta;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
-import nmt.minecraft.QuestManager.Quest.Quest;
+import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
 
 /**
- * Utility class for the quest log.<br />
- * Provides nice, simple wrapper functions for the elaborate workings of the Quest Log
+ * A quest journal keeps track of the current target quest's history<br />
+ * This class provides nice helper functions for making that happen
  * @author Skyler
- *
+ * @see QuestLog
  */
-public class QuestLog {
+public class QuestJournal {
 	
-	private static String escq = "\\\"";
+	public static final String escq = "\\\"";
 	
-	public static void addQuestlog(QuestPlayer qp) {
+	public static void addQuestJournal(QuestPlayer qp) {
 		if (!qp.getPlayer().isOnline()) {
 			return;
 		}
@@ -49,10 +49,10 @@ public class QuestLog {
 		
 		ItemStack book = null;
 		
-		for (ItemStack item : inv.all(Material.WRITTEN_BOOK).values()) {
+		for (ItemStack item : inv.all(Material.BOOK_AND_QUILL).values()) {
 			if (item.hasItemMeta()) {
 				BookMeta meta = (BookMeta) item.getItemMeta();
-				if (meta.getTitle().equals("Quest Log")
+				if (meta.getTitle().equals("Journal")
 						&& meta.getAuthor().equals(play.getName())
 						&& item.getEnchantmentLevel(Enchantment.LUCK) == 5) {
 					book = item;
@@ -63,10 +63,10 @@ public class QuestLog {
 		
 		if (book == null) {
 		
-			book = new ItemStack(Material.WRITTEN_BOOK);
+			book = new ItemStack(Material.BOOK_AND_QUILL);
 			BookMeta bookMeta = (BookMeta) book.getItemMeta();
 			
-			bookMeta.setTitle("Quest Log");
+			bookMeta.setTitle("Journal");
 			bookMeta.setAuthor(play.getName());
 			
 			book.setItemMeta(bookMeta);
@@ -76,7 +76,7 @@ public class QuestLog {
 			inv.addItem(book);
 			
 			play.sendMessage(ChatColor.GRAY + "A " + ChatColor.DARK_GREEN 
-					+ "Quest Log" + ChatColor.GRAY + " has been added to your inventory."
+					+ "Quest Journal" + ChatColor.GRAY + " has been added to your inventory."
 					 + ChatColor.RESET);
 		}
 		
@@ -99,9 +99,9 @@ public class QuestLog {
 		
 		for (slot = 0; slot <= 35; slot++) {
 			ItemStack item = inv.getItem(slot);
-			if (item.hasItemMeta() && item.getType() == Material.WRITTEN_BOOK) {
+			if (item.hasItemMeta() && item.getType() == Material.BOOK_AND_QUILL) {
 				BookMeta meta = (BookMeta) item.getItemMeta();
-				if (meta.getTitle().equals("Quest Log")
+				if (meta.getTitle().equals("Journal")
 						&& meta.getAuthor().equals(play.getName())
 						&& item.getEnchantmentLevel(Enchantment.LUCK) == 5) {
 					book = item;
@@ -111,67 +111,83 @@ public class QuestLog {
 		}
 		
 		if (book == null) {
-			//they don't have a quest log
+			//they don't have a quest journal
 			return;
 		}
 		
 		String builder = "replaceitem entity ";
 		builder += play.getName() + " ";
 		
-		builder += getSlotString(slot) + " written_book 1 0 ";
+		builder += getSlotString(slot) + " writable_book 1 0 ";
 		
 		//now start putting pages
 		builder += "{pages:[";
 		
 		//get title page
-		FancyMessage title = new FancyMessage("      Quest Log\n\n\n  This book details your current quest progress & history.")
+		FancyMessage title = new FancyMessage("      Journal\n  " + play.getName() + "\n\n  My own journal with details about my active quest")
 				.color(ChatColor.BLACK);
 		builder += generatePageJSON(title.toJSONString().replace("\"", escq));
 		
 		builder += ",";
 		
-		//get stats page
-		title = new FancyMessage(" " + qp.getPlayer().getName())
-				.color(ChatColor.DARK_PURPLE)
-			.then(" - ")
-				.color(ChatColor.BLACK)
-			.then(qp.getTitle())
-				.color(ChatColor.DARK_RED)
-			.then("\n-----\n  Fame: " + qp.getFame() + "\n  Gold: " + qp.getMoney())
-				.color(ChatColor.GOLD)
-			.then("\n\n  Current Quests: " + qp.getCurrentQuests().size())
-				.color(ChatColor.DARK_GREEN)
-			.then("\n\n  Completed Quests: " + qp.getCompletedQuests().size())
-				.color(ChatColor.DARK_BLUE)
-				.tooltip(qp.getCompletedQuests());
+		//get recent page
+		title = new FancyMessage(" Recent events:\n" + qp.getPlayer().getName())
+					.color(ChatColor.BLACK);
+		List<HistoryEvent> events;
+		
+		events = qp.getHistory().events();
+		
+		if (events == null || events.isEmpty()) {
+			title.then(" Nothing recent!");
+		} else {
+			for (HistoryEvent event : events.subList(events.size() - 6, events.size() - 1)) {
+				title.then("-" + event.getDescription())
+					.color(ChatColor.BLACK);
+			}
+		}
 		
 		builder += generatePageJSON(title.toJSONString().replace("\"", escq));
 		
 		//add quests
-		if (qp.getCurrentQuests().isEmpty()) {
+		if (qp.getFocusQuest() == null) {
 			builder += ",";
-			builder += generatePage("\nYou do not have any active quests!");
+			builder += generatePage("\nYou are not focused on any quest!");
 		} else {
-			for (Quest quest : qp.getCurrentQuests())  {
+			for (HistoryEvent event : qp.getFocusQuest().getHistory().events())  {
 				builder += ",";
-				builder += generatePageJSON(quest.getJSONDescription().replace("\"", escq));
+				builder += generatePage(event.getDescription());
 			}
 		}
 		
+		builder += ",";
+		
+		//add player notes title
+		title = new FancyMessage("\n  Player Notes\n\n\n")
+				.color(ChatColor.BLACK)
+			.then("  Notes left after this page will be kept")
+				.color(ChatColor.BLACK);
+		
+		builder += generatePageJSON(title.toJSONString().replace("\"", escq));
+		
+		if (qp.getPlayerNotes() != null && qp.getPlayerNotes().isEmpty()) {
+			for (String page : qp.getPlayerNotes()) {
+				builder += ",";
+				builder += generatePage(page);
+			}
+		}
 		
 		//bind
-		builder += "], title:\"Quest Log\",author:" + play.getName() + ",ench:[{id:61s,lvl:5s}]}";
+		builder += "], title:\"Journal\",author:" + play.getName() + ",ench:[{id:61s,lvl:5s}]}";
 
+		System.out.println(builder);
 		Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), builder);
 		
 
 		play.sendMessage(ChatColor.GRAY + "Your "
-				+ ChatColor.DARK_GREEN + "Quest Log" + ChatColor.GRAY + " has been"
+				+ ChatColor.DARK_GREEN + "Journal" + ChatColor.GRAY + " has been"
 				+ " updated!" + ChatColor.RESET);
 		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
 		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
-		
-		play.setLevel(qp.getMoney());
 	}
 	
 	private static String getSlotString(int rawslot) {
