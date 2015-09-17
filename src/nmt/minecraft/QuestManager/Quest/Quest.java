@@ -447,6 +447,7 @@ public class Quest implements Listener {
 			.then("\n" + template.getDescription() + "\n")
 				.color(ChatColor.DARK_BLUE)
 			.then("Party: ")
+				.color(ChatColor.BLACK)
 			.then("Uses  ")
 				.color(template.getUseParty() ? ChatColor.DARK_GREEN : ChatColor.GRAY)
 			.then("Requires\n")
@@ -455,7 +456,8 @@ public class Quest implements Listener {
 				.color(ChatColor.DARK_PURPLE)
 				.tooltip(ChatColor.DARK_BLUE + "Click to view this quest's history")
 				.command("/qhistory " + this.ID)
-			.then("Objective:\n");
+			.then("\nObjective:\n")
+				.color(ChatColor.BLACK);
 		Goal goal;
 		
 		if (goalIndex >= goals.size()) {
