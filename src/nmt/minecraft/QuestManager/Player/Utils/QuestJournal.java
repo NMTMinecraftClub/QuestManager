@@ -171,7 +171,7 @@ public class QuestJournal {
 		
 		builder += generatePage(title.toOldMessageFormat());
 		
-		if (qp.getPlayerNotes() != null && qp.getPlayerNotes().isEmpty()) {
+		if (qp.getPlayerNotes() != null && !qp.getPlayerNotes().isEmpty()) {
 			for (String page : qp.getPlayerNotes()) {
 				builder += ",";
 				builder += generatePage(page);

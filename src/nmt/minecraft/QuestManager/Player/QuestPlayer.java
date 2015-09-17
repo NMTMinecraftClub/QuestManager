@@ -753,7 +753,44 @@ public class QuestPlayer implements Participant, Listener {
 	
 	@EventHandler
 	public void onPlayerRuinJournal(PlayerEditBookEvent e) {
-		//TODO
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		if (!e.getPlayer().equals(getPlayer().getPlayer())) {
+			return;
+		}
+		
+		BookMeta oldMeta = e.getPreviousBookMeta(),
+				newMeta = e.getNewBookMeta();
+		
+		if (oldMeta.hasTitle() && oldMeta.getTitle().equals("Journal")
+			&& oldMeta.hasAuthor() && oldMeta.getAuthor().equals(e.getPlayer().getName())
+			&& oldMeta.getEnchantLevel(Enchantment.LUCK) == 5) {
+			//grab the player notes
+			int pageNum;
+			String page;
+			for (pageNum = 1; pageNum <= newMeta.getPageCount(); pageNum++) {
+				page = newMeta.getPage(pageNum);
+				if (page.contains("  Player Notes")) {
+					break;
+				}
+			}
+			pageNum++;
+			this.journalNotes.clear();
+			if (pageNum > newMeta.getPageCount()) {
+				//we went beyond what we have
+			} else {
+				//save their notes
+				for (; pageNum <= newMeta.getPageCount(); pageNum++) {
+					journalNotes.add(newMeta.getPage(pageNum));
+				}
+			}
+			
+			e.setCancelled(true);
+			QuestJournal.updateQuestlog(this);
+			
+		}
 	}
 	
 	/**
