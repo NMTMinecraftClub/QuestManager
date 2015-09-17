@@ -155,7 +155,7 @@ public class QuestLog {
 		
 		
 		//bind
-		builder += "], title:\"Quest Log\",author:" + play.getName() + "}";
+		builder += "], title:\"Quest Log\",author:" + play.getName() + ",ench:[{id:61s,lvl:5s}]}";
 
 		System.out.println(builder);
 		Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), builder);

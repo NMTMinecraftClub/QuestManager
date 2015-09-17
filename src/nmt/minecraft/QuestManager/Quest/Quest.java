@@ -154,8 +154,13 @@ public class Quest implements Listener {
 		}
 		
 		this.goalIndex = state.getGoalIndex();
-		
-		Goal goal = goals.get(goalIndex);
+
+		Goal goal;
+		if (goalIndex >= goals.size()) {
+			goal = goals.get(goals.size() - 1);
+		} else {
+			goal = goals.get(goalIndex);
+		}
 		goal.loadState(state.getGoalState());
 		
 		for (Requirement req : goal.getRequirements()) {
@@ -176,7 +181,13 @@ public class Quest implements Listener {
 			return state;
 		}
 		
-		state.setGoalState(goals.get(goalIndex).getState());
+		Goal goal;
+		if (goalIndex >= goals.size()) {
+			goal = goals.get(goals.size() - 1);
+		} else {
+			goal = goals.get(goalIndex);
+		}
+		state.setGoalState(goal.getState());
 				
 		state.setParticipant(getParticipants());
 		
