@@ -658,7 +658,8 @@ public class Quest implements Listener {
 		goalIndex++;
 		if (goals.size() <= goalIndex) {
 			this.ready = true;
-			tellParticipants("The quest " + ChatColor.GOLD + getName() + ChatColor.RESET + " is ready to turn in!");
+			if (goals.size() == goalIndex)
+				tellParticipants("The quest " + ChatColor.GOLD + getName() + ChatColor.RESET + " is ready to turn in!");
 			return;
 		}
 		
