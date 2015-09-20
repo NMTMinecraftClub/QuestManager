@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.enchantments.Enchantment;
@@ -452,7 +453,9 @@ public class QuestPlayer implements Participant, Listener {
 //        		new FancyMessage(title).toOldMessageFormat()));
 
         TitleManager.sendTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
-        		ChatColor.DARK_BLUE + "Title Unlocked!"));
+        		ChatColor.GREEN + "Title Unlocked!"));
+        
+        getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.FIREWORK_TWINKLE, 10, 1);
 	}
 	
 //	/**
