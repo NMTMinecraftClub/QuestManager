@@ -35,6 +35,7 @@ import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.ChestRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.CountdownRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.DeliverRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.InteractRequirement;
@@ -127,6 +128,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 				new CountdownRequirement.CountdownFactory());
 		reqManager.registerFactory("INTERACT", 
 				new InteractRequirement.InteractFactory());
+		reqManager.registerFactory("CHEST", 
+				new ChestRequirement.ChestRequirementFactory());
 		
 	}
 	
