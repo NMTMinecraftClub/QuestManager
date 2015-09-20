@@ -3,6 +3,7 @@ package nmt.minecraft.QuestManager.NPC;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,6 +17,7 @@ import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
@@ -164,6 +166,9 @@ public class SimpleChatNPC extends SimpleNPC {
 	protected void interact(Player player) {
 		ChatMenu messageChat = new SimpleChatMenu(chat.getFormattedMessage());
 		messageChat.show(player);
+		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player); 
+		this.updateQuestHistory(qp, this.chat.toString()
+				.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + ""));
 	}
 	
 	@Override

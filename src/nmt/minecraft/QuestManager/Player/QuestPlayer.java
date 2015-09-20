@@ -70,7 +70,7 @@ public class QuestPlayer implements Participant, Listener {
 	
 	private List<String> completedQuests;
 	
-	private Quest focusQuest;
+	private String focusQuest;
 	
 	private List<String> journalNotes;
 	
@@ -220,6 +220,10 @@ public class QuestPlayer implements Participant, Listener {
 		QuestLog.updateQuestlog(this);
 	}
 	
+	public void updateQuestLog() {
+		QuestJournal.updateQuestJournal(this);
+	}
+	
 	public List<Quest> getCurrentQuests() {
 		return currentQuests;
 	}
@@ -262,8 +266,7 @@ public class QuestPlayer implements Participant, Listener {
 		currentQuests.add(quest);
 		history.addHistoryEvent(new HistoryEvent("Accepted the quest " + ChatColor.DARK_PURPLE + quest.getName()));
 		if (focusQuest == null) {
-			focusQuest = quest;
-			QuestJournal.updateQuestlog(this);
+			setFocusQuest(quest.getName());
 		}
 		//addQuestBook();
 		//updateQuestBook();
@@ -286,8 +289,7 @@ public class QuestPlayer implements Participant, Listener {
 						focusQuest = null;
 						QuestJournal.addQuestJournal(this);
 					} else {
-						focusQuest = currentQuests.get(0);
-						QuestJournal.addQuestJournal(this);
+						setFocusQuest(currentQuests.get(0).getName());
 					}
 				}
 				return true;
@@ -459,6 +461,7 @@ public class QuestPlayer implements Participant, Listener {
 		map.put("id", getPlayer().getUniqueId().toString());
 		map.put("portalloc", this.questPortal);
 		map.put("completedquests", completedQuests);
+		map.put("focusquest", focusQuest);
 		map.put("notes", journalNotes);
 		
 		return map;
@@ -495,6 +498,7 @@ public class QuestPlayer implements Participant, Listener {
 		qp.title = (String) map.get("title");
 		qp.unlockedTitles = (List<String>) map.get("unlockedtitles");
 		qp.completedQuests = (List<String>) map.get("completedquests");
+		qp.focusQuest = (String) map.get("focusquest");
 		qp.journalNotes = (List<String>) map.get("notes");
 		
 		if (qp.completedQuests == null) {
@@ -615,6 +619,10 @@ public class QuestPlayer implements Participant, Listener {
 			return;
 		}
 		
+		if (e.getItem() == null) {
+			return;
+		}
+		
 		if (e.getItem() != null && e.getItem().getType().equals(Material.WRITTEN_BOOK)) {
 			BookMeta meta = (BookMeta) e.getItem().getItemMeta();
 			
@@ -624,6 +632,19 @@ public class QuestPlayer implements Participant, Listener {
 				
 				updateQuestBook();
 			}
+			
+			return;
+		}
+		
+		if (e.getItem().hasItemMeta() && e.getItem().getType() == Material.BOOK_AND_QUILL) {
+			BookMeta meta = (BookMeta) e.getItem().getItemMeta();
+			if (meta.hasTitle() && meta.getTitle().equals("Journal")
+					&& meta.hasAuthor() && meta.getAuthor().equals(p.getName())
+					&& e.getItem().getEnchantmentLevel(Enchantment.LUCK) == 5) {
+				updateQuestLog();
+			}
+			
+			return;
 		}
 		
 	}
@@ -793,7 +814,7 @@ public class QuestPlayer implements Participant, Listener {
 			}
 			
 			e.setCancelled(true);
-			QuestJournal.updateQuestlog(this);
+			QuestJournal.updateQuestJournal(this);
 			
 		}
 	}
@@ -894,11 +915,30 @@ public class QuestPlayer implements Participant, Listener {
 	}
 	
 	public Quest getFocusQuest() {
-		return this.focusQuest;
+		for (Quest q : currentQuests) {
+			if (q.getName().equals(focusQuest)) {
+				return q;
+			}
+		}
+		
+		return null;
 	}
 	
 	public List<String> getPlayerNotes() {
 		return this.journalNotes;
+	}
+	
+	public void setFocusQuest(String questName) {
+		for (Quest q : currentQuests) {
+			if (q.getName().equals(questName)) {
+				focusQuest = questName;
+				break;
+			}
+		}
+		QuestJournal.updateQuestJournal(this);
+		if (getPlayer().isOnline()) {
+			getPlayer().getPlayer().sendMessage("Your now focusing on the quest " + ChatColor.DARK_PURPLE + questName);
+		}
 	}
 	
 }

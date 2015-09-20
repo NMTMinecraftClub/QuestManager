@@ -79,10 +79,10 @@ public class QuestJournal {
 					 + ChatColor.RESET);
 		}
 		
-		updateQuestlog(qp);
+		updateQuestJournal(qp);
 	}
 	
-	public static void updateQuestlog(QuestPlayer qp) {
+	public static void updateQuestJournal(QuestPlayer qp) {
 		if (!qp.getPlayer().isOnline()) {
 			return;
 		}
@@ -133,8 +133,8 @@ public class QuestJournal {
 		builder += ",";
 		
 		//get recent page
-		title = new FancyMessage(" Recent events:\n")
-					.color(ChatColor.BLACK);
+		title = new FancyMessage("    Recent events:\n")
+					.color(ChatColor.DARK_GREEN);
 		List<HistoryEvent> events;
 		
 		events = qp.getHistory().events();
@@ -142,7 +142,7 @@ public class QuestJournal {
 		if (events == null || events.isEmpty()) {
 			title.then(" Nothing recent!");
 		} else {
-			for (HistoryEvent event : events.subList(Math.max(0, events.size() - 6), events.size() - 1)) {
+			for (HistoryEvent event : events.subList(Math.max(0, events.size() - 6), events.size())) {
 				title.then("-" + event.getDescription() + "\n")
 					.color(ChatColor.BLACK);
 			}
@@ -155,6 +155,8 @@ public class QuestJournal {
 			builder += ",";
 			builder += generatePage("\nYou are not focused on any quest!");
 		} else {
+			builder += ",";
+			builder += generatePage("Your current focus:\n\n" + ChatColor.DARK_PURPLE + qp.getFocusQuest().getName());
 			for (HistoryEvent event : qp.getFocusQuest().getHistory().events())  {
 				builder += ",";
 				builder += generatePage(event.getDescription());

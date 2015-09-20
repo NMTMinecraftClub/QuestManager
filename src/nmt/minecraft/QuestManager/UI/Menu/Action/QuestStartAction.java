@@ -8,21 +8,26 @@ import de.inventivegames.util.tellraw.TellrawConverterLite;
 import de.inventivegames.util.title.TitleManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Quest;
+import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
 
 public class QuestStartAction implements MenuAction {
 
 	private QuestConfiguration template;
 	
+	private FancyMessage startingMessage;
+	
 	private Player player;
 	
 	private static final String partyDenial = ChatColor.YELLOW + "This quest requires a party..." + ChatColor.RESET;
 	
-	public QuestStartAction(QuestConfiguration questTemplate, Player player) {
+	public QuestStartAction(QuestConfiguration questTemplate, FancyMessage start, Player player) {
 		this.template = questTemplate;
 		this.player = player;
+		this.startingMessage = start;
 	}
 	
 	@Override
@@ -58,19 +63,24 @@ public class QuestStartAction implements MenuAction {
 			return;
 		}
 
+		quest.getHistory().addHistoryEvent(new HistoryEvent(startingMessage.toOldMessageFormat()
+				.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + "")));
 		
-		TitleManager.sendTimings(player, 30, 80, 30);
 
-        TitleManager.sendSubTitle(player, TellrawConverterLite.convertToJSON(
-        		ChatColor.GOLD + template.getDescription()));
-
-        TitleManager.sendTitle(player, TellrawConverterLite.convertToJSON(
-        		ChatColor.DARK_RED + template.getName()));
         
 		QuestManagerPlugin.questManagerPlugin.getManager().registerQuest(quest);
 		
 		for (QuestPlayer qpe : participant.getParticipants()) {
 			qpe.updateQuestBook();
+			if (qpe.getPlayer().isOnline()) {
+				TitleManager.sendTimings(qpe.getPlayer().getPlayer(), 30, 80, 30);
+
+		        TitleManager.sendSubTitle(qpe.getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
+		        		ChatColor.GOLD + template.getDescription()));
+
+		        TitleManager.sendTitle(qpe.getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
+		        		ChatColor.DARK_RED + template.getName()));
+			}
 		}
 		
 	}

@@ -4,29 +4,33 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class History {
 	
 	private List<HistoryEvent> events;
-	
-	@SuppressWarnings("unchecked")
-	public static History fromConfig(YamlConfiguration config) throws InvalidConfigurationException {
-		if (config == null) {
+
+	public static History fromConfig(ConfigurationSection configurationSection) throws InvalidConfigurationException {
+		if (configurationSection == null) {
 			return null;
 		}
-		if (!config.contains("HistoryEvents")) {
+		if (!configurationSection.contains("HistoryEvents")) {
 			throw new InvalidConfigurationException();
 		}
 		
 		History history = new History();
 		
-		List<HistoryEvent> list;
+		List<String> list;
 		
-		list = (List<HistoryEvent>) config.get("HistoryEvents");
+		list = configurationSection.getStringList("HistoryEvents");
 		
-		history.events = list;
+		if (list != null && !list.isEmpty()) {
+			for (String line : list) {
+				history.addHistoryEvent(new HistoryEvent(line));
+			}
+		}
 		
 		return history;
 	}

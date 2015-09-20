@@ -124,6 +124,10 @@ public class BioptionMessage extends Message {
 		
 		return msg;
 	}
+	
+	public FancyMessage getBody() {
+		return body;
+	}
 
 	@Override
 	public FancyMessage getFormattedMessage() {

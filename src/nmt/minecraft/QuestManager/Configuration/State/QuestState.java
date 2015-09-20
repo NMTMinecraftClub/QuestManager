@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Quest.History.History;
 
 /**
  * Wrapper for state info config
@@ -24,6 +25,8 @@ public class QuestState {
 	private GoalState goalState;
 	
 	private Participant participant;
+	
+	private History history;
 	
 	public QuestState() {
 		this.name = "";
@@ -45,6 +48,14 @@ public class QuestState {
 		
 		this.goalState =  new GoalState();
 		this.goalState.load(config.getConfigurationSection("goalstate"));
+
+		history = null;
+		if (config.contains("history")) {
+			history = History.fromConfig(config.getConfigurationSection("history"));
+		}
+		if (history == null) {
+			history = new History();
+		}
 		
 		System.out.println("loading participants:");
 		this.participant = (Participant) QuestManagerPlugin.questManagerPlugin.getPlayerManager()
@@ -65,6 +76,10 @@ public class QuestState {
 		
 		//config.set("goals", goalList);
 		config.set("participants", participant.getIDString());
+		
+		if (history != null) {
+			config.set("history", history.toConfig());
+		}
 		
 		config.save(file);
 	}
@@ -108,6 +123,14 @@ public class QuestState {
 	
 	public void setGoalIndex(int index) {
 		this.goalIndex = index;
+	}
+	
+	public History getHistory() {
+		return history;
+	}
+	
+	public void setHistory(History history) {
+		this.history = history;
 	}
 	
 }

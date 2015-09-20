@@ -32,6 +32,7 @@ import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
 import nmt.minecraft.QuestManager.NPC.TeleportNPC;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.CountdownRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.DeliverRequirement;
@@ -288,6 +289,33 @@ public class QuestManagerPlugin extends JavaPlugin {
 			qp.addQuestBook();
 			qp.addJournal();
 			return true;
+		}
+		
+		if (cmd.getName().equals("qhistory")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage("Only players can use this command!");
+				return true;
+			}
+			if (args.length != 1) {
+				return false;
+			}
+			
+			QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
+			int id;
+			try {
+				id = Integer.parseInt(args[0]);
+			} catch (NumberFormatException e) {
+				return false;
+			}
+			
+			for (Quest q : qp.getCurrentQuests()) {
+				if (q.getID() == id) {
+					qp.setFocusQuest(q.getName());
+					return true;
+				}
+			}
+			
+			return false;
 		}
 		
 		if (cmd.getName().equals("party")) {

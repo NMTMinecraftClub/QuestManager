@@ -167,6 +167,8 @@ public class Quest implements Listener {
 			req.activate();
 		}
 		
+		history = state.getHistory();
+		
 		
 	}
 
@@ -190,6 +192,10 @@ public class Quest implements Listener {
 		state.setGoalState(goal.getState());
 				
 		state.setParticipant(getParticipants());
+		
+		if (history != null && !history.events().isEmpty()) {
+			state.setHistory(history);
+		}
 		
 		return state;
 	}
@@ -373,6 +379,10 @@ public class Quest implements Listener {
 		
 	}
 	
+	public int getID() {
+		return this.ID;
+	}
+	
 	public QuestConfiguration getTemplate() {
 		return template;
 	}
@@ -455,6 +465,8 @@ public class Quest implements Listener {
 	public String getJSONDescription() {
 		FancyMessage builder = new FancyMessage(template.getName())
 				.color(ChatColor.GOLD)
+				.tooltip(ChatColor.DARK_BLUE + "Click to set this quest", ChatColor.DARK_BLUE + "as your focus")
+				.command("/qhistory " + this.ID)
 			.then("\n" + template.getDescription() + "\n")
 				.color(ChatColor.DARK_BLUE)
 			.then("Party: ")
@@ -463,11 +475,7 @@ public class Quest implements Listener {
 				.color(template.getUseParty() ? ChatColor.DARK_GREEN : ChatColor.GRAY)
 			.then("Requires\n")
 				.color(template.getRequireParty() ? ChatColor.DARK_GREEN : ChatColor.GRAY)
-			.then("History")
-				.color(ChatColor.DARK_PURPLE)
-				.tooltip(ChatColor.DARK_BLUE + "Click to view this quest's history")
-				.command("/qhistory " + this.ID)
-			.then("\nObjective:\n")
+			.then("Objective:\n")
 				.color(ChatColor.BLACK);
 		Goal goal;
 		

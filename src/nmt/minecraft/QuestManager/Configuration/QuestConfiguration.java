@@ -146,9 +146,12 @@ public class QuestConfiguration {
 			ConfigurationSection npcSection = config.getConfigurationSection(
 					QuestConfigurationField.NPCS.getKey());
 			
+			NPC npc;
 			if (!(npcSection == null) && !npcSection.getKeys(false).isEmpty()) {
 				for (String key : npcSection.getKeys(false)) {
-					npcs.add((NPC) npcSection.get(key));
+					npc = (NPC) npcSection.get(key);
+					npc.setQuestName(this.getName());
+					npcs.add(npc);
 				}
 			}
 		}
@@ -171,6 +174,7 @@ public class QuestConfiguration {
 		} else {
 			startingNPC = (SimpleQuestStartNPC) config.get(QuestConfigurationField.START.getKey());
 			startingNPC.setQuestTemplate(this);
+			startingNPC.setQuestName(getName());
 			
 			if (config.contains(QuestConfigurationField.END.getKey())) {
 				

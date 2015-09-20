@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -256,10 +257,13 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 			}
 		} else {
 			messageChat = new BioptionChatMenu(chat, 
-					new QuestStartAction(quest, player), null);			
+					new QuestStartAction(quest, new FancyMessage(this.name).color(ChatColor.DARK_GRAY).style(ChatColor.BOLD)
+							.then(chat.getBody()), player), null);			
 		}
 
 		messageChat.show(player);
+		this.updateQuestHistory(qp, messageChat.getMessage().toOldMessageFormat()
+				.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + ""));
 	}
 	
 }
