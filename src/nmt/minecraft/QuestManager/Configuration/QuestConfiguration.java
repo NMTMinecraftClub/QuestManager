@@ -13,6 +13,7 @@ import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
 import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
@@ -250,7 +251,10 @@ public class QuestConfiguration {
 			quest.addItemReward(item);
 		}
 		
-		
+		if (participant != null)
+			for (QuestPlayer qp : participant.getParticipants()) {
+				qp.addQuest(quest);
+			}
 		
 		
 		

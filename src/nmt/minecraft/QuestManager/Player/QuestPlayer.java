@@ -40,11 +40,15 @@ import de.inventivegames.util.title.TitleManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Player.Utils.Compass;
+import nmt.minecraft.QuestManager.Player.Utils.CompassTrackable;
 import nmt.minecraft.QuestManager.Player.Utils.QuestJournal;
 import nmt.minecraft.QuestManager.Player.Utils.QuestLog;
+import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
+import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.ChatMenuOption;
 import nmt.minecraft.QuestManager.UI.Menu.MultioptionChatMenu;
@@ -87,6 +91,8 @@ public class QuestPlayer implements Participant, Listener {
 	private Location questPortal;
 	
 	private Party party;
+	
+	private CompassTrackable compassTarget;
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -220,10 +226,29 @@ public class QuestPlayer implements Participant, Listener {
 	 */
 	public void updateQuestBook(boolean silent) {
 		QuestLog.updateQuestlog(this, silent);
+		updateCompass(true);
 	}
 	
 	public void updateQuestLog(boolean silent) {
 		QuestJournal.updateQuestJournal(this, silent);
+	}
+	
+	public void updateCompass(boolean silent) {
+		this.getNextTarget();
+		Compass.updateCompass(this, silent);
+	}
+	
+	public void setCompassTarget(CompassTrackable target, boolean silent) {
+		this.compassTarget = target;
+		updateCompass(silent);
+	}
+	
+	public Location getCompassTarget() {
+		if (compassTarget == null) {
+			return null;
+		}
+		
+		return compassTarget.getLocation();
 	}
 	
 	public List<Quest> getCurrentQuests() {
@@ -925,6 +950,10 @@ public class QuestPlayer implements Participant, Listener {
 	}
 	
 	public Quest getFocusQuest() {
+		if (focusQuest == null) {
+			return null;
+		}
+		
 		for (Quest q : currentQuests) {
 			if (q.getName().equals(focusQuest)) {
 				return q;
@@ -949,6 +978,42 @@ public class QuestPlayer implements Participant, Listener {
 		if (getPlayer().isOnline()) {
 			getPlayer().getPlayer().sendMessage("Your now focusing on the quest " + ChatColor.DARK_PURPLE + questName);
 		}
+		
+		updateCompass(true);
+	}
+	
+	/**
+	 * Helper method to select the next compass target from the current focus quest's goal
+	 */
+	private void getNextTarget() {
+		Quest quest = this.getFocusQuest();
+		
+		if (quest == null) {
+			this.compassTarget = null;
+			return;
+		}
+		
+		Goal goal = quest.getCurrentGoal();
+		if (goal.getRequirements().isEmpty()) {
+			this.compassTarget = null;
+			return;
+		}
+		
+		for (Requirement req : goal.getRequirements()) {
+			if (req instanceof CompassTrackable && !req.isCompleted()) {
+				compassTarget = (CompassTrackable) req;
+				return;
+			}
+		}
+		
+		//got all the way through. Are all requirements complete? Then either the quest is done or there are
+		//reqs left we can't track, so we point to null.
+		
+		//if (goal.isComplete()) {
+			//HOPE that the quest is actually complete.
+		this.compassTarget = null;
+		return;
+		//}
 	}
 	
 }

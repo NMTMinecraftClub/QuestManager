@@ -23,6 +23,7 @@ import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.State.RequirementState;
 import nmt.minecraft.QuestManager.Configuration.State.StatekeepingRequirement;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.Player.Utils.CompassTrackable;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
@@ -33,7 +34,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
  * @author Skyler
  *
  */
-public class VanquishRequirement extends Requirement implements Listener, StatekeepingRequirement {
+public class VanquishRequirement extends Requirement implements Listener, StatekeepingRequirement, CompassTrackable {
 	
 	public static class VanquishFactory extends RequirementFactory<VanquishRequirement> {
 		
@@ -221,6 +222,17 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	@Override
 	public String getDescription() {
 		return desc;
+	}
+	
+	@Override
+	public Location getLocation() {
+		getFoe(); //update foe
+		if (foe == null) {
+			return null;
+		} else {
+			return foe.getLocation();
+		}
+		
 	}
 	
 }

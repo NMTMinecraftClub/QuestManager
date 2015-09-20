@@ -118,10 +118,11 @@ public class Quest implements Listener {
 		
 		this.participant = participant;
 		
-		if (participant != null)
-		for (QuestPlayer qp : participant.getParticipants()) {
-			qp.addQuest(this);
-		}
+		//put this into the instancing for different order for journal, compass
+//		if (participant != null)
+//		for (QuestPlayer qp : participant.getParticipants()) {
+//			qp.addQuest(this);
+//		}
 		
 		
 		itemRewards = new LinkedList<ItemStack>();
@@ -405,6 +406,10 @@ public class Quest implements Listener {
 		return goals;
 	}
 	
+	public Goal getCurrentGoal() {
+		return goals.get(Math.min(goalIndex, goals.size() - 1));
+	}
+	
 	/**
 	 * Appends the provided goal to the current list of goals
 	 * @param goal
@@ -649,6 +654,9 @@ public class Quest implements Listener {
 		if (goal.isComplete()) {
 			nextGoal();			
 		}
+		
+		//set compass to the first objective
+		//TODO
 	}
 	
 	/**

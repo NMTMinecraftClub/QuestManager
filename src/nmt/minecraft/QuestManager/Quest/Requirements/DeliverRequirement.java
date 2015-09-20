@@ -252,7 +252,6 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 									) {
 								//deduct from this item stack as much as we can, up to 'left'
 								//but if there's more than 'left' left, just remove it
-								System.out.println("Found one");
 								int amt = item.getAmount();
 								if (amt <= left) {
 									//gonna remove entire stack

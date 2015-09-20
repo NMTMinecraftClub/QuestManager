@@ -318,6 +318,22 @@ public class QuestManagerPlugin extends JavaPlugin {
 			return false;
 		}
 		
+		if (cmd.getName().equals("qcomp")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage("Only players can use this command!");
+				return true;
+			}
+			
+			
+			if (args.length == 0) {
+				//no args, just reset compass?
+				QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
+				qp.updateCompass(false);
+				return true;
+			}
+			return false;
+		}
+		
 		if (cmd.getName().equals("party")) {
 			
 			if (args.length == 0) {

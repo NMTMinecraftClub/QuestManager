@@ -12,6 +12,7 @@ import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Player.Utils.CompassTrackable;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
@@ -23,7 +24,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
  * @author Skyler
  * @see {@link ArriveRequirement}
  */
-public class PositionRequirement extends Requirement implements Listener {
+public class PositionRequirement extends Requirement implements Listener, CompassTrackable {
 	
 	public static class PositionFactory extends RequirementFactory<PositionRequirement> {
 		
@@ -144,5 +145,10 @@ public class PositionRequirement extends Requirement implements Listener {
 	@Override
 	public String getDescription() {
 		return desc;
+	}
+	
+	@Override
+	public Location getLocation() {
+		return this.destination;
 	}
 }
