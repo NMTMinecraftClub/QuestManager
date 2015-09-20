@@ -35,6 +35,8 @@ import com.onarandombox.MultiversePortals.MultiversePortals;
 import com.onarandombox.MultiversePortals.PortalPlayerSession;
 import com.onarandombox.MultiversePortals.event.MVPortalEvent;
 
+import de.inventivegames.util.tellraw.TellrawConverterLite;
+import de.inventivegames.util.title.TitleManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
@@ -418,6 +420,14 @@ public class QuestPlayer implements Participant, Listener {
 				.then(" title!"));
 		
 		menu.show(getPlayer().getPlayer());
+		
+		TitleManager.sendTimings(getPlayer().getPlayer(), 30, 80, 30);
+
+//        TitleManager.sendSubTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
+//        		new FancyMessage(title).toOldMessageFormat()));
+
+        TitleManager.sendTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
+        		ChatColor.DARK_BLUE + "Title Unlocked!"));
 	}
 	
 //	/**
