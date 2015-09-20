@@ -18,6 +18,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import nmt.minecraft.QuestManager.Configuration.PluginConfiguration;
+import nmt.minecraft.QuestManager.Configuration.Utils.Chest;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Fanciful.MessagePart;
@@ -36,6 +37,7 @@ import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.CountdownRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.DeliverRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.InteractRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.SlayRequirement;
@@ -123,6 +125,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 				new TimeRequirement.TimeFactory());
 		reqManager.registerFactory("COUNTDOWN", 
 				new CountdownRequirement.CountdownFactory());
+		reqManager.registerFactory("INTERACT", 
+				new InteractRequirement.InteractFactory());
 		
 	}
 	
@@ -147,6 +151,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		ConfigurationSerialization.registerClass(TextualComponent.ArbitraryTextTypeComponent.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ComplexTextTypeComponent.class);
 		ConfigurationSerialization.registerClass(FancyMessage.class);
+		Chest.registerWithAliases();
 
 		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		inventoryGuiHandler = new InventoryGuiHandler();
