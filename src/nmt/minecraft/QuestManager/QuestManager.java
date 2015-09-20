@@ -409,8 +409,8 @@ public class QuestManager implements Listener {
 				QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
 						e.getPlayer().getUniqueId()).addQuestBook();
 				
-				QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
-						e.getPlayer().getUniqueId()).updateQuestBook();
+//				QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
+//						e.getPlayer().getUniqueId()).updateQuestBook(false);
 			}
 		}
 		

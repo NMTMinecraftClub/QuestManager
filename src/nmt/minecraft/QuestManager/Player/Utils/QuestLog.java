@@ -80,10 +80,10 @@ public class QuestLog {
 					 + ChatColor.RESET);
 		}
 		
-		updateQuestlog(qp);
+		updateQuestlog(qp, true);
 	}
 	
-	public static void updateQuestlog(QuestPlayer qp) {
+	public static void updateQuestlog(QuestPlayer qp, boolean silent) {
 		if (!qp.getPlayer().isOnline()) {
 			return;
 		}
@@ -167,12 +167,13 @@ public class QuestLog {
 
 		Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), builder);
 		
-
-		play.sendMessage(ChatColor.GRAY + "Your "
-				+ ChatColor.DARK_GREEN + "Quest Log" + ChatColor.GRAY + " has been"
-				+ " updated!" + ChatColor.RESET);
-		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
-		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
+		if (!silent) {
+			play.sendMessage(ChatColor.GRAY + "Your "
+					+ ChatColor.DARK_GREEN + "Quest Log" + ChatColor.GRAY + " has been"
+					+ " updated!" + ChatColor.RESET);
+			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
+			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
+		}
 		
 		play.setLevel(qp.getMoney());
 	}

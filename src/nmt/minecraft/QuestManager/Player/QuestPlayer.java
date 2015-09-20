@@ -216,12 +216,12 @@ public class QuestPlayer implements Participant, Listener {
 	 * Updates the players quest book, if they have it in their inventory.<br />
 	 * If the user does not have abook already or has discarded it, this method will do nothing.
 	 */
-	public void updateQuestBook() {
-		QuestLog.updateQuestlog(this);
+	public void updateQuestBook(boolean silent) {
+		QuestLog.updateQuestlog(this, silent);
 	}
 	
-	public void updateQuestLog() {
-		QuestJournal.updateQuestJournal(this);
+	public void updateQuestLog(boolean silent) {
+		QuestJournal.updateQuestJournal(this, silent);
 	}
 	
 	public List<Quest> getCurrentQuests() {
@@ -630,7 +630,7 @@ public class QuestPlayer implements Participant, Listener {
 					e.getItem().getEnchantmentLevel(Enchantment.LUCK) == 5) {
 				//it's a quest log. Update it
 				
-				updateQuestBook();
+				updateQuestBook(true);
 			}
 			
 			return;
@@ -641,7 +641,7 @@ public class QuestPlayer implements Participant, Listener {
 			if (meta.hasTitle() && meta.getTitle().equals("Journal")
 					&& meta.hasAuthor() && meta.getAuthor().equals(p.getName())
 					&& e.getItem().getEnchantmentLevel(Enchantment.LUCK) == 5) {
-				updateQuestLog();
+				updateQuestLog(true);
 			}
 			
 			return;
@@ -814,7 +814,7 @@ public class QuestPlayer implements Participant, Listener {
 			}
 			
 			e.setCancelled(true);
-			QuestJournal.updateQuestJournal(this);
+			QuestJournal.updateQuestJournal(this, true);
 			
 		}
 	}
@@ -935,7 +935,7 @@ public class QuestPlayer implements Participant, Listener {
 				break;
 			}
 		}
-		QuestJournal.updateQuestJournal(this);
+		QuestJournal.updateQuestJournal(this, false);
 		if (getPlayer().isOnline()) {
 			getPlayer().getPlayer().sendMessage("Your now focusing on the quest " + ChatColor.DARK_PURPLE + questName);
 		}

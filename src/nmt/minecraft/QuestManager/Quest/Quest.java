@@ -24,6 +24,7 @@ import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.PartyDisbandEvent;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.History.History;
+import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.RequirementUpdateEvent;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
@@ -261,7 +262,7 @@ public class Quest implements Listener {
 				
 				qp.completeQuest(this);
 				
-				qp.updateQuestBook();
+				qp.updateQuestBook(true);
 				
 			    ChatMenu menu = new SimpleChatMenu(
 						new FancyMessage("")
@@ -505,6 +506,22 @@ public class Quest implements Listener {
 	public History getHistory() {
 		return history;
 	}
+	
+	/**
+	 * Adds an event to this quests history and updates all participants journals silently
+	 * @param event
+	 */
+	public void addHistoryEvent(HistoryEvent event) {
+		if (history == null) {
+			return;
+		}
+		history.addHistoryEvent(event);
+		
+		if (participant != null || !participant.getParticipants().isEmpty())
+		for (QuestPlayer qp : participant.getParticipants()) {
+			qp.updateQuestLog(true);
+		}
+	}
 		
 	public boolean getUseParty() {
 		return template.getUseParty();
@@ -574,8 +591,7 @@ public class Quest implements Listener {
 			update();
 
 			for (QuestPlayer p : participant.getParticipants()) {
-				p.addQuestBook();
-				p.updateQuestBook();
+				p.updateQuestBook(false);
 			}
 		}
 		System.out.println();

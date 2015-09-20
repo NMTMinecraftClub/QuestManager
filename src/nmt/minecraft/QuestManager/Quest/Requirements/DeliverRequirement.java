@@ -229,7 +229,7 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 				Inventory inv = player.getPlayer().getPlayer().getInventory();
 				
 				for (ItemStack item : inv.all(itemType).values()) {
-					if (itemName == null || 
+					if ((itemName == null && (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName())) || 
 							(item.hasItemMeta() && item.getItemMeta().getDisplayName() != null 
 							  && item.getItemMeta().getDisplayName().equals(itemName))) {
 						count += item.getAmount();
@@ -240,17 +240,19 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 					//if we just achieved it, update the quest!
 					this.state = true;
 					
-					if (itemName == null) {
-						//do not need to match a name, so remove a count of itemtype
-						player.getPlayer().getPlayer().getInventory().remove(
-								new ItemStack(itemType, itemCount));
-					} else {
+					
 						//gotta go through and find ones that match the name
 						int left = itemCount;
-						for (ItemStack item : inv.all(itemType).values()) {
-							if (item.hasItemMeta() && itemName.equals(item.getItemMeta().getDisplayName())) {
+						ItemStack item;
+						for (int i = 0; i <= 35; i++) {
+							item = inv.getItem(i);
+							if (item != null && item.getType() == itemType)
+							if (  (itemName == null && (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()))
+								|| (item.hasItemMeta() && item.getItemMeta().getDisplayName() != null && item.getItemMeta().getDisplayName().equals(itemName))	
+									) {
 								//deduct from this item stack as much as we can, up to 'left'
 								//but if there's more than 'left' left, just remove it
+								System.out.println("Found one");
 								int amt = item.getAmount();
 								if (amt <= left) {
 									//gonna remove entire stack
@@ -261,6 +263,7 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 									item.setAmount(amt - left);
 								}
 								
+								inv.setItem(i, item);
 								left-=amt;
 								
 								if (left <= 0) {
@@ -268,7 +271,7 @@ public class DeliverRequirement extends Requirement implements Listener,  Statek
 								}
 							}
 						}
-					}
+					
 					HandlerList.unregisterAll(this);
 					updateQuest();
 				}

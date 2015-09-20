@@ -79,10 +79,10 @@ public class QuestJournal {
 					 + ChatColor.RESET);
 		}
 		
-		updateQuestJournal(qp);
+		updateQuestJournal(qp, true);
 	}
 	
-	public static void updateQuestJournal(QuestPlayer qp) {
+	public static void updateQuestJournal(QuestPlayer qp, boolean silent) {
 		if (!qp.getPlayer().isOnline()) {
 			return;
 		}
@@ -140,7 +140,8 @@ public class QuestJournal {
 		events = qp.getHistory().events();
 		
 		if (events == null || events.isEmpty()) {
-			title.then(" Nothing recent!");
+			title.then(" Nothing recent!")
+				.color(ChatColor.BLACK);
 		} else {
 			for (HistoryEvent event : events.subList(Math.max(0, events.size() - 6), events.size())) {
 				title.then("-" + event.getDescription() + "\n")
@@ -188,12 +189,13 @@ public class QuestJournal {
 
 		Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), builder);
 		
-
-		play.sendMessage(ChatColor.GRAY + "Your "
-				+ ChatColor.DARK_GREEN + "Journal" + ChatColor.GRAY + " has been"
-				+ " updated!" + ChatColor.RESET);
-		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
-		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
+		if (!silent) {
+			play.sendMessage(ChatColor.GRAY + "Your "
+					+ ChatColor.DARK_GREEN + "Journal" + ChatColor.GRAY + " has been"
+					+ " updated!" + ChatColor.RESET);
+			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
+			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
+		}
 	}
 	
 	private static String getSlotString(int rawslot) {

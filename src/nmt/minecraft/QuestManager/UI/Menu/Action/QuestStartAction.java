@@ -63,7 +63,7 @@ public class QuestStartAction implements MenuAction {
 			return;
 		}
 
-		quest.getHistory().addHistoryEvent(new HistoryEvent(startingMessage.toOldMessageFormat()
+		quest.addHistoryEvent(new HistoryEvent(startingMessage.toOldMessageFormat()
 				.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + "")));
 		
 
@@ -71,7 +71,7 @@ public class QuestStartAction implements MenuAction {
 		QuestManagerPlugin.questManagerPlugin.getManager().registerQuest(quest);
 		
 		for (QuestPlayer qpe : participant.getParticipants()) {
-			qpe.updateQuestBook();
+			qpe.updateQuestBook(false);
 			if (qpe.getPlayer().isOnline()) {
 				TitleManager.sendTimings(qpe.getPlayer().getPlayer(), 30, 80, 30);
 

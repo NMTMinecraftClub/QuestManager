@@ -182,7 +182,7 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 		}
 		
 		//wasn't in there, so add one
-		quest.getHistory().addHistoryEvent(new HistoryEvent(desc));
+		quest.addHistoryEvent(new HistoryEvent(desc));
 		qp.addJournal();
 	}
 }
