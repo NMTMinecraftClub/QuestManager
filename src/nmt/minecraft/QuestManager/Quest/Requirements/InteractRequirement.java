@@ -28,7 +28,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
  */
 public class InteractRequirement extends Requirement implements Listener, StatekeepingRequirement, CompassTrackable {
 	
-	public static class VanquishFactory extends RequirementFactory<InteractRequirement> {
+	public static class InteractFactory extends RequirementFactory<InteractRequirement> {
 		
 		public InteractRequirement fromConfig(Goal goal, ConfigurationSection config) {
 			InteractRequirement req = new InteractRequirement(goal);
@@ -117,7 +117,8 @@ public class InteractRequirement extends Requirement implements Listener, Statek
 					//one of our participants
 					//actually check interaction now
 					if (face == null || face == e.getBlockFace()) 
-					if (actionsMatch(e.getAction())) {
+					if (actionsMatch(e.getAction()))
+					if (e.getClickedBlock().getLocation().equals(location.getBlock().getLocation())){
 						state = true;
 						HandlerList.unregisterAll(this);
 						updateQuest();
@@ -139,8 +140,6 @@ public class InteractRequirement extends Requirement implements Listener, Statek
 	@Override
 	public RequirementState getState() {
 		YamlConfiguration myState = new YamlConfiguration();
-		
-		myState.set("type", "intr");
 		
 		myState.set("state", state);
 		

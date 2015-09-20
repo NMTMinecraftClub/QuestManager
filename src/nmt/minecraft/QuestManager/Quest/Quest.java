@@ -23,6 +23,7 @@ import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.PartyDisbandEvent;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Player.Utils.CompassTrackable;
 import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
 import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
@@ -456,7 +457,8 @@ public class Quest implements Listener {
 		builder += "Objective:\n";
 		
 		for (Requirement req : goal.getRequirements()) {
-			builder += req.isCompleted() ? ChatColor.GREEN + "  =" : ChatColor.DARK_RED + "  -";
+			builder += req.isCompleted() ? ChatColor.GREEN + "  " : ChatColor.DARK_RED + "  ";
+			builder += req instanceof CompassTrackable ? "@" : "-";
 			builder += req.getDescription() + "\n";
 		}
 		
@@ -491,7 +493,8 @@ public class Quest implements Listener {
 			goal = goals.get(goalIndex);
 		}
 		for (Requirement req : goal.getRequirements()) {
-			builder.then((req.isCompleted() ? "  =" : "  -") + req.getDescription() + "\n")
+			builder.then((req.isCompleted() ? "  " : "  ")+ (req instanceof CompassTrackable ? "@" : "-") 
+					+ req.getDescription() + "\n")
 				.color(req.isCompleted() ? ChatColor.GREEN : ChatColor.DARK_RED);
 		}
 		

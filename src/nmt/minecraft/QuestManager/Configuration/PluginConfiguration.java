@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Player.Utils.Compass;
 
 /**
  * Wrapper class for configuration files needed by the plugin.<br />
@@ -22,7 +24,39 @@ public class PluginConfiguration {
 	
 	private YamlConfiguration config;
 	
-	
+	public enum PluginConfigurationKey {
+		
+		VERSION("version"),
+		CONSERVATIVE("config.conservativeMode"),
+		VERBOSEMENUS("menus.verboseMenus"),
+		ALLOWCRAFTING("player.allowCrafting"),
+		ALLOWNAMING("player.allowNaming"),
+		ALLOWTAMING("player.allowTaming"),
+		PARTYSIZE("player.maxPartySize"),
+		CLEANUPVILLAGERS("world.villagerCleanup"),
+		XPMONEY("interface.useXPMoney"),
+		PORTALS("interface.usePortals"),
+		ADJUSTXP("interface.adjustXP"),
+		TITLECHAT("interface.titleInChat"),
+		COMPASS("interface.compass.enabled"),
+		COMPASSTYPE("interface.compass.type"),
+		COMPASSNAME("interface.compass.name"),
+		WORLDS("questWorlds"),
+		QUESTS("quests"),
+		QUESTDIR("questDir"),
+		SAVEDIR("saveDir");
+		
+		
+		private String key;
+		
+		private PluginConfigurationKey(String key) {
+			this.key = key;
+		}
+		
+		public String getKey() {
+			return key;
+		}
+	}
 	
 	public PluginConfiguration(File configFile) {
 		config = new YamlConfiguration();
@@ -42,9 +76,14 @@ public class PluginConfiguration {
 			e.printStackTrace();
 		}
 		
-		if (config.getBoolean("conservativeMode", true)) {
+		if (config.getBoolean(PluginConfigurationKey.CONSERVATIVE.key, true)) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().info("Conservative mode is on,"
 					+ " so invalid configs will simply be ignored instead of destroyed.");
+		}
+		
+		if (getCompassEnabled()) {
+			Compass.CompassDefinition.setCompassType(getCompassType());
+			Compass.CompassDefinition.setDisplayName(getCompassName());
 		}
 	}
 	
@@ -54,7 +93,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public double getVersion() {
-		return config.getDouble("version", 0.0);
+		return config.getDouble(PluginConfigurationKey.VERSION.key, 0.0);
 	}
 	
 	
@@ -66,11 +105,11 @@ public class PluginConfiguration {
 	 */
 	public List<String> getQuests() {
 		
-		return config.getStringList("quests");
+		return config.getStringList(PluginConfigurationKey.QUESTS.key);
 	}
 	
 	public List<String> getWorlds() {
-		return config.getStringList("questWorlds");
+		return config.getStringList(PluginConfigurationKey.WORLDS.key);
 	}
 	
 	/**
@@ -78,7 +117,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public String getQuestPath() {
-		return config.getString("questDir");
+		return config.getString(PluginConfigurationKey.QUESTDIR.key);
 	}
 	
 	/**
@@ -87,7 +126,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public boolean getKeepOnError() {
-		return config.getBoolean("conservativeMode", true);
+		return config.getBoolean(PluginConfigurationKey.CONSERVATIVE.key, true);
 	}
 	
 	/**
@@ -97,7 +136,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public boolean getVillagerCleanup() {
-		return config.getBoolean("villagerCleanup");
+		return config.getBoolean(PluginConfigurationKey.CLEANUPVILLAGERS.key);
 	}
 	
 	/**
@@ -107,7 +146,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public boolean getXPMoney() {
-		return config.getBoolean("useXPMoney");
+		return config.getBoolean(PluginConfigurationKey.XPMONEY.key);
 	}
 	
 	/**
@@ -115,7 +154,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public int getMaxPartySize() {
-		return config.getInt("maxPartySize");
+		return config.getInt(PluginConfigurationKey.PARTYSIZE.key);
 	}
 	
 	/**
@@ -123,7 +162,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public boolean getAllowTaming() {
-		return config.getBoolean("allowTaming");
+		return config.getBoolean(PluginConfigurationKey.ALLOWTAMING.key);
 	}
 	
 	/**
@@ -132,7 +171,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public boolean getUsePortals() {
-		return config.getBoolean("usePortals");
+		return config.getBoolean(PluginConfigurationKey.PORTALS.key);
 	}
 	
 	/**
@@ -141,7 +180,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public boolean getAdjustXP() {
-		return config.getBoolean("adjustXP");
+		return config.getBoolean(PluginConfigurationKey.ADJUSTXP.key);
 	}
 	
 	/**
@@ -150,11 +189,11 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public boolean getMenuVerbose() {
-		return config.getBoolean("verboseMenus");
+		return config.getBoolean(PluginConfigurationKey.VERBOSEMENUS.key);
 	}
 	
 	public boolean getAllowCrafting() {
-		return config.getBoolean("allowCrafting");
+		return config.getBoolean(PluginConfigurationKey.ALLOWCRAFTING.key);
 	}
 	
 	/**
@@ -162,7 +201,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public boolean getAllowNaming() {
-		return config.getBoolean("allowNaming");
+		return config.getBoolean(PluginConfigurationKey.ALLOWNAMING.key);
 	}
 	
 	/**
@@ -170,7 +209,38 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public boolean getChatTitle() {
-		return config.getBoolean("titleInChat");
+		return config.getBoolean(PluginConfigurationKey.TITLECHAT.key);
+	}
+	
+	/**
+	 * Returns whether or not compasses are enabled
+	 * @return
+	 */
+	public boolean getCompassEnabled() {
+		return config.getBoolean(PluginConfigurationKey.COMPASS.key, true);
+	}
+	
+	/**
+	 * Gets the configuration's defined material for the compass object
+	 * @return
+	 */
+	public Material getCompassType() {
+		try {
+			return Material.valueOf(config.getString(PluginConfigurationKey.COMPASSTYPE.key, "COMPASS"));
+		} catch (IllegalArgumentException e) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to find the compass material: " 
+		+ config.getString(PluginConfigurationKey.COMPASSTYPE.key, "COMPASS"));
+			return Material.COMPASS;
+		}
+		
+	}
+	
+	/**
+	 * Returns the name of the compass object
+	 * @return
+	 */
+	public String getCompassName() {
+		return config.getString(PluginConfigurationKey.COMPASSNAME.key, "Magic Compass");
 	}
 	
 	/**
@@ -178,7 +248,7 @@ public class PluginConfiguration {
 	 * @return
 	 */
 	public String getSavePath() {
-		return config.getString("saveDir");
+		return config.getString(PluginConfigurationKey.SAVEDIR.key);
 	}
 	
 	/**
@@ -194,29 +264,39 @@ public class PluginConfiguration {
 		
 		YamlConfiguration config = new YamlConfiguration();
 		
-		config.set("version", QuestManagerPlugin.version);
-		config.set("conservativeMode", true);
-		config.set("verboseMenus", false);
-		config.set("allowCrafting", false);
-		config.set("allowNaming", false);
-		config.set("villagerCleanup", false);
-		config.set("useXPMoney", true);
-		config.set("maxPartySize", 4);
-		config.set("allowTaming", false);
-		config.set("usePortals", true);
-		config.set("adjustXP", true);
-		config.set("titleInChat", true);
+		config.set(PluginConfigurationKey.VERSION.key, QuestManagerPlugin.version);
+		
+		//config options
+		config.set(PluginConfigurationKey.CONSERVATIVE.key, true);
+		
+		//menu options
+		config.set(PluginConfigurationKey.VERBOSEMENUS.key, false);
+		
+		//player options
+		config.set(PluginConfigurationKey.ALLOWCRAFTING.key, false);
+		config.set(PluginConfigurationKey.ALLOWNAMING.key, false);
+		config.set(PluginConfigurationKey.PARTYSIZE.key, 4);
+		config.set(PluginConfigurationKey.ALLOWTAMING.key, false);
+		
+		//world options
+		config.set(PluginConfigurationKey.CLEANUPVILLAGERS.key, false);
+		
+		//interface options
+		config.set(PluginConfigurationKey.XPMONEY.key, true);
+		config.set(PluginConfigurationKey.PORTALS.key, true);
+		config.set(PluginConfigurationKey.ADJUSTXP.key, true);
+		config.set(PluginConfigurationKey.TITLECHAT.key, true);
 		
 		List<String> worlds = new ArrayList<String>();
 		worlds.add("QuestWorld");
 		worlds.add("TutorialWorld");
-		config.set("questWorlds", worlds);
+		config.set(PluginConfigurationKey.WORLDS.key, worlds);
 		//ConfigurationSection managers = config.createSection("managers");
 		
 		List<String> questNames = new ArrayList<String>(1);
-		config.set("quests", questNames);
-		config.set("questDir", "quests/");
-		config.set("saveDir", "savedata/");
+		config.set(PluginConfigurationKey.QUESTS.key, questNames);
+		config.set(PluginConfigurationKey.QUESTDIR.key, "quests/");
+		config.set(PluginConfigurationKey.SAVEDIR.key, "savedata/");
 		
 		try {
 			config.save(configFile);

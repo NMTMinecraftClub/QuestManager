@@ -29,6 +29,8 @@ public class Goal {
 	
 	private Quest quest;
 	
+	//private List<Chest> chests;
+	
 
 //	public static Goal fromConfig(Quest quest, YamlConfiguration config) throws InvalidConfigurationException {
 //		return fromMap(quest, config.)
@@ -61,7 +63,6 @@ public class Goal {
 		
 
 		Goal goal = new Goal(quest, name, description);
-		
 		
 		List<ConfigurationSection> reqs = new LinkedList<ConfigurationSection>();
 		for (String requirementKey : config.getConfigurationSection("requirements").getKeys(false)) {
@@ -96,6 +97,7 @@ public class Goal {
 		this.description = description;
 		
 		this.requirements = new LinkedList<Requirement>();
+		//this.chests = new LinkedList<Chest>();
 	}
 	
 	public Goal(Quest quest, String name) {
@@ -205,6 +207,5 @@ public class Goal {
 			}
 		}
 	}
-		
 	
 }

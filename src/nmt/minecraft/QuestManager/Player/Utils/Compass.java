@@ -12,6 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 
 
@@ -64,6 +65,10 @@ public class Compass {
 	
 	public static void updateCompass(QuestPlayer qp, boolean silent) {
 		if (!qp.getPlayer().isOnline()) {
+			return;
+		}
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getCompassEnabled()) {
 			return;
 		}
 		
