@@ -258,7 +258,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 		} else {
 			messageChat = new BioptionChatMenu(chat, 
 					new QuestStartAction(quest, new FancyMessage(this.name).color(ChatColor.DARK_GRAY).style(ChatColor.BOLD)
-							.then(chat.getBody()), player), null);			
+							.then("\n").then(chat.getBody()), player), null);			
 		}
 
 		messageChat.show(player);

@@ -167,7 +167,7 @@ public class SimpleChatNPC extends SimpleNPC {
 		ChatMenu messageChat = new SimpleChatMenu(chat.getFormattedMessage());
 		messageChat.show(player);
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player); 
-		this.updateQuestHistory(qp, this.chat.toString()
+		this.updateQuestHistory(qp, this.chat.getFormattedMessage().toOldMessageFormat()
 				.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + ""));
 	}
 	

@@ -284,7 +284,7 @@ public class QuestPlayer implements Participant, Listener {
 			Quest q = it.next();
 			if (q.equals(quest)) {
 				it.remove();
-				if (focusQuest.equals(quest)) {
+				if (focusQuest.equals(quest.getName())) {
 					if (currentQuests.isEmpty()) {
 						focusQuest = null;
 						QuestJournal.addQuestJournal(this);
