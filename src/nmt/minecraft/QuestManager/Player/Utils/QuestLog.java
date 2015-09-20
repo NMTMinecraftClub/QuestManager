@@ -171,8 +171,9 @@ public class QuestLog {
 			play.sendMessage(ChatColor.GRAY + "Your "
 					+ ChatColor.DARK_GREEN + "Quest Log" + ChatColor.GRAY + " has been"
 					+ " updated!" + ChatColor.RESET);
-			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
-			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
+			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.D));
+			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.G));
+			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.B));
 		}
 		
 		play.setLevel(qp.getMoney());

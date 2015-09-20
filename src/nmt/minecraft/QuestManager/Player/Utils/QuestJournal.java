@@ -193,8 +193,9 @@ public class QuestJournal {
 			play.sendMessage(ChatColor.GRAY + "Your "
 					+ ChatColor.DARK_GREEN + "Journal" + ChatColor.GRAY + " has been"
 					+ " updated!" + ChatColor.RESET);
-			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
-			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
+			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(0, Tone.G));
+			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(0, Tone.C));
+			play.playNote(play.getLocation(), Instrument.PIANO, Note.sharp(0, Tone.D));
 		}
 	}
 	

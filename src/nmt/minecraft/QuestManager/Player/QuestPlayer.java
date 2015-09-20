@@ -685,6 +685,11 @@ public class QuestPlayer implements Participant, Listener {
 			return;
 		}
 		
+		if (Compass.CompassDefinition.isCompass(e.getItem())) {
+			updateCompass(false);
+			return;
+		}
+		
 	}
 	
 	@EventHandler
