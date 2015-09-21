@@ -326,9 +326,8 @@ public class Quest implements Listener {
 		}
 		
 		if (!goals.isEmpty()) {	
-			for (Goal goal : goals) {
-				goal.stop();
-			}
+			Goal goal = goals.get(Math.min(goals.size() - 1, goalIndex));
+			goal.stop();
 		}
 		
 		if (participant.getParticipants().isEmpty()) {
@@ -375,9 +374,8 @@ public class Quest implements Listener {
 				
 		//stop goals
 		if (!goals.isEmpty()) {	
-			for (Goal goal : goals) {
-						goal.stop();
-			}
+			Goal goal = goals.get(Math.min(goals.size() - 1, goalIndex));
+			goal.stop();
 		}
 		
 	}
@@ -667,6 +665,13 @@ public class Quest implements Listener {
 	 */
 	private void nextGoal() {
 		goalIndex++;
+		
+		//did we just move a goal? Should the old one be deactivated?
+		if (goals.size() > goalIndex) {
+			//yes, because we are still under size. This means we don't stop on the last one
+			goals.get(goalIndex - 1).stop();
+		}
+		
 		if (goals.size() <= goalIndex) {
 			this.ready = true;
 			if (goals.size() == goalIndex)

@@ -114,7 +114,7 @@ public class ChestRequirement extends Requirement implements Listener, Statekeep
 	 */
 	@Override
 	public void update() {
-		;
+		chest.getLocation().getBlock().setType(chest.getMaterial());
 	}
 
 	@Override
