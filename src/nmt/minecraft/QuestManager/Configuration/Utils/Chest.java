@@ -105,7 +105,7 @@ public class Chest implements ConfigurationSerializable {
 	}
 	
 	public Inventory getInventory(InventoryHolder holder) {
-		Inventory inv = Bukkit.createInventory(holder, inventory.size());
+		Inventory inv = Bukkit.createInventory(holder, (int) (9 * (1 + Math.floor(inventory.size()/9))));
 		for (ItemStack item : inventory) {
 			inv.addItem(item);
 		}

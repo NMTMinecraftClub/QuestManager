@@ -7,7 +7,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -77,10 +76,11 @@ public class ChestRequirement extends Requirement implements Listener, Statekeep
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
 		
-		if (state) {
-			HandlerList.unregisterAll(this);
+		if (e.getClickedBlock() == null) {
 			return;
 		}
+		
+		sync();
 		
 		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
 				.contains(e.getPlayer().getPlayer().getWorld().getName())) {
@@ -90,17 +90,18 @@ public class ChestRequirement extends Requirement implements Listener, Statekeep
 					//one of our participants
 					//actually check interaction now
 					if (e.getClickedBlock().getLocation().equals(chest.getLocation().getBlock().getLocation())) {
-						state = true;
-						HandlerList.unregisterAll(this);
 						
 						//actually give them an/the inventory
 						if (inv == null) {
 							inv = chest.getInventory(e.getPlayer());
 						}
-						
+						e.setCancelled(true);
 						e.getPlayer().openInventory(inv);
 						
-						updateQuest();
+						if (!state) {
+							state = true;
+							updateQuest();
+						}
 					}
 				}
 			}
@@ -159,6 +160,7 @@ public class ChestRequirement extends Requirement implements Listener, Statekeep
 		
 		this.chest = (Chest) config.get("chest");
 		this.inv = null;
+		this.desc = config.getString("description", "Search the chest");
 	}
 	
 	public void stop() {

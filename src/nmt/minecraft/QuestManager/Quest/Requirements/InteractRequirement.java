@@ -185,6 +185,9 @@ public class InteractRequirement extends Requirement implements Listener, Statek
 		if (config.contains("action")) {
 			this.action = getAction(config.getString(config.getString("action")));
 		}
+		
+		this.desc = config.getString("description", config.getString("action", "Right")
+				+ " click the area");
 	}
 	
 	public void stop() {
@@ -217,7 +220,7 @@ public class InteractRequirement extends Requirement implements Listener, Statek
 	}
 	
 	private Action getAction(String configActionName) {
-		if (configActionName.equals("LEFT")) {
+		if (configActionName.equalsIgnoreCase("LEFT")) {
 			return Action.LEFT_CLICK_BLOCK;
 		} else {
 			return Action.RIGHT_CLICK_BLOCK;
