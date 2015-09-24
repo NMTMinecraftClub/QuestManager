@@ -1,5 +1,6 @@
 package nmt.minecraft.QuestManager.UI.Menu;
 
+import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.UI.Menu.Action.MenuAction;
 import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
@@ -14,13 +15,20 @@ public class ChatMenuOption {
 	
 	private Message label;
 	
+	private FancyMessage tooltip;
+	
 	private MenuAction action;
 	
-	public ChatMenuOption(Message message, MenuAction action) {
+	public ChatMenuOption(Message message, MenuAction action, FancyMessage tooltip) {
 		this.label = message;
 		this.action = action;
+		this.tooltip = tooltip;
 	}
-
+	
+	public ChatMenuOption(Message message, MenuAction action) {
+		this(message, action, null);
+	}
+	
 	/**
 	 * @return the label
 	 */
@@ -47,5 +55,13 @@ public class ChatMenuOption {
 	 */
 	public void setAction(MenuAction action) {
 		this.action = action;
+	}
+	
+	public void setTooltip(FancyMessage tooltip) {
+		this.tooltip = tooltip;
+	}
+	
+	public FancyMessage getTooltip() {
+		return tooltip;
 	}
 }

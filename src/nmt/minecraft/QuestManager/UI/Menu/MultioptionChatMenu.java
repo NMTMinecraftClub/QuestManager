@@ -134,6 +134,9 @@ public class MultioptionChatMenu extends ChatMenu implements RespondableMenu {
 			.then(opt.getLabel().getFormattedMessage()).command(ChatGuiHandler.cmdBase + " " + key)
 				.color(ChatColor.DARK_GREEN)
 				.style(ChatColor.ITALIC);
+			if (opt.getTooltip() != null) {
+				msg.formattedTooltip(opt.getTooltip());
+			}
 		}
 		
 		msg.then("--------------------------------------------\n")
