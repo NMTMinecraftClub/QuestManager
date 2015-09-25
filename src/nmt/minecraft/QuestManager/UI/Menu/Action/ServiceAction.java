@@ -4,7 +4,7 @@ package nmt.minecraft.QuestManager.UI.Menu.Action;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import nmt.minecraft.QuestManager.NPC.Utils.ServiceTrade;
+import nmt.minecraft.QuestManager.NPC.Utils.ServiceCraft;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.SimpleChatMenu;
@@ -17,13 +17,13 @@ import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
  */
 public class ServiceAction implements MenuAction {
 	
-	private ServiceTrade trade;
+	private ServiceCraft trade;
 	
 	private QuestPlayer player;
 	
 	private Message denial;
 	
-	public ServiceAction(ServiceTrade trade, QuestPlayer player, Message denialMessage) {
+	public ServiceAction(ServiceCraft trade, QuestPlayer player, Message denialMessage) {
 		this.trade = trade;
 		this.player = player;
 		this.denial = denialMessage;
