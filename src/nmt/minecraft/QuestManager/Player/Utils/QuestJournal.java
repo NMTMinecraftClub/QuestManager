@@ -66,6 +66,7 @@ public class QuestJournal {
 			BookMeta bookMeta = (BookMeta) book.getItemMeta();
 			
 			bookMeta.setTitle("Journal");
+			bookMeta.setDisplayName("Journal");
 			bookMeta.setAuthor(play.getName());
 			
 			book.setItemMeta(bookMeta);
@@ -123,7 +124,7 @@ public class QuestJournal {
 		builder += getSlotString(slot) + " writable_book 1 0 ";
 		
 		//now start putting pages
-		builder += "{pages:[";
+		builder += "{display:{Name: \"Journal\"},pages:[";
 		
 		//get title page
 		FancyMessage title = new FancyMessage("      Journal\n  " + play.getName() + "\n\n  My own journal with details about my active quest")

@@ -49,13 +49,13 @@ public class ServiceOfferItem extends ServiceItem {
 		ItemMeta meta = ret.getItemMeta();
 		List<String> lore = new LinkedList<String>();
 		lore.add(
-				ChatColor.BLUE + "Offer               " + offer.getPrice());
-		lore.add(ChatColor.DARK_RED + "\nRequested:");
+				ChatColor.BLUE + "Offer               " + ChatColor.GOLD + offer.getPrice());
+		lore.add(ChatColor.DARK_RED + "Requested:");
 		
 		if (offer.getItem().hasItemMeta() && offer.getItem().getItemMeta().hasDisplayName()) {
 			lore.add(ChatColor.RED + offer.getItem().getItemMeta().getDisplayName());
 		} else {
-			lore.add(ChatColor.RED + offer.getItem().getType().toString());
+			lore.add(ChatColor.RED + ServiceCraftItem.toCase(offer.getItem().getType().toString()));
 		}
 			
 		meta.setLore(lore);

@@ -49,15 +49,16 @@ public class ServiceCraftItem extends ServiceItem {
 		ItemMeta meta = ret.getItemMeta();
 		List<String> lore = new LinkedList<String>();
 		lore.add(
-				ChatColor.DARK_PURPLE + "Craft  " + (craft.getCost() <= player.getMoney() ? ChatColor.DARK_GREEN : ChatColor.DARK_RED) + 
-					"Cost:               " + craft.getCost());
+				ChatColor.DARK_PURPLE + "Craft  " + (craft.getCost() <= player.getMoney() ? ChatColor.GOLD : ChatColor.DARK_RED) + 
+					"      Cost: " + craft.getCost());
 		lore.add(ChatColor.DARK_RED + "Requires:");
 		
 		for (ItemStack item : craft.getRequired()) {
 			if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
 				lore.add((item.getAmount() > 0 ? "" + ChatColor.GRAY + item.getAmount() + " x ": "") + ChatColor.RED + item.getItemMeta().getDisplayName());
 			} else {
-				lore.add((item.getAmount() > 0 ? "" + ChatColor.GRAY + item.getAmount() + " x " : "") + ChatColor.RED + item.getType().toString());
+				lore.add((item.getAmount() > 0 ? "" + ChatColor.GRAY + item.getAmount() + " x " : "") + ChatColor.RED 
+						+ toCase(item.getType().toString()));
 			}
 		}
 			
@@ -92,5 +93,41 @@ public class ServiceCraftItem extends ServiceItem {
 		return craft;
 	}
 	
+	/**
+	 * Removes underscores from passed string and convers to title case
+	 * @param input
+	 * @return
+	 */
+	public static String toCase(String input) {
+		input = input.replace("_", " ");
+		input = input.toLowerCase();
+		
+		String result = "";
+		boolean set = false;
+		
+		for (int pos = 0; pos < input.length(); pos++) {
+			if (pos == 0) {
+				result += input.substring(0, 1).toUpperCase();
+				continue;
+			}
+			
+			if (set) {
+				set = false;
+				result += input.substring(pos, pos+1).toUpperCase();
+				continue;
+			}
+			
+			if (input.charAt(pos) == ' ') {
+				set = true;
+			}
+			
+			result += input.charAt(pos);
+			
+			
+			
+		}
+
+		return result;
+	}
 	
 }
