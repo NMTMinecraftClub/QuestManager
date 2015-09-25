@@ -15,11 +15,12 @@ import org.bukkit.inventory.ItemStack;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 
 /**
- * An inventory used with inventory gui's. Contains everything the rendered inventory needs
+ * Inventory that has service deals.<br />
+ * The inventory can hold only service items, and not regular purchases.
  * @author Skyler
  *
  */
-public class ShopInventory extends GuiInventory {
+public class ServiceInventory extends GuiInventory {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -27,7 +28,7 @@ public class ShopInventory extends GuiInventory {
 	 */
 	public static void registerWithAliases() {
 		for (aliases alias : aliases.values()) {
-			ConfigurationSerialization.registerClass(ShopInventory.class, alias.getAlias());
+			ConfigurationSerialization.registerClass(ServiceInventory.class, alias.getAlias());
 		}
 	}
 	
@@ -35,13 +36,13 @@ public class ShopInventory extends GuiInventory {
 	 * Registers this class as configuration serializable with only the default alias
 	 */
 	public static void registerWithoutAliases() {
-		ConfigurationSerialization.registerClass(ShopInventory.class);
+		ConfigurationSerialization.registerClass(ServiceInventory.class);
 	}
 	
 
 	private enum aliases {
 		FULL("nmt.minecraft.QuestManager.UI.Inventory.ShopInventory"),
-		DEFAULT(ShopInventory.class.getName()),
+		DEFAULT(ServiceInventory.class.getName()),
 		SHORT("ShopInventory"),
 		INFORMAL("SHINV");
 		
@@ -56,14 +57,12 @@ public class ShopInventory extends GuiInventory {
 		}
 	}
 	
-	private Map<Integer, ShopItem> items;
-	
-	public ShopInventory() {
-		items = new HashMap<Integer, ShopItem>();
+	public ServiceInventory() {
+		super();
 	}
 	
-	public ShopInventory(Map<Integer, ShopItem> items) {
-		this.items = items;
+	public ServiceInventory(Map<Integer, InventoryItem> items) {
+		super(items);
 	}
 	
 	@Override
@@ -76,8 +75,8 @@ public class ShopInventory extends GuiInventory {
 		Player p = player.getPlayer().getPlayer();
 		
 		Inventory inv = Bukkit.createInventory(p, 45);
-		if (!items.isEmpty()) {
-			for (Entry<Integer, ShopItem> e : items.entrySet()) {
+		if (!getItems().isEmpty()) {
+			for (Entry<Integer, InventoryItem> e : getItems().entrySet()) {
 				Object key = e.getKey();
 				if (key == null) {
 					continue;
@@ -113,11 +112,11 @@ public class ShopInventory extends GuiInventory {
 		 */
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		if (items.isEmpty()) {
+		if (getItems().isEmpty()) {
 			return map;
 		}
 		
-		for (Entry<Integer, ShopItem> e : items.entrySet()) {
+		for (Entry<Integer, InventoryItem> e : getItems().entrySet()) {
 			Map<String, Object> subMap = new HashMap<String, Object>(4);
 			
 			//create subMap as specified in comments above
@@ -134,7 +133,7 @@ public class ShopInventory extends GuiInventory {
 		return map;
 	}
 	
-	public static ShopInventory valueOf(Map<String, Object> configMap) {
+	public static ServiceInventory valueOf(Map<String, Object> configMap) {
 		/*
 		 * 4:
 		 * 	display:
@@ -152,7 +151,7 @@ public class ShopInventory extends GuiInventory {
 		YamlConfiguration config = new YamlConfiguration();
 		config.createSection("top", configMap);
 		
-		Map<Integer, ShopItem> map = new HashMap<Integer, ShopItem>();
+		Map<Integer, InventoryItem> map = new HashMap<Integer, InventoryItem>();
 		ConfigurationSection conf = config.getConfigurationSection("top");
 		
 		for (String slotString : conf.getKeys(false)) {
@@ -170,19 +169,14 @@ public class ShopInventory extends GuiInventory {
 			cost = section.getInt("cost");
 			fame = section.getInt("fame");
 			
-			ShopItem ii = new ShopItem(item, display, cost, fame);
+			InventoryItem ii = new InventoryItem(item, display, cost, fame);
 			
 			map.put(key, ii);
 			
 		}
 		
-		return new ShopInventory(map);
+		return new ServiceInventory(map);
 		
-	}
-
-	@Override
-	public InventoryItem getItem(int pos) {
-		return items.get(pos);
 	}
 	
 	
