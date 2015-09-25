@@ -119,7 +119,7 @@ public class OfferServiceAction implements MenuAction {
 		
 		for (int i = 0; i <= 35; i++) {
 			item = inv.getItem(i);
-			if (item != null && item.getType() == item.getType())
+			if (item != null && item.getType() == searchItem.getType())
 			if (  (itemName == null && (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()))
 				|| (item.hasItemMeta() && item.getItemMeta().getDisplayName() != null && item.getItemMeta().getDisplayName().equals(itemName))	
 					) {

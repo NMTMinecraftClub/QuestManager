@@ -29,10 +29,10 @@ public class ServiceCraft extends Service {
 	
 
 	private enum aliases {
-		FULL("nmt.minecraft.QuestManager.NPC.ServiceTrade"),
+		FULL("nmt.minecraft.QuestManager.NPC.ServiceCraft"),
 		DEFAULT(ServiceCraft.class.getName()),
-		SHORT("ServiceTrade"),
-		INFORMAL("TRADE");
+		SHORT("ServiceCraft"),
+		INFORMAL("CRAFT");
 		
 		private String alias;
 		

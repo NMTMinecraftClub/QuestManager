@@ -55,9 +55,9 @@ public class ServiceCraftItem extends ServiceItem {
 		
 		for (ItemStack item : craft.getRequired()) {
 			if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
-				lore.add(ChatColor.RED + item.getItemMeta().getDisplayName());
+				lore.add((item.getAmount() > 0 ? "" + ChatColor.GRAY + item.getAmount() + " x ": "") + ChatColor.RED + item.getItemMeta().getDisplayName());
 			} else {
-				lore.add(ChatColor.RED + item.getType().toString());
+				lore.add((item.getAmount() > 0 ? "" + ChatColor.GRAY + item.getAmount() + " x " : "") + ChatColor.RED + item.getType().toString());
 			}
 		}
 			

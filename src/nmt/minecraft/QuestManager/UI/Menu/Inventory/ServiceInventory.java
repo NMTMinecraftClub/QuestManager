@@ -139,8 +139,11 @@ public class ServiceInventory extends GuiInventory {
 		ConfigurationSection conf = config.getConfigurationSection("top");
 		
 		for (String slotString : conf.getKeys(false)) {
+			if (slotString.startsWith("==")) {
+				continue;
+			}
 			int key = Integer.valueOf(slotString);
-			Service service = (Service) config.get(slotString);
+			Service service = (Service) conf.get(slotString);
 			ServiceItem servItem;
 			if (service instanceof ServiceCraft) {
 				servItem = new ServiceCraftItem((ServiceCraft) service);
