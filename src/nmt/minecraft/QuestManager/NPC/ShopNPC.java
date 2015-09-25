@@ -20,7 +20,7 @@ import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.Action.OpenShopAction;
-import nmt.minecraft.QuestManager.UI.Menu.Inventory.GuiInventory;
+import nmt.minecraft.QuestManager.UI.Menu.Inventory.ShopInventory;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
 
 /**
@@ -124,7 +124,7 @@ public class ShopNPC extends SimpleBioptionNPC {
 		
 		npc.name = (String) map.get("name");
 		
-		npc.inventory = (GuiInventory) map.get("shop");
+		npc.inventory = (ShopInventory) map.get("shop");
 		
 
 		loc.getChunk();
@@ -152,7 +152,7 @@ public class ShopNPC extends SimpleBioptionNPC {
 		return npc;
 	}
 	
-	private GuiInventory inventory;
+	private ShopInventory inventory;
 		
 	@Override
 	protected void interact(Player player) {
