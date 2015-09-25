@@ -3,7 +3,6 @@ package nmt.minecraft.QuestManager.NPC.Utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
  * @author Skyler
  *
  */
-public class ServiceOffer implements ConfigurationSerializable {
+public class ServiceOffer extends Service {
 	
 
 	/**

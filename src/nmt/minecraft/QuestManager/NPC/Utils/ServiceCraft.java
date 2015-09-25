@@ -4,11 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
 
-public class ServiceCraft implements ConfigurationSerializable {
+public class ServiceCraft extends Service {
 	
 
 	/**
@@ -52,16 +51,16 @@ public class ServiceCraft implements ConfigurationSerializable {
 	
 	private List<ItemStack> requiredItems;
 	
-	private List<ItemStack> rewardItems;
+	private ItemStack result;
 	
-	public ServiceCraft(String name, int cost, List<ItemStack> requiredItems, List<ItemStack> rewardItems) {
+	public ServiceCraft(String name, int cost, List<ItemStack> requiredItems, ItemStack result) {
 		this.cost = cost;
 		this.requiredItems = requiredItems;
-		this.rewardItems = rewardItems;
+		this.result = result;
 	}
 	
-	public List<ItemStack> getRewards() {
-		return rewardItems;
+	public ItemStack getResult() {
+		return result;
 	}
 	
 	public List<ItemStack> getRequired() {
@@ -87,17 +86,17 @@ public class ServiceCraft implements ConfigurationSerializable {
 		 * cost: money cost
 		 * requiredItems: 
 		 * 	list of items
-		 * rewardItems:
-		 * 	list of items
+		 * result:
+		 * 	==item
 		 */
 		
 		String name = (String) map.get("name");
 		int cost = (int) map.get("cost");
 		
-		List<ItemStack> rewards = (List<ItemStack>) map.get("rewardItems");
 		List<ItemStack> required = (List<ItemStack>) map.get("requiredItems");
+		ItemStack item = (ItemStack) map.get("result");
 		
-		return new ServiceCraft(name, cost, required, rewards);
+		return new ServiceCraft(name, cost, required, item);
 	}
 	
 	@Override
@@ -108,7 +107,7 @@ public class ServiceCraft implements ConfigurationSerializable {
 		map.put("cost", cost);
 		
 		map.put("requiredItems", requiredItems);
-		map.put("rewardItems", rewardItems);
+		map.put("result", result);
 		
 		return map;
 	}

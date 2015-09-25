@@ -10,8 +10,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
+import nmt.minecraft.QuestManager.NPC.Utils.Service;
+import nmt.minecraft.QuestManager.NPC.Utils.ServiceCraft;
+import nmt.minecraft.QuestManager.NPC.Utils.ServiceOffer;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 
 /**
@@ -43,8 +45,8 @@ public class ServiceInventory extends GuiInventory {
 	private enum aliases {
 		FULL("nmt.minecraft.QuestManager.UI.Inventory.ShopInventory"),
 		DEFAULT(ServiceInventory.class.getName()),
-		SHORT("ShopInventory"),
-		INFORMAL("SHINV");
+		SHORT("ServiceInventory"),
+		INFORMAL("SERVINV");
 		
 		private String alias;
 		
@@ -57,12 +59,14 @@ public class ServiceInventory extends GuiInventory {
 		}
 	}
 	
+	private Map<Integer, ServiceItem> items;
+	
 	public ServiceInventory() {
 		super();
 	}
 	
-	public ServiceInventory(Map<Integer, InventoryItem> items) {
-		super(items);
+	public ServiceInventory(Map<Integer, ServiceItem> items) {
+		this.items = items;
 	}
 	
 	@Override
@@ -75,8 +79,8 @@ public class ServiceInventory extends GuiInventory {
 		Player p = player.getPlayer().getPlayer();
 		
 		Inventory inv = Bukkit.createInventory(p, 45);
-		if (!getItems().isEmpty()) {
-			for (Entry<Integer, InventoryItem> e : getItems().entrySet()) {
+		if (!items.isEmpty()) {
+			for (Entry<Integer, ServiceItem> e : items.entrySet()) {
 				Object key = e.getKey();
 				if (key == null) {
 					continue;
@@ -101,31 +105,18 @@ public class ServiceInventory extends GuiInventory {
 	public Map<String, Object> serialize() {
 		/*
 		 * 4:
-		 * 	display:
-		 * 		==: itemstack
-		 * 	item:
-		 * 		==: itemstack
-		 * 	cost: INTEGER
-		 *  fame: INTEGER
+		 * 	==: Service
 		 * 8:
 		 * 	""
 		 */
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		if (getItems().isEmpty()) {
+		if (items.isEmpty()) {
 			return map;
 		}
 		
-		for (Entry<Integer, InventoryItem> e : getItems().entrySet()) {
-			Map<String, Object> subMap = new HashMap<String, Object>(4);
-			
-			//create subMap as specified in comments above
-			subMap.put("display", e.getValue().getDisplay(null));
-			subMap.put("item", e.getValue().getItem());
-			subMap.put("cost", e.getValue().getCost());
-			subMap.put("fame", e.getValue().getFamecost());
-			
-			map.put(e.getKey().toString(), subMap);
+		for (Entry<Integer, ServiceItem> e : items.entrySet()) {
+			map.put(e.getKey().toString(), e.getValue().getService());
 		}
 		
 		
@@ -136,47 +127,39 @@ public class ServiceInventory extends GuiInventory {
 	public static ServiceInventory valueOf(Map<String, Object> configMap) {
 		/*
 		 * 4:
-		 * 	display:
-		 * 		==: itemstack
-		 * 	item:
-		 * 		==: itemstack
-		 * 	cost: INTEGER
-		 *  fame: INTEGER
+		 * 	==: service
 		 * 8:
 		 * 	""
 		 */
-		//TODO instead of jumping right into display, item, etc
-		//make multiple inventory items. E.g. a purchase one, an inn one, etc
 		
 		YamlConfiguration config = new YamlConfiguration();
 		config.createSection("top", configMap);
 		
-		Map<Integer, InventoryItem> map = new HashMap<Integer, InventoryItem>();
+		Map<Integer, ServiceItem> map = new HashMap<Integer, ServiceItem>();
 		ConfigurationSection conf = config.getConfigurationSection("top");
 		
 		for (String slotString : conf.getKeys(false)) {
-			ConfigurationSection section = conf.getConfigurationSection(slotString);
-			if (slotString.startsWith("==")) {
-				continue;
-			}
 			int key = Integer.valueOf(slotString);
-			
-			int cost, fame;
-			ItemStack display, item;
-			
-			display = section.getItemStack("display");
-			item = section.getItemStack("item");
-			cost = section.getInt("cost");
-			fame = section.getInt("fame");
-			
-			InventoryItem ii = new InventoryItem(item, display, cost, fame);
-			
-			map.put(key, ii);
-			
+			Service service = (Service) config.get(slotString);
+			ServiceItem servItem;
+			if (service instanceof ServiceCraft) {
+				servItem = new ServiceCraftItem((ServiceCraft) service);
+			} else if (service instanceof ServiceOffer) {
+				servItem = new ServiceOfferItem((ServiceOffer) service);
+			} else {
+				System.out.println("Serious error when interpretting service inventory");
+				return null;
+			}
+			map.put(key, servItem);
 		}
 		
 		return new ServiceInventory(map);
 		
+	}
+
+	@Override
+	public InventoryItem getItem(int pos) {
+		return items.get(pos);
 	}
 	
 	
