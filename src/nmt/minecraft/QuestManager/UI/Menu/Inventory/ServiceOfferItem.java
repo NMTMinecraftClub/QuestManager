@@ -53,9 +53,11 @@ public class ServiceOfferItem extends ServiceItem {
 		lore.add(ChatColor.DARK_RED + "Requested:");
 		
 		if (offer.getItem().hasItemMeta() && offer.getItem().getItemMeta().hasDisplayName()) {
-			lore.add(ChatColor.RED + offer.getItem().getItemMeta().getDisplayName());
+			lore.add((player.hasItem(offer.getItem()) ? ChatColor.GREEN : ChatColor.RED) 
+					+ offer.getItem().getItemMeta().getDisplayName());
 		} else {
-			lore.add(ChatColor.RED + ServiceCraftItem.toCase(offer.getItem().getType().toString()));
+			lore.add( (player.hasItem(offer.getItem()) ? ChatColor.GREEN : ChatColor.RED)
+					+ ServiceCraftItem.toCase(offer.getItem().getType().toString()));
 		}
 			
 		meta.setLore(lore);
