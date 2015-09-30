@@ -28,7 +28,7 @@ import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
  * @author Skyler
  *
  */
-public class ServiceNPC extends SimpleBioptionNPC {
+public class ServiceNPC extends SimpleStaticBioptionNPC {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 

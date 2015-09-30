@@ -51,6 +51,8 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	
 	private LivingEntity foe;
 	
+	private RequirementState foeStateRecord;
+	
 	private UUID id;
 	
 	private VanquishRequirement(Goal goal) {
@@ -70,6 +72,48 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 
 	@Override
 	public void activate() {
+		ConfigurationSection myState = foeStateRecord.getConfig();
+		
+		//get rid of any entities we already have
+		if (foe != null && !foe.isDead()) {
+			foe.remove();			
+		}
+		
+		
+		ConfigurationSection foeState =  myState.getConfigurationSection("foe");
+		Location loc = ((LocationState) foeState.get("location")).getLocation();
+		
+		//load chunk before creating foe
+		loc.getChunk();
+		
+		foe = (LivingEntity) loc.getWorld().spawnEntity(loc, EntityType.valueOf(foeState.getString("type")));
+		this.id = foe.getUniqueId();
+		foe.setMaxHealth(foeState.getDouble("maxhp"));
+		foe.setHealth(foeState.getDouble("hp"));
+		foe.setCustomName(foeState.getString("name"));
+		
+		foe.setRemoveWhenFarAway(false);
+		
+		EntityEquipment equipment = foe.getEquipment();
+		EquipmentConfiguration econ = new EquipmentConfiguration();
+		try {
+			econ.load( foeState.getConfigurationSection("equipment"));
+		} catch (InvalidConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		equipment.setHelmet(econ.getHead());
+		equipment.setChestplate(econ.getChest());
+		equipment.setLeggings(econ.getLegs());
+		equipment.setBoots(econ.getBoots());
+		equipment.setItemInHand(econ.getHeld());
+		
+		if (desc == null) {
+			desc = foeState.getString("description", "Slay " + foe.getCustomName());
+		}
+		
+		update();
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
@@ -145,49 +189,16 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 
 	@Override
 	public void loadState(RequirementState reqState) throws InvalidConfigurationException {
-		
-		
+
 		ConfigurationSection myState = reqState.getConfig();
-		
+
 		if (!myState.contains("type") || !myState.getString("type").equals("vr")) {
 			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'vr' but got " + myState.get("type", "null"));
 		}
 		
-		//get rid of any entities we already have
-		if (foe != null && !foe.isDead()) {
-			foe.remove();			
-		}
+		this.desc = myState.getString("description", "Vanquish " + myState.getString("foe.name", "the monster"));
 		
-		
-		ConfigurationSection foeState =  myState.getConfigurationSection("foe");
-		Location loc = ((LocationState) foeState.get("location")).getLocation();
-		
-		//load chunk before creating foe
-		loc.getChunk();
-		
-		foe = (LivingEntity) loc.getWorld().spawnEntity(loc, EntityType.valueOf(foeState.getString("type")));
-		this.id = foe.getUniqueId();
-		foe.setMaxHealth(foeState.getDouble("maxhp"));
-		foe.setHealth(foeState.getDouble("hp"));
-		foe.setCustomName(foeState.getString("name"));
-		
-		foe.setRemoveWhenFarAway(false);
-		
-		EntityEquipment equipment = foe.getEquipment();
-		EquipmentConfiguration econ = new EquipmentConfiguration();
-		econ.load( foeState.getConfigurationSection("equipment"));
-		
-		equipment.setHelmet(econ.getHead());
-		equipment.setChestplate(econ.getChest());
-		equipment.setLeggings(econ.getLegs());
-		equipment.setBoots(econ.getBoots());
-		equipment.setItemInHand(econ.getHeld());
-		
-		if (desc == null) {
-			desc = foeState.getString("description", "Slay " + foe.getCustomName());
-		}
-		
-		update();
+		this.foeStateRecord = reqState;
 	}
 
 	@Override

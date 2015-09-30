@@ -31,7 +31,7 @@ import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
  * @author Skyler
  *
  */
-public class TeleportNPC extends SimpleBioptionNPC {
+public class TeleportNPC extends SimpleStaticBioptionNPC {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 

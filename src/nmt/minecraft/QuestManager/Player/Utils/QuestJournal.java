@@ -217,13 +217,21 @@ public class QuestJournal {
 	 * @return
 	 */
 	private static String generatePage(String line) {
-		String ret = "\"";
-		
-		if (line != null) {
+		if (line == null) {
+			return "\"\"";	
+		}
+			String ret;
+
+		if (line.length() > 260) {
+			ret = generatePage(line.substring(0, 260));
+			ret += ",";
+			ret += generatePage(line.substring(260));
+		} else {
+			ret = "\"";
 			ret += line;
+			ret += "\"";
 		}
 		
-		ret += "\"";
 		
 		return ret;
 	}

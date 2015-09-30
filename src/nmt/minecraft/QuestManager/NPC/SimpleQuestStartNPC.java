@@ -36,7 +36,7 @@ import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
  * @author Skyler
  *
  */
-public class SimpleQuestStartNPC extends SimpleBioptionNPC implements CompassTrackable {
+public class SimpleQuestStartNPC extends SimpleStaticBioptionNPC implements CompassTrackable {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -260,7 +260,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC implements CompassTra
 		} else {
 			messageChat = new BioptionChatMenu(chat, 
 					new QuestStartAction(quest, new FancyMessage(this.name).color(ChatColor.DARK_GRAY).style(ChatColor.BOLD)
-							.then("\n").then(chat.getBody()), player), null);			
+							.then("\n").then(chat.getBody()), chat.getResponse1(), player),  null);			
 		}
 
 		messageChat.show(player);

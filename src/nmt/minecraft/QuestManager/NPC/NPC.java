@@ -85,6 +85,9 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 	public void setEntity(Entity entity) {
 		this.entity = entity;
 		this.id = entity.getUniqueId();
+		if (entity instanceof LivingEntity) {
+			((LivingEntity) entity).setRemoveWhenFarAway(false);
+		}
 	}
 	
 	/**

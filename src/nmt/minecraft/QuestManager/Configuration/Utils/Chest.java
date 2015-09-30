@@ -87,7 +87,11 @@ public class Chest implements ConfigurationSerializable {
 		
 		LocationState loc = (LocationState) map.get("location");
 		List<ItemStack> items = (List<ItemStack>) map.get("items");
-		return new Chest(items, loc.getLocation());
+		Material type = null;
+		if (map.containsKey("material")) {
+			type = Material.valueOf((String) map.get("material"));
+		}
+		return new Chest(items, loc.getLocation(), type);
 	}
 	
 	public Chest(List<ItemStack> items, Location location, Material material) {

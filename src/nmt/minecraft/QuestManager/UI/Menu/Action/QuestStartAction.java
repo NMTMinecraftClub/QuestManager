@@ -20,14 +20,17 @@ public class QuestStartAction implements MenuAction {
 	
 	private FancyMessage startingMessage;
 	
+	private FancyMessage acceptMessage;
+	
 	private Player player;
 	
 	private static final String partyDenial = ChatColor.YELLOW + "This quest requires a party..." + ChatColor.RESET;
 	
-	public QuestStartAction(QuestConfiguration questTemplate, FancyMessage start, Player player) {
+	public QuestStartAction(QuestConfiguration questTemplate, FancyMessage start, FancyMessage accept, Player player) {
 		this.template = questTemplate;
 		this.player = player;
 		this.startingMessage = start;
+		this.acceptMessage = accept;
 	}
 	
 	@Override
@@ -64,6 +67,8 @@ public class QuestStartAction implements MenuAction {
 		}
 
 		quest.addHistoryEvent(new HistoryEvent(startingMessage.toOldMessageFormat()
+				.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + "")));
+		quest.addHistoryEvent(new HistoryEvent(acceptMessage.toOldMessageFormat()
 				.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + "")));
 		
 
