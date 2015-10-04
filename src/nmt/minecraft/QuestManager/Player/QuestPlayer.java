@@ -12,12 +12,10 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Note;
-import org.bukkit.Note.Tone;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.enchantments.Enchantment;
@@ -25,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerEditBookEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -38,13 +37,20 @@ import com.onarandombox.MultiversePortals.MultiversePortals;
 import com.onarandombox.MultiversePortals.PortalPlayerSession;
 import com.onarandombox.MultiversePortals.event.MVPortalEvent;
 
+import de.inventivegames.util.tellraw.TellrawConverterLite;
+import de.inventivegames.util.title.TitleManager;
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
+import nmt.minecraft.QuestManager.Player.Utils.Compass;
+import nmt.minecraft.QuestManager.Player.Utils.CompassTrackable;
+import nmt.minecraft.QuestManager.Player.Utils.QuestJournal;
+import nmt.minecraft.QuestManager.Player.Utils.QuestLog;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.History.History;
 import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
+import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.ChatMenuOption;
 import nmt.minecraft.QuestManager.UI.Menu.MultioptionChatMenu;
@@ -72,6 +78,10 @@ public class QuestPlayer implements Participant, Listener {
 	
 	private List<String> completedQuests;
 	
+	private String focusQuest;
+	
+	private List<String> journalNotes;
+	
 	private int fame;
 	
 	private int money;
@@ -83,6 +93,8 @@ public class QuestPlayer implements Participant, Listener {
 	private Location questPortal;
 	
 	private Party party;
+	
+	private CompassTrackable compassTarget;
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -164,6 +176,7 @@ public class QuestPlayer implements Participant, Listener {
 		this.money = 0;
 		this.title = "The Unknown";
 		this.unlockedTitles = new LinkedList<String>();
+		this.journalNotes = new LinkedList<String>();
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
@@ -199,176 +212,45 @@ public class QuestPlayer implements Participant, Listener {
 	 * This method will produce a fully updated quest book in the players inventory.
 	 */
 	public void addQuestBook() {
-		if (!getPlayer().isOnline()) {
-			return;
-		}
-		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
-				.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
-			return;
-		}
-		
-		Player play = getPlayer().getPlayer();
-		Inventory inv = play.getInventory();
-		
-		if (inv.firstEmpty() == -1) {
-			//no room!
-			return;
-		}
-		
-		ItemStack book = null;
-		
-		for (ItemStack item : inv.all(Material.WRITTEN_BOOK).values()) {
-			if (item.hasItemMeta()) {
-				BookMeta meta = (BookMeta) item.getItemMeta();
-				if (meta.getTitle().equals("Quest Log")
-						&& meta.getAuthor().equals(play.getName())) {
-					book = item;
-					break;
-				}
-			}
-		}
-		
-		if (book == null) {
-		
-			book = new ItemStack(Material.WRITTEN_BOOK);
-			BookMeta bookMeta = (BookMeta) book.getItemMeta();
-			
-			bookMeta.setTitle("Quest Log");
-			bookMeta.setAuthor(play.getName());
-			
-			book.setItemMeta(bookMeta);
-			
-			book.addUnsafeEnchantment(Enchantment.LUCK, 5);
-			
-			inv.addItem(book);
-			
-			play.sendMessage(ChatColor.GRAY + "A " + ChatColor.DARK_GREEN 
-					+ "Quest Log" + ChatColor.GRAY + " has been added to your inventory."
-					 + ChatColor.RESET);
-		}
-		
-		updateQuestBook();
+		QuestLog.addQuestlog(this);
+	}
+	
+	/**
+	 * Adds a journal to the player's inventory if there's space. Also updates immediately.
+	 */
+	public void addJournal() {
+		QuestJournal.addQuestJournal(this);
 	}
 	
 	/**
 	 * Updates the players quest book, if they have it in their inventory.<br />
 	 * If the user does not have abook already or has discarded it, this method will do nothing.
 	 */
-	public void updateQuestBook() {
-		if (!getPlayer().isOnline()) {
-			return;
-		}
-		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
-				.getWorlds().contains(getPlayer().getPlayer().getWorld().getName())) {
-			return;
-		}
-		
-		Player play = getPlayer().getPlayer();
-		Inventory inv = play.getInventory();
-		ItemStack book = null;
-		
-		for (ItemStack item : inv.all(Material.WRITTEN_BOOK).values()) {
-			if (item.hasItemMeta()) {
-				BookMeta meta = (BookMeta) item.getItemMeta();
-				if (meta.getTitle().equals("Quest Log")
-						&& meta.getAuthor().equals(play.getName())) {
-					book = item;
-					break;
-				}
-			}
-		}
-		
-		if (book == null) {
-			//they don't have a quest log
-			return;
+	public void updateQuestBook(boolean silent) {
+		QuestLog.updateQuestlog(this, silent);
+		updateCompass(true);
+	}
+	
+	public void updateQuestLog(boolean silent) {
+		QuestJournal.updateQuestJournal(this, silent);
+	}
+	
+	public void updateCompass(boolean silent) {
+		this.getNextTarget();
+		Compass.updateCompass(this, silent);
+	}
+	
+	public void setCompassTarget(CompassTrackable target, boolean silent) {
+		this.compassTarget = target;
+		updateCompass(silent);
+	}
+	
+	public Location getCompassTarget() {
+		if (compassTarget == null) {
+			return null;
 		}
 		
-		
-		
-		BookMeta bookMeta = (BookMeta) book.getItemMeta();
-		bookMeta.setPages(new LinkedList<String>());
-		
-		
-		//generate the first page
-		bookMeta.addPage("      Quest Log\n  " 
-				+ ChatColor.RESET + "\n\n"
-						+ "  This book details your current quest progress & history.");
-		
-		//generate the stats page
-		bookMeta.addPage(ChatColor.DARK_PURPLE + " " + getPlayer().getName() + " - "
-				+ ChatColor.DARK_RED + title
-				+ "\n-----\n  " + ChatColor.GOLD + "Fame: " + fame
-				+ "\n  "			+ ChatColor.GOLD + "Gold: " + money
-				+ ChatColor.DARK_GREEN + "\n\n  Current Quests: " + currentQuests.size()
-				+ ChatColor.DARK_BLUE + "\n\n  Completed Quests: " + completedQuests.size()
-				+ ChatColor.RESET);	
-			
-		
-		
-		//now do quest info
-		//Quest Name
-		//Quest Description
-			//Goal Description? :S
-		
-		if (currentQuests.isEmpty()) {
-			bookMeta.addPage("\nYou do not have any active quests!");
-		} else {
-			for (Quest quest : currentQuests) {
-				
-				String page = "";
-				
-				page += ChatColor.GOLD + quest.getName() + "\n";
-				
-				page += ChatColor.DARK_BLUE + quest.getDescription() + "\n";
-				
-				page += ChatColor.BLACK + "Party: ";
-				
-				if (quest.getUseParty()) {
-					page += ChatColor.DARK_GREEN;
-				} else {
-					page += ChatColor.GRAY;
-				}
-				
-				page += "Uses  ";
-				
-				if (quest.getRequireParty()) {
-					page += ChatColor.DARK_GREEN;
-				} else {
-					page += ChatColor.GRAY;
-				}
-				
-				page += "Requires\n";
-				
-				page += ChatColor.RESET + "Objectives:\n";
-				
-				page += ChatColor.DARK_GRAY;
-				
-				for (Goal goal : quest.getGoals()) {
-					if (goal.isComplete()) {
-						page += ChatColor.GREEN + " =" + goal.getDescription() + "\n"; 
-					} else {
-						page += ChatColor.DARK_RED + " -" + goal.getDescription() + "\n";
-					}
-				}
-				if (quest.isReady()) {
-					page += ChatColor.DARK_PURPLE + "\n  =" + quest.getTemplate().getEndHint();
-				}
-				
-				bookMeta.addPage(page);
-				
-			}
-		}
-		
-		
-		
-		book.setItemMeta(bookMeta);
-		play.sendMessage(ChatColor.GRAY + "Your "
-				+ ChatColor.DARK_GREEN + "Quest Log" + ChatColor.GRAY + " has been"
-				+ " updated!" + ChatColor.RESET);
-		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.C));
-		play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.A));
-		
-		play.setLevel(money);
+		return compassTarget.getLocation();
 	}
 	
 	public List<Quest> getCurrentQuests() {
@@ -411,9 +293,12 @@ public class QuestPlayer implements Participant, Listener {
 	
 	public void addQuest(Quest quest) {
 		currentQuests.add(quest);
-		history.addHistoryEvent(new HistoryEvent("Accepted the quest \"" + quest.getName() +"\""));
-		addQuestBook();
-		updateQuestBook();
+		history.addHistoryEvent(new HistoryEvent("Accepted the quest " + ChatColor.DARK_PURPLE + quest.getName()));
+		if (focusQuest == null) {
+			setFocusQuest(quest.getName());
+		}
+		//addQuestBook();
+		//updateQuestBook();
 	}
 	
 	public boolean removeQuest(Quest quest) {
@@ -428,6 +313,14 @@ public class QuestPlayer implements Participant, Listener {
 			Quest q = it.next();
 			if (q.equals(quest)) {
 				it.remove();
+				if (focusQuest.equals(quest.getName())) {
+					if (currentQuests.isEmpty()) {
+						focusQuest = null;
+						QuestJournal.addQuestJournal(this);
+					} else {
+						setFocusQuest(currentQuests.get(0).getName());
+					}
+				}
 				return true;
 			}
 		}
@@ -442,7 +335,7 @@ public class QuestPlayer implements Participant, Listener {
 		removeQuest(quest);
 		
 		history.addHistoryEvent(
-				new HistoryEvent("Completed the quest \"" + quest.getName() + "\""));
+				new HistoryEvent("Completed the quest " + ChatColor.DARK_PURPLE + quest.getName()));
 	}
 	
 	public int getFame() {
@@ -554,6 +447,16 @@ public class QuestPlayer implements Participant, Listener {
 				.then(" title!"));
 		
 		menu.show(getPlayer().getPlayer());
+		
+		TitleManager.sendTimings(getPlayer().getPlayer(), 30, 80, 30);
+
+//        TitleManager.sendSubTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
+//        		new FancyMessage(title).toOldMessageFormat()));
+
+        TitleManager.sendTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
+        		ChatColor.GREEN + "Title Unlocked!"));
+        
+        getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.FIREWORK_TWINKLE, 10, 1);
 	}
 	
 //	/**
@@ -597,6 +500,8 @@ public class QuestPlayer implements Participant, Listener {
 		map.put("id", getPlayer().getUniqueId().toString());
 		map.put("portalloc", this.questPortal);
 		map.put("completedquests", completedQuests);
+		map.put("focusquest", focusQuest);
+		map.put("notes", journalNotes);
 		
 		return map;
 	}
@@ -632,6 +537,8 @@ public class QuestPlayer implements Participant, Listener {
 		qp.title = (String) map.get("title");
 		qp.unlockedTitles = (List<String>) map.get("unlockedtitles");
 		qp.completedQuests = (List<String>) map.get("completedquests");
+		qp.focusQuest = (String) map.get("focusquest");
+		qp.journalNotes = (List<String>) map.get("notes");
 		
 		if (qp.completedQuests == null) {
 			qp.completedQuests = new LinkedList<String>();
@@ -641,6 +548,9 @@ public class QuestPlayer implements Participant, Listener {
 			qp.unlockedTitles = new LinkedList<String>();
 		}
 		
+		if (qp.journalNotes == null) {
+			qp.journalNotes = new LinkedList<String>();
+		}
 		
 		return qp;
 	}
@@ -748,6 +658,10 @@ public class QuestPlayer implements Participant, Listener {
 			return;
 		}
 		
+		if (e.getItem() == null) {
+			return;
+		}
+		
 		if (e.getItem() != null && e.getItem().getType().equals(Material.WRITTEN_BOOK)) {
 			BookMeta meta = (BookMeta) e.getItem().getItemMeta();
 			
@@ -755,8 +669,26 @@ public class QuestPlayer implements Participant, Listener {
 					e.getItem().getEnchantmentLevel(Enchantment.LUCK) == 5) {
 				//it's a quest log. Update it
 				
-				updateQuestBook();
+				updateQuestBook(true);
 			}
+			
+			return;
+		}
+		
+		if (e.getItem().hasItemMeta() && e.getItem().getType() == Material.BOOK_AND_QUILL) {
+			BookMeta meta = (BookMeta) e.getItem().getItemMeta();
+			if (meta.hasTitle() && meta.getTitle().equals("Journal")
+					&& meta.hasAuthor() && meta.getAuthor().equals(p.getName())
+					&& e.getItem().getEnchantmentLevel(Enchantment.LUCK) == 5) {
+				updateQuestLog(true);
+			}
+			
+			return;
+		}
+		
+		if (Compass.CompassDefinition.isCompass(e.getItem())) {
+			updateCompass(false);
+			return;
 		}
 		
 	}
@@ -889,6 +821,48 @@ public class QuestPlayer implements Participant, Listener {
 	
 	}
 	
+	@EventHandler
+	public void onPlayerRuinJournal(PlayerEditBookEvent e) {
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		if (!e.getPlayer().equals(getPlayer().getPlayer())) {
+			return;
+		}
+		
+		BookMeta oldMeta = e.getPreviousBookMeta(),
+				newMeta = e.getNewBookMeta();
+		
+		if (oldMeta.hasTitle() && oldMeta.getTitle().equals("Journal")
+			&& oldMeta.hasAuthor() && oldMeta.getAuthor().equals(e.getPlayer().getName())
+			&& oldMeta.getEnchantLevel(Enchantment.LUCK) == 5) {
+			//grab the player notes
+			int pageNum;
+			String page;
+			for (pageNum = 1; pageNum <= newMeta.getPageCount(); pageNum++) {
+				page = newMeta.getPage(pageNum);
+				if (page.contains("  Player Notes")) {
+					break;
+				}
+			}
+			pageNum++;
+			this.journalNotes.clear();
+			if (pageNum > newMeta.getPageCount()) {
+				//we went beyond what we have
+			} else {
+				//save their notes
+				for (; pageNum <= newMeta.getPageCount(); pageNum++) {
+					journalNotes.add(newMeta.getPage(pageNum));
+				}
+			}
+			
+			e.setCancelled(true);
+			QuestJournal.updateQuestJournal(this, true);
+			
+		}
+	}
+	
 	/**
 	 * Displays for this quest player a player menu for the given player.
 	 * @param player
@@ -984,4 +958,154 @@ public class QuestPlayer implements Participant, Listener {
 		return Bukkit.getOfflinePlayer(playerID);
 	}
 	
+	public Quest getFocusQuest() {
+		if (focusQuest == null) {
+			return null;
+		}
+		
+		for (Quest q : currentQuests) {
+			if (q.getName().equals(focusQuest)) {
+				return q;
+			}
+		}
+		
+		return null;
+	}
+	
+	public List<String> getPlayerNotes() {
+		return this.journalNotes;
+	}
+	
+	public void setFocusQuest(String questName) {
+		for (Quest q : currentQuests) {
+			if (q.getName().equals(questName)) {
+				focusQuest = questName;
+				break;
+			}
+		}
+		QuestJournal.updateQuestJournal(this, false);
+		if (getPlayer().isOnline()) {
+			getPlayer().getPlayer().sendMessage("Your now focusing on the quest " + ChatColor.DARK_PURPLE + questName);
+		}
+		
+		updateCompass(true);
+	}
+	
+	/**
+	 * Helper method to select the next compass target from the current focus quest's goal
+	 */
+	private void getNextTarget() {
+		Quest quest = this.getFocusQuest();
+		
+		if (quest == null) {
+			this.compassTarget = null;
+			return;
+		}
+		
+		Goal goal = quest.getCurrentGoal();
+		if (goal.getRequirements().isEmpty()) {
+			this.compassTarget = null;
+			return;
+		}
+		
+		for (Requirement req : goal.getRequirements()) {
+			if (req instanceof CompassTrackable && !req.isCompleted()) {
+				compassTarget = (CompassTrackable) req;
+				return;
+			}
+		}
+		
+		//got all the way through. Are all requirements complete? Then either the quest is done or there are
+		//reqs left we can't track, so we point to null.
+		
+		//if (goal.isComplete()) {
+			//HOPE that the quest is actually complete.
+		this.compassTarget = null;
+		return;
+		//}
+	}
+	
+	/**
+	 * Checks whether this player has enough of the provided item.<br />
+	 * This method checks the name of the item when calculating how much they have
+	 * @param searchItem
+	 * @return
+	 */
+	public boolean hasItem(ItemStack searchItem) {
+		if (!getPlayer().isOnline()) {
+			return false;
+		}
+		
+		Inventory inv = getPlayer().getPlayer().getInventory();
+		int count = 0;
+		String itemName = null;
+		
+		if (searchItem.hasItemMeta() && searchItem.getItemMeta().hasDisplayName()) {
+			itemName = searchItem.getItemMeta().getDisplayName();
+		}
+		
+		for (ItemStack item : inv.all(searchItem.getType()).values()) {
+			if ((itemName == null && (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName())) || 
+					(item.hasItemMeta() && item.getItemMeta().getDisplayName() != null 
+					  && item.getItemMeta().getDisplayName().equals(itemName))) {
+				count += item.getAmount();
+			}
+		}
+		
+		if (count >= searchItem.getAmount()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Removes the passed item from the player's inventory.<br />
+	 * This method also uses item lore to make sure the correct items are removed
+	 * @param inv
+	 * @param item
+	 */
+	public void removeItem(ItemStack searchItem) {
+		
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		Inventory inv = getPlayer().getPlayer().getInventory();
+		//gotta go through and find ones that match the name
+		int left = searchItem.getAmount();
+		String itemName = null;
+		ItemStack item;
+		
+		if (searchItem.hasItemMeta() && searchItem.getItemMeta().hasDisplayName()) {
+			itemName = searchItem.getItemMeta().getDisplayName();
+		}
+		
+		for (int i = 0; i <= 35; i++) {
+			item = inv.getItem(i);
+			if (item != null && item.getType() == searchItem.getType())
+			if (  (itemName == null && (!item.hasItemMeta() || !item.getItemMeta().hasDisplayName()))
+				|| (item.hasItemMeta() && item.getItemMeta().getDisplayName() != null && item.getItemMeta().getDisplayName().equals(itemName))	
+					) {
+				//deduct from this item stack as much as we can, up to 'left'
+				//but if there's more than 'left' left, just remove it
+				int amt = item.getAmount();
+				if (amt <= left) {
+					//gonna remove entire stack
+					item.setType(Material.AIR);
+					item.setAmount(0);
+					item.setItemMeta(null);
+				} else {
+					item.setAmount(amt - left);
+				}
+				
+				inv.setItem(i, item);
+				left-=amt;
+				
+				if (left <= 0) {
+					break;
+				}
+			}
+		}
+	}
 }

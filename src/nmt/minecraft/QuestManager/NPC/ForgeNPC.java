@@ -29,7 +29,7 @@ import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
  * @author Skyler
  *
  */
-public class ForgeNPC extends SimpleBioptionNPC {
+public class ForgeNPC extends SimpleStaticBioptionNPC {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 

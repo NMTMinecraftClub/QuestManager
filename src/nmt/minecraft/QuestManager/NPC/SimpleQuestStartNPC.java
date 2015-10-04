@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -19,6 +21,7 @@ import nmt.minecraft.QuestManager.Configuration.QuestConfiguration;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Player.Utils.CompassTrackable;
 import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
@@ -33,7 +36,7 @@ import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
  * @author Skyler
  *
  */
-public class SimpleQuestStartNPC extends SimpleBioptionNPC {
+public class SimpleQuestStartNPC extends SimpleStaticBioptionNPC implements CompassTrackable {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -248,7 +251,7 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 					messageChat = ChatMenu.getDefaultMenu(finishMessage);
 					qInst.completeQuest(false);
 				} else {
-					QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player).updateQuestBook();
+					QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player).updateQuestBook(true);
 				}
 			}
 			if (messageChat == null) {
@@ -256,10 +259,24 @@ public class SimpleQuestStartNPC extends SimpleBioptionNPC {
 			}
 		} else {
 			messageChat = new BioptionChatMenu(chat, 
-					new QuestStartAction(quest, player), null);			
+					new QuestStartAction(quest, new FancyMessage(this.name).color(ChatColor.DARK_GRAY).style(ChatColor.BOLD)
+							.then("\n").then(chat.getBody()), chat.getResponse1(), player),  null);			
 		}
 
 		messageChat.show(player);
+		this.updateQuestHistory(qp, messageChat.getMessage().toOldMessageFormat()
+				.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + ""));
+	}
+	
+	@Override
+	public Location getLocation() {
+		Entity e = getEntity();
+		
+		if (e != null) {
+			return e.getLocation();
+		} else {
+			return null;
+		}
 	}
 	
 }

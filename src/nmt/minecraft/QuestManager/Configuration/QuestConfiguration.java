@@ -13,8 +13,10 @@ import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.NPC.NPC;
 import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
 import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Quest;
+import nmt.minecraft.QuestManager.Quest.Requirements.Requirement;
 import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
 
 /**
@@ -55,6 +57,14 @@ public class QuestConfiguration {
 	 * @see QuestConfigurationField
 	 */
 	private void checkConfig() {
+		
+		if (config.getDouble("configversion", 0.0) - configVersion > .001) {
+			String name = config.getString(QuestConfigurationField.NAME.getKey(), "NO NAME");
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning("The quest [" + name + "] has an invalid version!\n"
+					+ "QuestManager Configuration Version: " + configVersion + " doesn't match quest's: " 
+					+ config.getDouble("configversion", 0.0));
+			
+		}
 		
 		//Check each field and put in defaults if they aren't there (niave approach)
 		for (QuestConfigurationField field : QuestConfigurationField.values()) {
@@ -137,9 +147,12 @@ public class QuestConfiguration {
 			ConfigurationSection npcSection = config.getConfigurationSection(
 					QuestConfigurationField.NPCS.getKey());
 			
+			NPC npc;
 			if (!(npcSection == null) && !npcSection.getKeys(false).isEmpty()) {
 				for (String key : npcSection.getKeys(false)) {
-					npcs.add((NPC) npcSection.get(key));
+					npc = (NPC) npcSection.get(key);
+					npc.setQuestName(this.getName());
+					npcs.add(npc);
 				}
 			}
 		}
@@ -162,6 +175,7 @@ public class QuestConfiguration {
 		} else {
 			startingNPC = (SimpleQuestStartNPC) config.get(QuestConfigurationField.START.getKey());
 			startingNPC.setQuestTemplate(this);
+			startingNPC.setQuestName(getName());
 			
 			if (config.contains(QuestConfigurationField.END.getKey())) {
 				
@@ -218,6 +232,11 @@ public class QuestConfiguration {
 			quest.addGoal(goal);
 		}
 		
+		//activate first goal
+		for (Requirement req : quest.getGoals().get(0).getRequirements()) {
+			req.activate();
+		}
+		
 		//get fame and reward info
 		quest.setFame(config.getInt(QuestConfigurationField.FAME.getKey()));
 		quest.setTitleReward(config.getString(QuestConfigurationField.TITLEREWARD.getKey()));
@@ -232,7 +251,10 @@ public class QuestConfiguration {
 			quest.addItemReward(item);
 		}
 		
-		
+		if (participant != null)
+			for (QuestPlayer qp : participant.getParticipants()) {
+				qp.addQuest(quest);
+			}
 		
 		
 		

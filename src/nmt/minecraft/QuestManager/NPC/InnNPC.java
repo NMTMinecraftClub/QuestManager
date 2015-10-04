@@ -30,7 +30,7 @@ import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
  * @author Skyler
  *
  */
-public class InnNPC extends SimpleBioptionNPC {
+public class InnNPC extends SimpleStaticBioptionNPC {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 

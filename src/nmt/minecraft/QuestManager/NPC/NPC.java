@@ -3,6 +3,7 @@ package nmt.minecraft.QuestManager.NPC;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Entity;
@@ -14,6 +15,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
+import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Quest.Quest;
+import nmt.minecraft.QuestManager.Quest.History.HistoryEvent;
 import nmt.minecraft.QuestManager.Scheduling.Tickable;
 
 public abstract class NPC implements ConfigurationSerializable, Listener, Tickable {
@@ -29,6 +33,11 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 	protected UUID id;
 	
 	protected String name;
+	
+	/**
+	 * Which quests is this NPC associated? Meaning which quest's history should include this npc's dialogue?
+	 */
+	protected String questName;
 	
 	protected NPC() {
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
@@ -76,6 +85,9 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 	public void setEntity(Entity entity) {
 		this.entity = entity;
 		this.id = entity.getUniqueId();
+		if (entity instanceof LivingEntity) {
+			((LivingEntity) entity).setRemoveWhenFarAway(false);
+		}
 	}
 	
 	/**
@@ -88,6 +100,14 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 	
 	public String getName() {
 		return name;
+	}
+	
+	public String getQuestName() {
+		return questName;
+	}
+	
+	public void setQuestName(String questName) {
+		this.questName = questName;
 	}
 	
 	
@@ -137,4 +157,33 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 	}
 	
 	protected abstract void interact(Player player);
+	
+	protected void updateQuestHistory(QuestPlayer qp, String desc) {
+		if (questName == null || qp == null) {
+			return;
+		}
+		
+		Quest quest = null;
+		
+		for (Quest q : qp.getCurrentQuests()) {
+			if (q.getName().equals(questName)) {
+				quest = q;
+				break;
+			}
+		}
+		
+		if (quest == null) {
+			return;
+		}
+
+		for (HistoryEvent event : quest.getHistory().events()) {
+			if (ChatColor.stripColor(event.getDescription()).equals(ChatColor.stripColor(desc))) {
+				return; //already in there
+			}
+		}
+		
+		//wasn't in there, so add one
+		quest.addHistoryEvent(new HistoryEvent(desc));
+		qp.addJournal();
+	}
 }

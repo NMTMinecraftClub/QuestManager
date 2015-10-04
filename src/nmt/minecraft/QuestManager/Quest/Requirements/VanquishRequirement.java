@@ -23,6 +23,7 @@ import nmt.minecraft.QuestManager.Configuration.EquipmentConfiguration;
 import nmt.minecraft.QuestManager.Configuration.State.RequirementState;
 import nmt.minecraft.QuestManager.Configuration.State.StatekeepingRequirement;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
+import nmt.minecraft.QuestManager.Player.Utils.CompassTrackable;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
@@ -33,7 +34,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
  * @author Skyler
  *
  */
-public class VanquishRequirement extends Requirement implements Listener, StatekeepingRequirement {
+public class VanquishRequirement extends Requirement implements Listener, StatekeepingRequirement, CompassTrackable {
 	
 	public static class VanquishFactory extends RequirementFactory<VanquishRequirement> {
 		
@@ -50,11 +51,12 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	
 	private LivingEntity foe;
 	
+	private RequirementState foeStateRecord;
+	
 	private UUID id;
 	
 	private VanquishRequirement(Goal goal) {
 		super(goal);
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	public VanquishRequirement(Goal goal, LivingEntity foe) {
@@ -68,6 +70,53 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		
 	}
 
+	@Override
+	public void activate() {
+		ConfigurationSection myState = foeStateRecord.getConfig();
+		
+		//get rid of any entities we already have
+		if (foe != null && !foe.isDead()) {
+			foe.remove();			
+		}
+		
+		
+		ConfigurationSection foeState =  myState.getConfigurationSection("foe");
+		Location loc = ((LocationState) foeState.get("location")).getLocation();
+		
+		//load chunk before creating foe
+		loc.getChunk();
+		
+		foe = (LivingEntity) loc.getWorld().spawnEntity(loc, EntityType.valueOf(foeState.getString("type")));
+		this.id = foe.getUniqueId();
+		foe.setMaxHealth(foeState.getDouble("maxhp"));
+		foe.setHealth(foeState.getDouble("hp"));
+		foe.setCustomName(foeState.getString("name"));
+		
+		foe.setRemoveWhenFarAway(false);
+		
+		EntityEquipment equipment = foe.getEquipment();
+		EquipmentConfiguration econ = new EquipmentConfiguration();
+		try {
+			econ.load( foeState.getConfigurationSection("equipment"));
+		} catch (InvalidConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		equipment.setHelmet(econ.getHead());
+		equipment.setChestplate(econ.getChest());
+		equipment.setLeggings(econ.getLegs());
+		equipment.setBoots(econ.getBoots());
+		equipment.setItemInHand(econ.getHeld());
+		
+		if (desc == null) {
+			desc = foeState.getString("description", "Slay " + foe.getCustomName());
+		}
+		
+		update();
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
+	}
+	
 	/**
 	 * @return the foe
 	 */
@@ -140,45 +189,16 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 
 	@Override
 	public void loadState(RequirementState reqState) throws InvalidConfigurationException {
-		
-		
+
 		ConfigurationSection myState = reqState.getConfig();
-		
+
 		if (!myState.contains("type") || !myState.getString("type").equals("vr")) {
 			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'vr' but got " + myState.get("type", "null"));
 		}
 		
-		//get rid of any entities we already have
-		if (foe != null && !foe.isDead()) {
-			foe.remove();			
-		}
+		this.desc = myState.getString("description", "Vanquish " + myState.getString("foe.name", "the monster"));
 		
-		
-		ConfigurationSection foeState =  myState.getConfigurationSection("foe");
-		Location loc = ((LocationState) foeState.get("location")).getLocation();
-		
-		//load chunk before creating foe
-		loc.getChunk();
-		
-		foe = (LivingEntity) loc.getWorld().spawnEntity(loc, EntityType.valueOf(foeState.getString("type")));
-		this.id = foe.getUniqueId();
-		foe.setMaxHealth(foeState.getDouble("maxhp"));
-		foe.setHealth(foeState.getDouble("hp"));
-		foe.setCustomName(foeState.getString("name"));
-		
-		foe.setRemoveWhenFarAway(false);
-		
-		EntityEquipment equipment = foe.getEquipment();
-		EquipmentConfiguration econ = new EquipmentConfiguration();
-		econ.load( foeState.getConfigurationSection("equipment"));
-		
-		equipment.setHelmet(econ.getHead());
-		equipment.setChestplate(econ.getChest());
-		equipment.setLeggings(econ.getLegs());
-		equipment.setBoots(econ.getBoots());
-		equipment.setItemInHand(econ.getHeld());
-		
-		update();
+		this.foeStateRecord = reqState;
 	}
 
 	@Override
@@ -206,9 +226,23 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 				break;
 			}
 		}
-		System.out.println("removing");
 		foe.remove();
 	}
 	
+	@Override
+	public String getDescription() {
+		return desc;
+	}
+	
+	@Override
+	public Location getLocation() {
+		getFoe(); //update foe
+		if (foe == null) {
+			return null;
+		} else {
+			return foe.getLocation();
+		}
+		
+	}
 	
 }

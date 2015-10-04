@@ -1,10 +1,8 @@
 package nmt.minecraft.QuestManager.NPC;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,17 +19,16 @@ import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.UI.ChatMenu;
 import nmt.minecraft.QuestManager.UI.Menu.BioptionChatMenu;
-import nmt.minecraft.QuestManager.UI.Menu.Action.TeleportAction;
+import nmt.minecraft.QuestManager.UI.Menu.Action.OpenShopAction;
+import nmt.minecraft.QuestManager.UI.Menu.Inventory.ServiceInventory;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
-import nmt.minecraft.QuestManager.UI.Menu.Message.Message;
-import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
 
 /**
- * NPC which offers to take a player and move them, for a fee?
+ * NPC which offers to and repairs a players equipment, for a fee
  * @author Skyler
  *
  */
-public class TeleportNPC extends SimpleStaticBioptionNPC {
+public class ServiceNPC extends SimpleStaticBioptionNPC {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -39,7 +36,7 @@ public class TeleportNPC extends SimpleStaticBioptionNPC {
 	 */
 	public static void registerWithAliases() {
 		for (aliases alias : aliases.values()) {
-			ConfigurationSerialization.registerClass(TeleportNPC.class, alias.getAlias());
+			ConfigurationSerialization.registerClass(ServiceNPC.class, alias.getAlias());
 		}
 	}
 	
@@ -47,16 +44,15 @@ public class TeleportNPC extends SimpleStaticBioptionNPC {
 	 * Registers this class as configuration serializable with only the default alias
 	 */
 	public static void registerWithoutAliases() {
-		ConfigurationSerialization.registerClass(TeleportNPC.class);
+		ConfigurationSerialization.registerClass(ServiceNPC.class);
 	}
 	
 
 	private enum aliases {
-		FULL("nmt.minecraft.QuestManager.NPC.TeleportNPC"),
-		DEFAULT(TeleportNPC.class.getName()),
-		SHORT("TeleportNPC"),
-		ALT("FerryNPC"),
-		INFORMAL("TPNPC");
+		FULL("nmt.minecraft.QuestManager.NPC.ServiceNPC"),
+		DEFAULT(ServiceNPC.class.getName()),
+		SHORT("ServiceNPC"),
+		INFORMAL("SERVICE");
 		
 		private String alias;
 		
@@ -68,9 +64,8 @@ public class TeleportNPC extends SimpleStaticBioptionNPC {
 			return alias;
 		}
 	}
-
 	
-	private TeleportNPC(Location startingLoc) {
+	private ServiceNPC(Location startingLoc) {
 		super(startingLoc);
 	}
 	
@@ -80,9 +75,8 @@ public class TeleportNPC extends SimpleStaticBioptionNPC {
 		
 		map.put("name", name);
 		map.put("type", getEntity().getType());
-		map.put("cost", cost);
-		map.put("destination", new LocationState(destination));
 		map.put("location", new LocationState(getEntity().getLocation()));
+		map.put("services", inventory);
 		
 		EquipmentConfiguration econ;
 		
@@ -97,26 +91,20 @@ public class TeleportNPC extends SimpleStaticBioptionNPC {
 		map.put("equipment", econ);
 		
 		map.put("message", chat);
-		
-		map.put("badrequirementmessage", altMessage);
-		
-		map.put("requiredquests", requirements);
 	
 		
 		return map;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static TeleportNPC valueOf(Map<String, Object> map) {
+	public static ServiceNPC valueOf(Map<String, Object> map) {
 		if (map == null || !map.containsKey("name") || !map.containsKey("type") 
 				 || !map.containsKey("location") || !map.containsKey("equipment")
-				  || !map.containsKey("message") || !map.containsKey("cost") 
-				|| !map.containsKey("destination") || !map.containsKey("requiredquests")
-				|| !map.containsKey("badrequirementmessage")) {
+				  || !map.containsKey("message") || !map.containsKey("services")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Invalid NPC info! "
 					+ (map.containsKey("name") ? ": " + map.get("name") : ""));
 			return null;
 		}
+		
 		
 		EquipmentConfiguration econ = new EquipmentConfiguration();
 		try {
@@ -131,15 +119,12 @@ public class TeleportNPC extends SimpleStaticBioptionNPC {
 		LocationState ls = (LocationState) map.get("location");
 		Location loc = ls.getLocation();
 		
+		ServiceNPC npc = new ServiceNPC(loc);
 		EntityType type = EntityType.valueOf((String) map.get("type"));
-		
-		TeleportNPC npc = new TeleportNPC(loc);
 		
 		npc.name = (String) map.get("name");
 		
-		npc.cost = (int) map.get("cost");
-		
-		npc.destination = ((LocationState) map.get("destination")).getLocation();
+		npc.inventory = (ServiceInventory) map.get("services");
 		
 
 		loc.getChunk();
@@ -156,27 +141,18 @@ public class TeleportNPC extends SimpleStaticBioptionNPC {
 			
 		}
 		
-		npc.chat = (BioptionMessage) map.get("message");
-		npc.altMessage = (Message) map.get("badrequirementmessage");
-		npc.requirements = (List<String>) map.get("requiredquests");
+		npc.chat = (BioptionMessage) map.get("message");		
 		
 		//provide our npc's name, unless we don't have one!
 		if (npc.name != null && !npc.name.equals("")) {
 			FancyMessage label = new FancyMessage(npc.name);
 			npc.chat.setSourceLabel(label);			
-			npc.altMessage.setSourceLabel(label);
 		}
 		
 		return npc;
 	}
-		
-	private int cost;
 	
-	private Location destination;
-	
-	private Message altMessage;
-	
-	private List<String> requirements;
+	private ServiceInventory inventory;
 		
 	@Override
 	protected void interact(Player player) {
@@ -184,34 +160,9 @@ public class TeleportNPC extends SimpleStaticBioptionNPC {
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager()
 				.getPlayer(player.getUniqueId());
 		
-		FancyMessage msg = new FancyMessage("I apologize, but you ")
-		.then("don't seem to have enough for fare...")
-		.color(ChatColor.DARK_RED);
-		
-		boolean meetreqs = true;
-		
-		if (requirements != null && !requirements.isEmpty()) {
-			//go through reqs, see if the player has those quests completed
-			for (String req : requirements) {
-				if (!qp.hasCompleted(req)) {
-					meetreqs=false;
-					break;
-				}
-			}
-		}
-		
-		if (!meetreqs) {
-			//doesn't have all the required quests done yet!
-			ChatMenu messageChat = ChatMenu.getDefaultMenu(altMessage);
-			messageChat.show(player);
-			return;
-		}
-			
-		SimpleMessage message = new SimpleMessage(msg);
-		message.setSourceLabel(new FancyMessage(this.name));
 		
 		ChatMenu messageChat = new BioptionChatMenu(chat, 
-					new TeleportAction(cost, destination, qp, message)
+					new OpenShopAction(qp, inventory)
 		, null);			
 
 		messageChat.show(player);

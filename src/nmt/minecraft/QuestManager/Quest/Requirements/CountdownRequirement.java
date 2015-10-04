@@ -40,7 +40,6 @@ public class CountdownRequirement extends Requirement implements Tickable, State
 	
 	private CountdownRequirement(Goal goal) {
 		super(goal);
-		IntervalScheduler.getScheduler().register(this);
 	}
 	
 	public CountdownRequirement(Participant participants, Goal goal, String description, Date targetTime) {
@@ -48,11 +47,13 @@ public class CountdownRequirement extends Requirement implements Tickable, State
 		state = false;
 		this.targetTime = targetTime;
 		this.participants = participants;
-		IntervalScheduler.getScheduler().register(this);
 		
 	}
 	
-	
+	@Override
+	public void activate() {
+		IntervalScheduler.getScheduler().register(this);
+	}
 	
 	/**
 	 * @return the targetTime
@@ -103,6 +104,7 @@ public class CountdownRequirement extends Requirement implements Tickable, State
 			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'countdownr' but got " + config.getString("type", "null"));
 		}
 		
+		desc = config.getString("description", "Wait for a period");
 		int offset = config.getInt("delay");
 		
 		Calendar cal = Calendar.getInstance();
@@ -150,6 +152,32 @@ public class CountdownRequirement extends Requirement implements Tickable, State
 		;
 	}
 	
+	@Override
+	public String getDescription() {
+		Date date = new Date();
+		String ret = this.desc;
+		if (!state) {
+			ret += " (";
+			long left = targetTime.getTime() - date.getTime();
+			boolean mins = true;
+			long value = left / 60000; //get minutes
+			if (value == 0) {
+				//less than a minute remaining
+				value = left / 1000; //get seconds
+				mins = false;
+			}
+			
+			ret += value + " ";
+			if (mins) {
+				ret += "m";
+			} else {
+				ret += "s";
+			}
+			ret += ")";
+		}
+		
+		return ret;
+	}
 	
 	
 }

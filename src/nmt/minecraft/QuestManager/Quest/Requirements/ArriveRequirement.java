@@ -16,6 +16,7 @@ import nmt.minecraft.QuestManager.Configuration.State.StatekeepingRequirement;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Player.Utils.CompassTrackable;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
@@ -26,7 +27,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
  * @author Skyler
  * @see {@link PositionRequirement}
  */
-public class ArriveRequirement extends Requirement implements Listener, StatekeepingRequirement {
+public class ArriveRequirement extends Requirement implements Listener, StatekeepingRequirement, CompassTrackable {
 	
 	public static class ArriveFactory extends RequirementFactory<ArriveRequirement> {
 
@@ -60,20 +61,21 @@ public class ArriveRequirement extends Requirement implements Listener, Statekee
 	 */
 	private ArriveRequirement(Goal goal) {
 		super(goal);	
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
-	}
-	
-	public ArriveRequirement(Goal goal, Participant participants, Location location, double range) {
-		this(goal, "", participants, location, range);
+		//Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	public ArriveRequirement(Goal goal, String description, Participant participants, Location location, double range) {
-		super(goal, description);
+		this(goal);
 		
 		this.participants = participants;
 		this.destination = location;
 		this.targetRange = range;
 		
+	}
+	
+	@Override
+	public void activate() {
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
@@ -148,7 +150,8 @@ public class ArriveRequirement extends Requirement implements Listener, Statekee
 		if (!config.contains("type") || !config.getString("type").equals("arrr")) {
 			throw new InvalidConfigurationException();
 		}
-			
+		
+		this.desc = config.getString("description", "Arrive at the location");
 		this.targetRange = config.getDouble("range", 1.0);
 		this.destination = ((LocationState) config.get("destination")).getLocation();
 		
@@ -180,7 +183,15 @@ public class ArriveRequirement extends Requirement implements Listener, Statekee
 	public void stop() {
 		; //do nothing, nothing to clean
 	}
+
+	@Override
+	public String getDescription() {
+		return this.desc;
+	}
 	
-	
+	@Override
+	public Location getLocation() {
+		return this.destination;
+	}
 	
 }

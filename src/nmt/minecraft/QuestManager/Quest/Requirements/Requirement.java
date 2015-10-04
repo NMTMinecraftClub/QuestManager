@@ -22,7 +22,7 @@ import nmt.minecraft.QuestManager.Quest.Goal;
  */
 public abstract class Requirement {
 	
-	private String desc;
+	protected String desc;
 	
 	private Goal goal;
 	
@@ -68,9 +68,7 @@ public abstract class Requirement {
 	 * Returns the description of this requirement
 	 * @return
 	 */
-	public String getDescription() {
-		return desc;
-	}
+	public abstract String getDescription();
 	
 	/**
 	 * Returns whether or not the current requirement is completed.<br />
@@ -85,6 +83,11 @@ public abstract class Requirement {
 		update();
 		return state;
 	}
+	
+	/**
+	 * Sets this requirement to be active, listening for events and updating based on them
+	 */
+	public abstract void activate();
 	
 	/**
 	 * Notifies the parent goal of a status chain, usually causing a re-evaluation of criteria

@@ -18,6 +18,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import nmt.minecraft.QuestManager.Configuration.PluginConfiguration;
+import nmt.minecraft.QuestManager.Configuration.Utils.Chest;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Fanciful.FancyMessage;
 import nmt.minecraft.QuestManager.Fanciful.MessagePart;
@@ -25,16 +26,22 @@ import nmt.minecraft.QuestManager.Fanciful.TextualComponent;
 import nmt.minecraft.QuestManager.NPC.ForgeNPC;
 import nmt.minecraft.QuestManager.NPC.InnNPC;
 import nmt.minecraft.QuestManager.NPC.MuteNPC;
+import nmt.minecraft.QuestManager.NPC.ServiceNPC;
 import nmt.minecraft.QuestManager.NPC.ShopNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleBioptionNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleChatNPC;
 import nmt.minecraft.QuestManager.NPC.SimpleQuestStartNPC;
 import nmt.minecraft.QuestManager.NPC.TeleportNPC;
+import nmt.minecraft.QuestManager.NPC.Utils.ServiceCraft;
+import nmt.minecraft.QuestManager.NPC.Utils.ServiceOffer;
 import nmt.minecraft.QuestManager.Player.Party;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Quest.Quest;
 import nmt.minecraft.QuestManager.Quest.Requirements.ArriveRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.ChestRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.CountdownRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.DeliverRequirement;
+import nmt.minecraft.QuestManager.Quest.Requirements.InteractRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PositionRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.PossessRequirement;
 import nmt.minecraft.QuestManager.Quest.Requirements.SlayRequirement;
@@ -43,7 +50,8 @@ import nmt.minecraft.QuestManager.Quest.Requirements.VanquishRequirement;
 import nmt.minecraft.QuestManager.UI.ChatGuiHandler;
 import nmt.minecraft.QuestManager.UI.InventoryGuiHandler;
 import nmt.minecraft.QuestManager.UI.Menu.Action.PartyInviteAction;
-import nmt.minecraft.QuestManager.UI.Menu.Inventory.GuiInventory;
+import nmt.minecraft.QuestManager.UI.Menu.Inventory.ServiceInventory;
+import nmt.minecraft.QuestManager.UI.Menu.Inventory.ShopInventory;
 import nmt.minecraft.QuestManager.UI.Menu.Message.BioptionMessage;
 import nmt.minecraft.QuestManager.UI.Menu.Message.SimpleMessage;
 
@@ -122,6 +130,10 @@ public class QuestManagerPlugin extends JavaPlugin {
 				new TimeRequirement.TimeFactory());
 		reqManager.registerFactory("COUNTDOWN", 
 				new CountdownRequirement.CountdownFactory());
+		reqManager.registerFactory("INTERACT", 
+				new InteractRequirement.InteractFactory());
+		reqManager.registerFactory("CHEST", 
+				new ChestRequirement.ChestRequirementFactory());
 		
 	}
 	
@@ -141,11 +153,16 @@ public class QuestManagerPlugin extends JavaPlugin {
 		TeleportNPC.registerWithAliases();
 		SimpleMessage.registerWithAliases();
 		BioptionMessage.registerWithAliases();
-		GuiInventory.registerWithAliases();
+		ShopInventory.registerWithAliases();
+		ServiceInventory.registerWithAliases();
+		ServiceCraft.registerWithAliases();
+		ServiceOffer.registerWithAliases();
+		ServiceNPC.registerWithAliases();
 		ConfigurationSerialization.registerClass(MessagePart.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ArbitraryTextTypeComponent.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ComplexTextTypeComponent.class);
 		ConfigurationSerialization.registerClass(FancyMessage.class);
+		Chest.registerWithAliases();
 
 		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		inventoryGuiHandler = new InventoryGuiHandler();
@@ -286,7 +303,51 @@ public class QuestManagerPlugin extends JavaPlugin {
 			QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
 			
 			qp.addQuestBook();
+			qp.addJournal();
 			return true;
+		}
+		
+		if (cmd.getName().equals("qhistory")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage("Only players can use this command!");
+				return true;
+			}
+			if (args.length != 1) {
+				return false;
+			}
+			
+			QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
+			int id;
+			try {
+				id = Integer.parseInt(args[0]);
+			} catch (NumberFormatException e) {
+				return false;
+			}
+			
+			for (Quest q : qp.getCurrentQuests()) {
+				if (q.getID() == id) {
+					qp.setFocusQuest(q.getName());
+					return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		if (cmd.getName().equals("qcomp")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage("Only players can use this command!");
+				return true;
+			}
+			
+			
+			if (args.length == 0) {
+				//no args, just reset compass?
+				QuestPlayer qp = playerManager.getPlayer((OfflinePlayer) sender);
+				qp.updateCompass(false);
+				return true;
+			}
+			return false;
 		}
 		
 		if (cmd.getName().equals("party")) {

@@ -3,9 +3,12 @@ package nmt.minecraft.QuestManager.Quest;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.State.GoalState;
@@ -28,6 +31,8 @@ public class Goal {
 	private String description;
 	
 	private Quest quest;
+	
+	//private List<Chest> chests;
 	
 
 //	public static Goal fromConfig(Quest quest, YamlConfiguration config) throws InvalidConfigurationException {
@@ -62,7 +67,6 @@ public class Goal {
 
 		Goal goal = new Goal(quest, name, description);
 		
-		
 		List<ConfigurationSection> reqs = new LinkedList<ConfigurationSection>();
 		for (String requirementKey : config.getConfigurationSection("requirements").getKeys(false)) {
 			reqs.add( config.getConfigurationSection("requirements")
@@ -96,6 +100,7 @@ public class Goal {
 		this.description = description;
 		
 		this.requirements = new LinkedList<Requirement>();
+		//this.chests = new LinkedList<Chest>();
 	}
 	
 	public Goal(Quest quest, String name) {
@@ -115,8 +120,13 @@ public class Goal {
 		ListIterator<RequirementState> states = state.getRequirementStates().listIterator();
 		for (Requirement req : requirements) {
 			req.sync();
-			if (req instanceof StatekeepingRequirement) {
-				((StatekeepingRequirement) req).loadState(states.next());
+			try {
+				if (req instanceof StatekeepingRequirement) {
+					((StatekeepingRequirement) req).loadState(states.next());
+				}
+			} catch (NoSuchElementException e) {
+				QuestManagerPlugin.questManagerPlugin.getLogger().warning("Error when loading state for quest" 
+						+ this.getQuest().getName() + "; Not enough requirement states!");
 			}
 		}
 	}
@@ -164,6 +174,9 @@ public class Goal {
 		requirements.add(requirement);
 	}
 	
+	public List<Requirement> getRequirements() {
+		return requirements;
+	}
 	
 	/**
 	 * Assesses and reports whether the goal has been completed.<br />
@@ -200,8 +213,10 @@ public class Goal {
 			if (req instanceof StatekeepingRequirement) {
 				((StatekeepingRequirement) req).stop();
 			}
+			if (req instanceof Listener) {
+				HandlerList.unregisterAll((Listener) req);
+			}
 		}
 	}
-		
 	
 }

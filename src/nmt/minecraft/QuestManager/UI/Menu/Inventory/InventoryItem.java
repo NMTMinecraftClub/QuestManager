@@ -1,14 +1,9 @@
 package nmt.minecraft.QuestManager.UI.Menu.Inventory;
 
-import java.util.Arrays;
-
-import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
 import nmt.minecraft.QuestManager.UI.Menu.Action.MenuAction;
-import nmt.minecraft.QuestManager.UI.Menu.Action.PurchaseAction;
 
 /**
  * An item used in an inventory menu.<br />
@@ -17,70 +12,34 @@ import nmt.minecraft.QuestManager.UI.Menu.Action.PurchaseAction;
  * @author Skyler
  *
  */
-public class InventoryItem {
+public abstract class InventoryItem {
 	
 	private ItemStack displayItem;
 	
-	private ItemStack item;
-	
-	private int cost;
-	
-	private int famecost;
-	
-	public InventoryItem(ItemStack item, ItemStack displayItem, int cost, int famecost) {
-		this.item = item;
+	protected InventoryItem(ItemStack displayItem) {
 		this.displayItem = displayItem;
-		this.cost = cost;
-		this.famecost = famecost;
 	}
 	
 	/**
-	 * Returns the item that should be used to display the item to the given player.<br />
-	 * This method formats the lore, etc to display correctly (and with correct colors) to
-	 * the provided player given their fame and money.<br /><br />
-	 * 
-	 * If the passed player is null, the item without lore is returned.
+	 * Returns the display item without any modification to the lore, etc. This is like the unformatted version
+	 * @return
+	 */
+	public ItemStack getRawDisplayItem() {
+		return displayItem;
+	}
+	
+	/**
+	 * Returns a nice, pretty display item ocmplete with lore and naming magic
 	 * @param player
 	 * @return
 	 */
-	public ItemStack getDisplay(QuestPlayer player) {
-		if (player == null) {
-			return displayItem;
-		}
-		ItemStack ret = displayItem.clone();
-		ItemMeta meta = ret.getItemMeta();
-		meta.setLore(Arrays.asList(
-				(cost <= player.getMoney() ? ChatColor.DARK_GREEN : ChatColor.DARK_RED) + 
-					"Cost:               " + cost,
-				(famecost <= player.getFame() ? ChatColor.DARK_GREEN : ChatColor.DARK_RED) +
-					"Fame Required: " + famecost));
-		ret.setItemMeta(meta);
-		
-		return ret;
-	}
+	public abstract ItemStack getDisplay(QuestPlayer player);
 	
-	public ItemStack getItem() {
-		return item;
-	}
-	
-	public MenuAction getAction(QuestPlayer player) {
-		return new PurchaseAction(player, item, cost, famecost);
-	}
-
 	/**
-	 * @return the cost
+	 * Return the action that should be performed when this menu item is clicked/activated
+	 * @param player
+	 * @return
 	 */
-	public int getCost() {
-		return cost;
-	}
+	public abstract MenuAction getAction(QuestPlayer player);
 
-	/**
-	 * @return the famecost
-	 */
-	public int getFamecost() {
-		return famecost;
-	}
-	
-	
-	
 }

@@ -189,6 +189,10 @@ public class QuestManager implements Listener {
 					}
 					
 					continue;
+				} catch (NullPointerException e) {
+					QuestManagerPlugin.questManagerPlugin.getLogger().warning("Missing quest template for save data: "
+							+ questName);
+					continue;
 				}
 				
 				QuestState state = new QuestState();
@@ -405,8 +409,8 @@ public class QuestManager implements Listener {
 				QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
 						e.getPlayer().getUniqueId()).addQuestBook();
 				
-				QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
-						e.getPlayer().getUniqueId()).updateQuestBook();
+//				QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
+//						e.getPlayer().getUniqueId()).updateQuestBook(false);
 			}
 		}
 		

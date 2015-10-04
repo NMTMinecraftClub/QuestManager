@@ -3,14 +3,13 @@ package nmt.minecraft.QuestManager.Configuration.State;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Player.Participant;
+import nmt.minecraft.QuestManager.Quest.History.History;
 
 /**
  * Wrapper for state info config
@@ -21,31 +20,41 @@ public class QuestState {
 	
 	private String name;
 	
-	private List<GoalState> goalState;
+	private int goalIndex;
+	
+	private GoalState goalState;
 	
 	private Participant participant;
 	
+	private History history;
+	
 	public QuestState() {
 		this.name = "";
-		this.goalState = new LinkedList<GoalState>();
+		this.goalState = null;
 	}
 
 
 	public void load(YamlConfiguration config) throws InvalidConfigurationException {
 		
-		if (!config.contains("saveTime") || !config.contains("participants") || !config.contains("name") || !config.contains("goals")) {
+		if (!config.contains("saveTime") || !config.contains("participants") || !config.contains("name") 
+				|| !config.contains("goalstate") || !config.contains("goalstate")) {
 			throw new InvalidConfigurationException("Some keys were missing in a quest state! "
 					+ (config.contains("name") ? config.getString("name") : ""));
 		}
 		
 		this.name = config.getString("name");
 		
-		this.goalState = new LinkedList<GoalState>();
+		this.goalIndex = config.getInt("goalindex");
 		
-		for (String goalKey : config.getConfigurationSection("goals").getKeys(false)) {
-			GoalState gs = new GoalState();
-			gs.load(config.getConfigurationSection("goals").getConfigurationSection(goalKey));
-			goalState.add(gs);
+		this.goalState =  new GoalState();
+		this.goalState.load(config.getConfigurationSection("goalstate"));
+
+		history = null;
+		if (config.contains("history")) {
+			history = History.fromConfig(config.getConfigurationSection("history"));
+		}
+		if (history == null) {
+			history = new History();
 		}
 		
 		System.out.println("loading participants:");
@@ -61,14 +70,16 @@ public class QuestState {
 		
 		config.set("name", name);
 		
-		int i = 1;
-		for (GoalState conf : goalState) {
-			config.set("goals." + i, conf.asConfig());
-			i++;
-		}
+		config.set("goalindex", goalIndex);
+		
+		config.set("goalstate", goalState.asConfig());
 		
 		//config.set("goals", goalList);
 		config.set("participants", participant.getIDString());
+		
+		if (history != null) {
+			config.set("history", history.toConfig());
+		}
 		
 		config.save(file);
 	}
@@ -98,13 +109,28 @@ public class QuestState {
 	/**
 	 * @return the goalState
 	 */
-	public List<GoalState> getGoalState() {
+	public GoalState getGoalState() {
 		return goalState;
 	}
 	
-	public void addGoalState(GoalState goalState) {
-		this.goalState.add(goalState);
+	public void setGoalState(GoalState goalState) {
+		this.goalState = goalState;
 	}
 	
+	public int getGoalIndex() {
+		return goalIndex;
+	}
+	
+	public void setGoalIndex(int index) {
+		this.goalIndex = index;
+	}
+	
+	public History getHistory() {
+		return history;
+	}
+	
+	public void setHistory(History history) {
+		this.history = history;
+	}
 	
 }

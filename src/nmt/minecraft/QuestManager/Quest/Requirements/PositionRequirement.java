@@ -12,6 +12,7 @@ import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.Utils.LocationState;
 import nmt.minecraft.QuestManager.Player.Participant;
 import nmt.minecraft.QuestManager.Player.QuestPlayer;
+import nmt.minecraft.QuestManager.Player.Utils.CompassTrackable;
 import nmt.minecraft.QuestManager.Quest.Goal;
 import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 
@@ -23,7 +24,7 @@ import nmt.minecraft.QuestManager.Quest.Requirements.Factory.RequirementFactory;
  * @author Skyler
  * @see {@link ArriveRequirement}
  */
-public class PositionRequirement extends Requirement implements Listener {
+public class PositionRequirement extends Requirement implements Listener, CompassTrackable {
 	
 	public static class PositionFactory extends RequirementFactory<PositionRequirement> {
 		
@@ -51,11 +52,6 @@ public class PositionRequirement extends Requirement implements Listener {
 	
 	private PositionRequirement(Goal goal) {
 		super(goal);
-		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
-	}
-	
-	public PositionRequirement(Goal goal, Participant participants, Location destination, double range) {
-		this(goal, "", participants, destination, range);
 	}
 	
 	public PositionRequirement(Goal goal, String description, Participant participants, Location destination, double range) {
@@ -65,6 +61,11 @@ public class PositionRequirement extends Requirement implements Listener {
 		this.targetRange = range;
 		this.state = false;
 		
+	}
+	
+	@Override
+	public void activate() {
+		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 
 	/**
@@ -136,7 +137,18 @@ public class PositionRequirement extends Requirement implements Listener {
 			throw new InvalidConfigurationException();
 		}
 		
+		this.desc = config.getString("description", "Be in the target area");
 		this.targetRange = config.getDouble("range", 1.0);
 		this.destination = ((LocationState) config.get("destination")).getLocation();
+	}
+	
+	@Override
+	public String getDescription() {
+		return desc;
+	}
+	
+	@Override
+	public Location getLocation() {
+		return this.destination;
 	}
 }
