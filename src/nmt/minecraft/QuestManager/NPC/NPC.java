@@ -175,10 +175,8 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 		if (quest == null) {
 			return;
 		}
-		
+
 		for (HistoryEvent event : quest.getHistory().events()) {
-			System.out.println("Desc: " + ChatColor.stripColor(desc));
-			System.out.println("event: " + ChatColor.stripColor(event.getDescription()));
 			if (ChatColor.stripColor(event.getDescription()).equals(ChatColor.stripColor(desc))) {
 				return; //already in there
 			}

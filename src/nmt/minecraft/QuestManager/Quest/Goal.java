@@ -3,9 +3,12 @@ package nmt.minecraft.QuestManager.Quest;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 
 import nmt.minecraft.QuestManager.QuestManagerPlugin;
 import nmt.minecraft.QuestManager.Configuration.State.GoalState;
@@ -117,8 +120,13 @@ public class Goal {
 		ListIterator<RequirementState> states = state.getRequirementStates().listIterator();
 		for (Requirement req : requirements) {
 			req.sync();
-			if (req instanceof StatekeepingRequirement) {
-				((StatekeepingRequirement) req).loadState(states.next());
+			try {
+				if (req instanceof StatekeepingRequirement) {
+					((StatekeepingRequirement) req).loadState(states.next());
+				}
+			} catch (NoSuchElementException e) {
+				QuestManagerPlugin.questManagerPlugin.getLogger().warning("Error when loading state for quest" 
+						+ this.getQuest().getName() + "; Not enough requirement states!");
 			}
 		}
 	}
@@ -204,6 +212,9 @@ public class Goal {
 		for (Requirement req : requirements) {
 			if (req instanceof StatekeepingRequirement) {
 				((StatekeepingRequirement) req).stop();
+			}
+			if (req instanceof Listener) {
+				HandlerList.unregisterAll((Listener) req);
 			}
 		}
 	}

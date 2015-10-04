@@ -108,7 +108,7 @@ public class InteractRequirement extends Requirement implements Listener, Statek
 			HandlerList.unregisterAll(this);
 			return;
 		}
-		
+
 		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
 				.contains(e.getPlayer().getPlayer().getWorld().getName())) {
 			for (QuestPlayer qp : participants.getParticipants()) {

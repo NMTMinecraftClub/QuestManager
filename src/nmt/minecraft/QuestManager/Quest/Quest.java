@@ -156,6 +156,9 @@ public class Quest implements Listener {
 			}
 		}
 		
+		//quickly stop the requirements that were started because we were created, instanced, etc
+		goals.get(goalIndex).stop();
+		
 		this.goalIndex = state.getGoalIndex();
 
 		Goal goal;

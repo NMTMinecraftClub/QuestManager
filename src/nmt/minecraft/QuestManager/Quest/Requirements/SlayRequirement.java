@@ -265,7 +265,7 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 
 	@Override
 	public void stop() {
-		; //do nothing!		
+		; //do nothing!
 	}
 	
 	@Override
