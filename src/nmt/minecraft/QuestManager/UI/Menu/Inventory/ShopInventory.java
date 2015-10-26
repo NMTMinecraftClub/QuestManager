@@ -75,7 +75,7 @@ public class ShopInventory extends GuiInventory {
 		
 		Player p = player.getPlayer().getPlayer();
 		
-		Inventory inv = Bukkit.createInventory(p, 45);
+		Inventory inv = Bukkit.createInventory(p, 45, p.getName() + "_qsh");
 		if (!items.isEmpty()) {
 			for (Entry<Integer, ShopItem> e : items.entrySet()) {
 				Object key = e.getKey();

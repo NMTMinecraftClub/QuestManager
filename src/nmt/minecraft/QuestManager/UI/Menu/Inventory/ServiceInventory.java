@@ -78,7 +78,7 @@ public class ServiceInventory extends GuiInventory {
 		
 		Player p = player.getPlayer().getPlayer();
 		
-		Inventory inv = Bukkit.createInventory(p, 45);
+		Inventory inv = Bukkit.createInventory(p, 45, p.getName() + "_qsr");
 		if (!items.isEmpty()) {
 			for (Entry<Integer, ServiceItem> e : items.entrySet()) {
 				Object key = e.getKey();
