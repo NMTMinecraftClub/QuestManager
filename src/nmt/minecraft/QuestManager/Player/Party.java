@@ -114,6 +114,7 @@ public class Party implements Participant, Listener {
 		
 	}
 	
+	@SuppressWarnings("deprecation")
 	public Party(QuestPlayer leader) {
 		this();
 		this.leader = leader;
@@ -127,6 +128,7 @@ public class Party implements Participant, Listener {
 		updateScoreboard();
 	}
 	
+	@SuppressWarnings("deprecation")
 	public Party(String name, QuestPlayer leader, Collection<QuestPlayer> players) {
 		this(name, leader);
 		
@@ -252,6 +254,7 @@ public class Party implements Participant, Listener {
 	 * @param player
 	 * @return true if successful
 	 */
+	@SuppressWarnings("deprecation")
 	public boolean addMember(QuestPlayer player) {
 		if (members.size() < Party.maxSize) {
 			tellMembers(
@@ -337,6 +340,7 @@ public class Party implements Participant, Listener {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public boolean removePlayer(QuestPlayer player, String exitMessage) {
 		
 		player.leaveParty(exitMessage);
