@@ -14,4 +14,7 @@ public abstract class Region {
 	
 	public abstract boolean isIn(Location loc);
 	
+	@Override
+	public abstract int hashCode();
+	
 }

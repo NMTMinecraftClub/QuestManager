@@ -72,4 +72,14 @@ public class CuboidRegion extends Region {
 		return false;
 	}
 
+	@Override
+	public int hashCode() {
+		return (int) (84000 + (7 * least.getX())
+				+ (13 * least.getY())
+				+ (17 * least.getZ())
+				+ (23 * most.getX())
+				+ (29 * most.getY())
+				+ (47 * most.getZ()));
+	}
+
 }
