@@ -1,10 +1,19 @@
 package com.SkyIsland.QuestManager.util;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
+import java.util.Set;
 
+/**
+ * Stores a list of items associated with a weight. This list is designed to be used to pull out
+ * random elements, and not for simple traversal.
+ * @author Skyler
+ *
+ * @param <T>
+ */
 public class WeightedList<T>  {
 	
 	private static class Item<E> {
@@ -35,6 +44,12 @@ public class WeightedList<T>  {
 		rand = new Random();
 	}
 	
+	/**
+	 * Adds an element to the list.<br />
+	 * <b>Note:</b> This method does not detect or avoid duplicates in any way.
+	 * @param object
+	 * @param weight
+	 */
 	public void add(T object, Double weight) {
 		list.add(new Item<T>(object, weight));
 	}
@@ -69,5 +84,19 @@ public class WeightedList<T>  {
 		
 		//if we get here, something went wrong
 		return null;
+	}
+	
+	/**
+	 * Returns all elements stored in this list, without their associated weights.
+	 * @return
+	 */
+	public Set<T> getElements() {
+		Set<T> set = new HashSet<T>();
+		
+		for (Item<T> i : list) {
+			set.add(i.getObject());
+		}
+		
+		return set;
 	}
 }
