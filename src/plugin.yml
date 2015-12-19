@@ -1,5 +1,5 @@
 name: QuestManager
-main: nmt.minecraft.QuestManager.QuestManagerPlugin
+main: com.SkyIsland.QuestManager.QuestManagerPlugin
 version: 1.0
 softdepend: [Fanciful, Multiverse-Core]
 loadfirst:
