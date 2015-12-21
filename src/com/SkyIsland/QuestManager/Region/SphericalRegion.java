@@ -60,10 +60,12 @@ public class SphericalRegion extends Region {
 			return loc;
 		}
 		
-		//check y, climb up till we are out of our y
-		if (loc.add(0,1,0).getBlock().getType().isSolid() ||
+		//check y, climb up till we are out of our range
+		while (loc.add(0,1,0).getBlock().getType().isSolid() ||
 				loc.clone().add(0,1,0).getBlock().getType().isSolid()) {
-			return randomLocation(safe);
+			if (loc.toVector().distance(center) > radius) {
+				return randomLocation(safe);
+			}
 		}
 		
 		loc.setY(Math.floor(loc.getY()));
