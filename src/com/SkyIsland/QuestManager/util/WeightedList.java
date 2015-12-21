@@ -99,4 +99,16 @@ public class WeightedList<T>  {
 		
 		return set;
 	}
+	
+	public void clear() {
+		if (list.isEmpty()) {
+			return;
+		}
+		
+		for (Item<T> item : list) {
+			item.o = null;
+		}
+		
+		list.clear();
+	}
 }
