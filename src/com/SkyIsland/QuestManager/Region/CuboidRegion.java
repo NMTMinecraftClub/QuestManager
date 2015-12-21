@@ -42,6 +42,8 @@ public class CuboidRegion extends Region {
 		
 		this.least = new Vector(lx, ly, lz);
 		this.most = new Vector(mx, my, mz);
+		
+		this.world = world;
 	}
 	
 	@Override
@@ -80,7 +82,7 @@ public class CuboidRegion extends Region {
 	@Override
 	public int hashCode() {
 		return (int) (84000 + (7 * least.getX())
-				+ (379 * world.getName().hashCode())
+				//+ (379 * world.getName().hashCode())
 				+ (13 * least.getY())
 				+ (17 * least.getZ())
 				+ (23 * most.getX())

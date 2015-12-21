@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Region.Region;
+import com.SkyIsland.QuestManager.Scheduling.Alarm;
 import com.SkyIsland.QuestManager.Scheduling.Alarmable;
 import com.SkyIsland.QuestManager.util.WeightedList;
 
@@ -31,6 +32,8 @@ public final class EnemyManager implements Alarmable<EnemyAlarms> {
 	public EnemyManager(double spawnrate) {
 		enemyMap = new HashMap<Region, WeightedList<Enemy>>();
 		this.spawnrate = spawnrate;
+		
+		Alarm.getScheduler().schedule(this, EnemyAlarms.SPAWN, spawnrate);
 	}
 	
 	/**
@@ -105,6 +108,7 @@ public final class EnemyManager implements Alarmable<EnemyAlarms> {
 		switch (reference) {
 		case SPAWN:
 			spawnEnemies();
+			Alarm.getScheduler().schedule(this, EnemyAlarms.SPAWN, spawnrate);
 			break;
 		}
 	}

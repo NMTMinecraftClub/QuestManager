@@ -13,13 +13,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 import com.SkyIsland.QuestManager.Configuration.PluginConfiguration;
 import com.SkyIsland.QuestManager.Configuration.Utils.Chest;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
+import com.SkyIsland.QuestManager.Enemy.DefaultEnemy;
+import com.SkyIsland.QuestManager.Enemy.Enemy;
+import com.SkyIsland.QuestManager.Enemy.EnemyManager;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Fanciful.MessagePart;
 import com.SkyIsland.QuestManager.Fanciful.TextualComponent;
@@ -47,6 +52,8 @@ import com.SkyIsland.QuestManager.Quest.Requirements.PossessRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.SlayRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.TimeRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.VanquishRequirement;
+import com.SkyIsland.QuestManager.Region.CuboidRegion;
+import com.SkyIsland.QuestManager.Region.Region;
 import com.SkyIsland.QuestManager.UI.ChatGuiHandler;
 import com.SkyIsland.QuestManager.UI.InventoryGuiHandler;
 import com.SkyIsland.QuestManager.UI.Menu.Action.PartyInviteAction;
@@ -73,6 +80,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	private RequirementManager reqManager;
 	
 	private PlayerManager playerManager;
+	
+	private EnemyManager enemyManager;
 	
 	private QuestManager manager;
 	
@@ -204,9 +213,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 				questDirectory, 
 				saveDirectory,
 				config.getQuests());
-					
 		
-		
+		enemyManager = new EnemyManager(10);	
 	}
 	
 	@Override
