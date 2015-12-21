@@ -1,6 +1,7 @@
 package com.SkyIsland.QuestManager.Enemy;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.EntityType;
 
 /*
@@ -8,7 +9,7 @@ import org.bukkit.entity.EntityType;
  * Each enemy object represents a unique, spawnable enemy type. Each instance of an enemy is created from this
  * class when spawning things, but this class doesn't hold instances.
  */
-public abstract class Enemy {
+public abstract class Enemy implements ConfigurationSerializable {
 	
 	protected EntityType type;
 	

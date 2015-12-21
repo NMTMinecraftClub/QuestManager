@@ -13,13 +13,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 import com.SkyIsland.QuestManager.Configuration.PluginConfiguration;
 import com.SkyIsland.QuestManager.Configuration.Utils.Chest;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
+import com.SkyIsland.QuestManager.Enemy.DefaultEnemy;
+import com.SkyIsland.QuestManager.Enemy.Enemy;
 import com.SkyIsland.QuestManager.Enemy.EnemyManager;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Fanciful.MessagePart;
@@ -48,6 +52,8 @@ import com.SkyIsland.QuestManager.Quest.Requirements.PossessRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.SlayRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.TimeRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.VanquishRequirement;
+import com.SkyIsland.QuestManager.Region.Region;
+import com.SkyIsland.QuestManager.Region.SphericalRegion;
 import com.SkyIsland.QuestManager.UI.ChatGuiHandler;
 import com.SkyIsland.QuestManager.UI.InventoryGuiHandler;
 import com.SkyIsland.QuestManager.UI.Menu.Action.PartyInviteAction;
@@ -89,6 +95,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private File questDirectory;
 	
+	private File enemyDirectory;
+	
 	private final static String configFileName = "QuestManagerConfig.yml";
 	
 	private final static String playerConfigFileName = "players.yml";
@@ -114,6 +122,11 @@ public class QuestManagerPlugin extends JavaPlugin {
 		questDirectory = new File(getDataFolder(), config.getQuestPath());
 		if (!questDirectory.exists()) {
 			questDirectory.mkdirs();
+		}
+		
+		enemyDirectory = new File(getDataFolder(), config.getEnemyPath());
+		if (!enemyDirectory.exists()) {
+			enemyDirectory.mkdirs();
 		}
 	
 		//register our own requirements
@@ -208,7 +221,23 @@ public class QuestManagerPlugin extends JavaPlugin {
 				saveDirectory,
 				config.getQuests());
 		
-		enemyManager = new EnemyManager(10);
+		enemyManager = new EnemyManager(enemyDirectory, 10);
+
+		
+//		///////////////////////////////////////////////////////////////////////////////
+//					
+//		Vector v1 = new Vector(-600, 5, -800),
+//		v2 = new Vector(-605, 3, -805);
+//		Region r = new SphericalRegion(Bukkit.getWorld("QuestWorld"), v1, 4);
+//		Enemy e = new DefaultEnemy(EntityType.ZOMBIE);
+//		
+//		enemyManager.registerRegion(r);
+//		enemyManager.addEnemy(r, e);
+//		
+//		e = new DefaultEnemy(EntityType.SKELETON);
+//		enemyManager.addEnemy(r, e);
+//		
+//		///////////////////////////////////////////////////////////////////////////////		
 	}
 	
 	@Override

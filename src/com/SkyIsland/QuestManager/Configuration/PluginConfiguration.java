@@ -44,7 +44,8 @@ public class PluginConfiguration {
 		WORLDS("questWorlds"),
 		QUESTS("quests"),
 		QUESTDIR("questDir"),
-		SAVEDIR("saveDir");
+		SAVEDIR("saveDir"),
+		ENEMYDIR("enemyDir");
 		
 		
 		private String key;
@@ -252,6 +253,14 @@ public class PluginConfiguration {
 	}
 	
 	/**
+	 * Returns the path to where enemy spawning location is kept
+	 * @return
+	 */
+	public String getEnemyPath() {
+		return config.getString(PluginConfigurationKey.ENEMYDIR.key);
+	}
+	
+	/**
 	 * Sets up a default configuration file with blank values
 	 * @param configFile
 	 */
@@ -297,6 +306,7 @@ public class PluginConfiguration {
 		config.set(PluginConfigurationKey.QUESTS.key, questNames);
 		config.set(PluginConfigurationKey.QUESTDIR.key, "quests/");
 		config.set(PluginConfigurationKey.SAVEDIR.key, "savedata/");
+		config.set(PluginConfigurationKey.ENEMYDIR.key, "enemies/");
 		
 		try {
 			config.save(configFile);

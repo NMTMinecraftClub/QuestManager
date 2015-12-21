@@ -1,6 +1,7 @@
 package com.SkyIsland.QuestManager.Region;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Entity;
 
 /**
@@ -11,7 +12,7 @@ import org.bukkit.entity.Entity;
  * @author Skyler
  *
  */
-public abstract class Region {
+public abstract class Region implements ConfigurationSerializable {
 	
 	/**
 	 * Checks whether the provided entity is in the region

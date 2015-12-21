@@ -1,14 +1,52 @@
 package com.SkyIsland.QuestManager.Region;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 public class CuboidRegion extends Region {
 
+	/**
+	 * Registers this class as configuration serializable with all defined 
+	 * {@link aliases aliases}
+	 */
+	public static void registerWithAliases() {
+		for (aliases alias : aliases.values()) {
+			ConfigurationSerialization.registerClass(CuboidRegion.class, alias.getAlias());
+		}
+	}
+	
+	/**
+	 * Registers this class as configuration serializable with only the default alias
+	 */
+	public static void registerWithoutAliases() {
+		ConfigurationSerialization.registerClass(CuboidRegion.class);
+	}
+	
+
+	private enum aliases {
+		DEFAULT(CuboidRegion.class.getName()),
+		SIMPLE("RCube"),
+		LONG("RCuboid");
+		
+		private String alias;
+		
+		private aliases(String alias) {
+			this.alias = alias;
+		}
+		
+		public String getAlias() {
+			return alias;
+		}
+	}
+	
 	private World world;
 	
 	private Vector least, most;
@@ -125,5 +163,24 @@ public class CuboidRegion extends Region {
 		loc.setZ(Math.floor(loc.getZ()) + .5);
 		loc.setY(Math.floor(loc.getY()));
 		return loc;
+	}
+	
+	public static CuboidRegion valueOf(Map<String, Object> map) {
+		World world = Bukkit.getWorld((String) map.get("world"));
+		
+		return new CuboidRegion(world, 
+				(Vector) map.get("v1"),
+				(Vector) map.get("v2"));
+	}
+	
+	@Override
+	public Map<String, Object> serialize() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("world", world.getName());
+		map.put("v1", least);
+		map.put("v2", most);
+		
+		return map;
 	}
 }

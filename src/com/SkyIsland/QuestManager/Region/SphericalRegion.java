@@ -1,13 +1,50 @@
 package com.SkyIsland.QuestManager.Region;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 public class SphericalRegion extends Region {
+	
+	/**
+	 * Registers this class as configuration serializable with all defined 
+	 * {@link aliases aliases}
+	 */
+	public static void registerWithAliases() {
+		for (aliases alias : aliases.values()) {
+			ConfigurationSerialization.registerClass(SphericalRegion.class, alias.getAlias());
+		}
+	}
+	
+	/**
+	 * Registers this class as configuration serializable with only the default alias
+	 */
+	public static void registerWithoutAliases() {
+		ConfigurationSerialization.registerClass(SphericalRegion.class);
+	}
+	
+
+	private enum aliases {
+		DEFAULT(SphericalRegion.class.getName()),
+		SIMPLE("RSphere");
+		
+		private String alias;
+		
+		private aliases(String alias) {
+			this.alias = alias;
+		}
+		
+		public String getAlias() {
+			return alias;
+		}
+	}
 	
 	private World world;
 	
@@ -74,5 +111,24 @@ public class SphericalRegion extends Region {
 		return loc;
 	}
 	
+	public static SphericalRegion valueOf(Map<String, Object> map) {
+		World world = Bukkit.getWorld((String) map.get("world"));
+		
+		Vector vector = (Vector) map.get("center");
+		Double radius = (Double) map.get("radius");
+		
+		return new SphericalRegion(world, vector, radius);
+	}
+	
+	@Override
+	public Map<String, Object> serialize() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("world", world.getName());
+		map.put("center", center);
+		map.put("radius", radius);
+		
+		return map;
+	}
 	
 }

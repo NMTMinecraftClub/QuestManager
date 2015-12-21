@@ -1,9 +1,13 @@
 package com.SkyIsland.QuestManager.Enemy;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
@@ -34,6 +38,25 @@ public final class EnemyManager implements Alarmable<EnemyAlarms> {
 		this.spawnrate = spawnrate;
 		
 		Alarm.getScheduler().schedule(this, EnemyAlarms.SPAWN, spawnrate);
+	}
+	
+	/**
+	 * Creates a new Enemy Manager using the provided file or files in the provided directory.<br />
+	 * Spawnrate defaults to 3.0
+	 * @param target The file to load or the directory to search for files to load
+	 */
+	public EnemyManager(File target) {
+		this(target, 3.0);
+	}
+	
+	/**
+	 * Creates a new Enemy Manager using the provided file or files in the provided directory.<br />
+	 * @param target The file to load or the directory to search for files to load
+	 * @param spawnrate
+	 */
+	public EnemyManager(File target, double spawnrate) {
+		this(spawnrate);
+		load(target);
 	}
 	
 	/**
@@ -142,6 +165,74 @@ public final class EnemyManager implements Alarmable<EnemyAlarms> {
 		e = l.getRandom();
 		
 		e.spawn(region.randomLocation(true));
+	}
+	
+	/**
+	 * Loads regions and enemies from the provided config file.<br />
+	 * Does not clear the current map before adding what's found in the config
+	 * @param config
+	 */
+	private void load(File target) {
+		/*
+		 * Is a file? If so, load it. If not, get all files and load them
+		 */
+		if (target == null || !target.exists()) {
+			return;
+		}
+		
+		if (!target.isDirectory()) {
+			loadFile(target);
+		} else {
+			for (File file : target.listFiles()) {
+				if (file.isDirectory()) {
+					load(file);
+				}
+				
+				String ln = file.getName().toLowerCase();
+				
+				if (ln.endsWith(".yml") || ln.endsWith(".yaml")) {
+					loadFile(file);
+				}
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void loadFile(File file) {
+		/*
+		 * Load the config. There should be regions and enemies associated with them, like
+		 * region1:
+		 *  type:	==: Cuboid
+		 * 			etc
+		 *  enemies:
+		 *    - ==: enemy
+		 */
+		
+		YamlConfiguration config = new YamlConfiguration();
+		try {
+			config.load(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		for (String key : config.getKeys(false)) {
+			ConfigurationSection regionSection = config.getConfigurationSection(key);
+			Region region = (Region) regionSection.get("region");
+			
+			List<Enemy> enemies = null;
+			
+			if (regionSection.contains("enemies")) {
+				//load enemies
+				enemies = (List<Enemy>) regionSection.getList("enemies");
+			}
+			
+			registerRegion(region);
+			for (Enemy e : enemies) {
+				addEnemy(region, e);
+			}
+			//TODO add enemy weights?
+		}
 	}
 	
 }
