@@ -12,6 +12,10 @@ public abstract class Enemy {
 	
 	protected EntityType type;
 	
+	public Enemy(EntityType type) {
+		this.type = type;
+	}
+	
 	public void spawn(Location loc) {
 		loc.getWorld().spawnEntity(loc, type);
 	}
