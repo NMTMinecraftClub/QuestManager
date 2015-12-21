@@ -68,6 +68,8 @@ public class SphericalRegion extends Region {
 			}
 		}
 		
+		loc.setX(Math.floor(loc.getX()) + .5);
+		loc.setZ(Math.floor(loc.getZ()) + .5);
 		loc.setY(Math.floor(loc.getY()));
 		return loc;
 	}

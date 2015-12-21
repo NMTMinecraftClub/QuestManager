@@ -208,7 +208,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 				saveDirectory,
 				config.getQuests());
 		
-		enemyManager = new EnemyManager(10);	
+		enemyManager = new EnemyManager(10);
 	}
 	
 	@Override
