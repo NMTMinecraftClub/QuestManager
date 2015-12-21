@@ -221,7 +221,7 @@ public final class EnemyManager implements Alarmable<EnemyAlarms> {
 			Region region = (Region) regionSection.get("region");
 			
 			List<Enemy> enemies = null;
-			
+
 			if (regionSection.contains("enemies")) {
 				//load enemies
 				enemies = (List<Enemy>) regionSection.getList("enemies");

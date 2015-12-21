@@ -3,6 +3,7 @@ package com.SkyIsland.QuestManager.Enemy;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.EntityType;
 
 /**
@@ -12,6 +13,39 @@ import org.bukkit.entity.EntityType;
  *
  */
 public class DefaultEnemy extends Enemy {
+	
+	/**
+	 * Registers this class as configuration serializable with all defined 
+	 * {@link aliases aliases}
+	 */
+	public static void registerWithAliases() {
+		for (aliases alias : aliases.values()) {
+			ConfigurationSerialization.registerClass(DefaultEnemy.class, alias.getAlias());
+		}
+	}
+	
+	/**
+	 * Registers this class as configuration serializable with only the default alias
+	 */
+	public static void registerWithoutAliases() {
+		ConfigurationSerialization.registerClass(DefaultEnemy.class);
+	}
+	
+
+	private enum aliases {
+		DEFAULT(DefaultEnemy.class.getName()),
+		SIMPLE("DefaultEnemy");
+		
+		private String alias;
+		
+		private aliases(String alias) {
+			this.alias = alias;
+		}
+		
+		public String getAlias() {
+			return alias;
+		}
+	}
 	
 	public DefaultEnemy(EntityType type) {
 		super(type);
@@ -27,9 +61,18 @@ public class DefaultEnemy extends Enemy {
 	}
 	
 	public static DefaultEnemy valueOf(Map<String, Object> map) {
-		EntityType type = (EntityType) map.get("type");
 		
-		return new DefaultEnemy(type);
+		String type = (String) map.get("type");
+		EntityType et;
+		try {
+			et = EntityType.valueOf(type);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Invalid entity type: " + type + "! Defaulting to Zombie!");
+			et = EntityType.ZOMBIE;
+		}
+		
+		return new DefaultEnemy(et);
 	}
 	
 }
