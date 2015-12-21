@@ -41,4 +41,6 @@ public abstract class Region implements ConfigurationSerializable {
 	@Override
 	public abstract int hashCode();
 	
+	@Override
+	public abstract boolean equals(Object o);
 }

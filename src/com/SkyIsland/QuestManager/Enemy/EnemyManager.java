@@ -63,10 +63,10 @@ public final class EnemyManager implements Alarmable<EnemyAlarms> {
 	 * Registers the region with the manager.<br />
 	 * Regions must be registered before they can start being associated with enemy types.
 	 * @param region
-	 * @return
+	 * @return false if the region is null or already in the map, true otherwise
 	 */
 	public boolean registerRegion(Region region) {
-		if (region == null) {
+		if (region == null || enemyMap.containsKey(region)) {
 			return false;
 		}
 		

@@ -79,6 +79,19 @@ public class SphericalRegion extends Region {
 				+ (23 * center.getX())
 				+ (13 * radius));
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof SphericalRegion) {
+			SphericalRegion r = (SphericalRegion) o;
+			if (r.center.equals(center) 
+					&& Math.abs(r.radius - radius) < .05) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	@Override
 	public Location randomLocation(boolean safe) {

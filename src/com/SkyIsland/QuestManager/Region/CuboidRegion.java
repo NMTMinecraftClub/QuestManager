@@ -183,4 +183,17 @@ public class CuboidRegion extends Region {
 		
 		return map;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof CuboidRegion) {
+			CuboidRegion r = (CuboidRegion) o;
+			if (r.least.equals(least) 
+					&& r.most.equals(most)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }
