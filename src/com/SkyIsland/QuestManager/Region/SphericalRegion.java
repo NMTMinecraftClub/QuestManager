@@ -61,11 +61,12 @@ public class SphericalRegion extends Region {
 		}
 		
 		//check y, climb up till we are out of our y
-		if (loc.getBlock().getType().isSolid() ||
+		if (loc.add(0,1,0).getBlock().getType().isSolid() ||
 				loc.clone().add(0,1,0).getBlock().getType().isSolid()) {
 			return randomLocation(safe);
 		}
 		
+		loc.setY(Math.floor(loc.getY()));
 		return loc;
 	}
 	

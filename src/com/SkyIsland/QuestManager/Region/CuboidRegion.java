@@ -1,14 +1,19 @@
 package com.SkyIsland.QuestManager.Region;
 
+import java.util.Random;
+
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 public class CuboidRegion extends Region {
 
+	private World world;
+	
 	private Vector least, most;
 	
-	public CuboidRegion(Vector pos1, Vector pos2) {
+	public CuboidRegion(World world, Vector pos1, Vector pos2) {
 		double lx, ly, lz, mx, my, mz;
 		
 		if (pos1.getX() < pos2.getX()) {
@@ -75,6 +80,7 @@ public class CuboidRegion extends Region {
 	@Override
 	public int hashCode() {
 		return (int) (84000 + (7 * least.getX())
+				+ (379 * world.getName().hashCode())
 				+ (13 * least.getY())
 				+ (17 * least.getZ())
 				+ (23 * most.getX())
@@ -82,4 +88,38 @@ public class CuboidRegion extends Region {
 				+ (47 * most.getZ()));
 	}
 
+	@Override
+	public Location randomLocation(boolean safe) {
+		Random rand = new Random();
+		
+		Location loc = world.getSpawnLocation().clone();
+		loc.setX(least.getX());
+		loc.setY(least.getY());
+		loc.setZ(least.getZ());
+		
+		double dx = (most.getX() - least.getX()),
+				dy = (most.getY() - least.getY()),
+				dz = (most.getZ() - least.getZ());
+		
+		dx = rand.nextDouble() * dx;
+		dy = rand.nextDouble() * dy;
+		dz = rand.nextDouble() * dz;
+		
+		loc.add(dx, dy, dz);
+		
+		if (!safe) {
+			return loc;
+		}
+		
+		while (loc.add(0, 1, 0).getBlock().getType().isSolid() ||
+				loc.clone().add(0,1,0).getBlock().getType().isSolid()) {
+			if (loc.getY() > most.getY()) {
+				//exhausted y search, so get a new random and return it instead
+				return randomLocation(safe);
+			}
+		}
+		
+		loc.setY(Math.floor(loc.getY()));
+		return loc;
+	}
 }
