@@ -3,7 +3,8 @@ package com.SkyIsland.QuestManager.Effects;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
@@ -32,10 +33,15 @@ public class LineEffect extends QuestEffect implements Runnable {
 	}
 	
 	@Override
-	public void play(Player player, Location location) {
+	public void play(Entity player, Location location) {
 		
 		// TODO Auto-generated method stub
-		cur = player.getEyeLocation();
+		if (player instanceof LivingEntity) {
+			cur = ((LivingEntity) player).getEyeLocation();
+		} else {
+			cur = player.getLocation().clone().add(0, 1.5, 0);
+		}
+		
 		dir = location.toVector().subtract(
 				player.getLocation().toVector());
 		dir.normalize();

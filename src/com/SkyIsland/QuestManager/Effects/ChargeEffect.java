@@ -3,7 +3,7 @@ package com.SkyIsland.QuestManager.Effects;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 
@@ -17,7 +17,7 @@ public class ChargeEffect extends QuestEffect implements Runnable {
 	
 	private Effect effect;
 	
-	private Player player;
+	private Entity player;
 	
 	private int count;
 	
@@ -26,7 +26,7 @@ public class ChargeEffect extends QuestEffect implements Runnable {
 	}
 	
 	@Override
-	public void play(Player player, Location location) {
+	public void play(Entity player, Location location) {
 		this.player = player;
 		count = 0;
 		spark();

@@ -3,6 +3,7 @@ package com.SkyIsland.QuestManager.Effects;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 /**
@@ -34,9 +35,13 @@ public class EntityConfirmEffect extends QuestEffect {
 	
 	@SuppressWarnings("deprecation")
 	@Override
-	public void play(Player player, Location effectLocation) {
+	public void play(Entity player, Location effectLocation) {
+		
+		if (!(player instanceof Player)) {
+			return;
+		}
 		
 		for (int i = 0; i < magnitude; i++)
-		player.playEffect(effectLocation, effect, blockType);
+		((Player) player ) .playEffect(effectLocation, effect, blockType);
 	}
 }

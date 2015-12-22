@@ -1,7 +1,7 @@
 package com.SkyIsland.QuestManager.Effects;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 /**
  * An effect used by the QuestManager to signal something to the player.
@@ -10,6 +10,6 @@ import org.bukkit.entity.Player;
  */
 public abstract class QuestEffect {
 
-	public abstract void play(Player player, Location location);
+	public abstract void play(Entity player, Location location);
 	
 }
