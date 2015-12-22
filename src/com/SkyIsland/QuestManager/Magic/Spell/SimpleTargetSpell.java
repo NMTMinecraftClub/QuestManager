@@ -1,4 +1,4 @@
-package com.SkyIsland.QuestManager.Magic.Spell.Offense;
+package com.SkyIsland.QuestManager.Magic.Spell;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -7,10 +7,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
 import com.SkyIsland.QuestManager.Magic.MagicUser;
-import com.SkyIsland.QuestManager.Magic.Spell.SpellProjectile;
-import com.SkyIsland.QuestManager.Magic.Spell.TargetSpell;
 
-public class SimpleDamageSpell extends TargetSpell {
+public class SimpleTargetSpell extends TargetSpell {
 
 	private double damage;
 	
@@ -26,7 +24,7 @@ public class SimpleDamageSpell extends TargetSpell {
 	
 	private Sound contactSound;
 	
-	public SimpleDamageSpell(int cost, String name, String description, double damage, double speed,
+	public SimpleTargetSpell(int cost, String name, String description, double damage, double speed,
 			int maxDistance) {
 		super(cost, name, description);
 		this.damage = damage;

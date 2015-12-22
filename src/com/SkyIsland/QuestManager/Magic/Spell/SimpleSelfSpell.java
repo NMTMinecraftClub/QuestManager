@@ -1,4 +1,4 @@
-package com.SkyIsland.QuestManager.Magic.Spell.Defense;
+package com.SkyIsland.QuestManager.Magic.Spell;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -10,9 +10,8 @@ import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import com.SkyIsland.QuestManager.Effects.ChargeEffect;
 import com.SkyIsland.QuestManager.Effects.QuestEffect;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
-import com.SkyIsland.QuestManager.Magic.Spell.SelfSpell;
 
-public class SimpleHealSpell extends SelfSpell {
+public class SimpleSelfSpell extends SelfSpell {
 	
 	private double amount;
 	
@@ -20,7 +19,7 @@ public class SimpleHealSpell extends SelfSpell {
 	
 	private Sound castSound;
 	
-	public SimpleHealSpell(int cost, String name, String description, double amount) {
+	public SimpleSelfSpell(int cost, String name, String description, double amount) {
 		super(cost, name, description);
 		this.amount = amount;
 		castEffect = null;
