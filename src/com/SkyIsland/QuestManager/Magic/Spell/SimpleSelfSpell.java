@@ -1,15 +1,108 @@
 package com.SkyIsland.QuestManager.Magic.Spell;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Effect;
 import org.bukkit.Sound;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 
+import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Effects.ChargeEffect;
 import com.SkyIsland.QuestManager.Effects.QuestEffect;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.SpellEffect;
 
 public class SimpleSelfSpell extends SelfSpell {
+	
+	/**
+	 * Registers this class as configuration serializable with all defined 
+	 * {@link aliases aliases}
+	 */
+	public static void registerWithAliases() {
+		for (aliases alias : aliases.values()) {
+			ConfigurationSerialization.registerClass(SimpleSelfSpell.class, alias.getAlias());
+		}
+	}
+	
+	/**
+	 * Registers this class as configuration serializable with only the default alias
+	 */
+	public static void registerWithoutAliases() {
+		ConfigurationSerialization.registerClass(SimpleSelfSpell.class);
+	}
+	
+
+	private enum aliases {
+		DEFAULT(DamageEffect.class.getName()),
+		LONG("SimpleSelfSpell"),
+		SHORT("SSelfSpell");
+		
+		private String alias;
+		
+		private aliases(String alias) {
+			this.alias = alias;
+		}
+		
+		public String getAlias() {
+			return alias;
+		}
+	}
+
+	public static SimpleSelfSpell valueOf(Map<String, Object> map) {
+		if (!map.containsKey("cost") || !map.containsKey("name") || !map.containsKey("description")
+				|| !map.containsKey("effects")) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning(
+					"Unable to load spell " 
+						+ (map.containsKey("name") ? (String) map.get("name") : "")
+						+ ": Missing some keys!"
+					);
+			return null;
+		}
+		
+		SimpleSelfSpell spell = new SimpleSelfSpell(
+				(int) map.get("cost"),
+				(String) map.get("name"),
+				(String) map.get("description")
+				);
+		
+		@SuppressWarnings("unchecked")
+		List<SpellEffect> effects = (List<SpellEffect>) map.get("effects");
+		for (SpellEffect effect : effects) {
+			spell.addSpellEffect(effect);
+		}
+		
+		if (map.containsKey("casteffect")) {
+			spell.setCastEffect(Effect.valueOf((String) map.get("casteffect")));
+		}
+		if (map.containsKey("castsound")) {
+			spell.setCastSound(Sound.valueOf((String) map.get("castsound")));
+		}
+		
+		return spell;
+	}
+	
+	public Map<String, Object> serialize() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("cost", getCost());
+		map.put("name", getName());
+		map.put("description", getDescription());
+		
+		map.put("effects", getSpellEffects());
+		
+		if (castEffect != null) {
+			map.put("casteffect", castEffect.name());
+		}
+		if (castSound != null) {
+			map.put("castsound", castSound.name());
+		}
+		
+		return map;
+	}
 	
 	private Effect castEffect;
 	
@@ -44,18 +137,6 @@ public class SimpleSelfSpell extends SelfSpell {
 		
 		QuestEffect ef = new ChargeEffect(Effect.WITCH_MAGIC);
 		ef.play(e, null);
-		
-//		if (caster.getEntity() instanceof LivingEntity) {
-//			LivingEntity e = (LivingEntity) caster.getEntity();
-//			EntityRegainHealthEvent event = new EntityRegainHealthEvent(e, amount, RegainReason.MAGIC);
-//			Bukkit.getPluginManager().callEvent(event);
-//			
-//			if (event.isCancelled()) {
-//				return;
-//			}
-//			
-//			e.setHealth(Math.min(e.getMaxHealth(), 
-//			e.getHealth() + amount));
 			
 		for (SpellEffect effect : getSpellEffects()) {
 			effect.apply(e, e);

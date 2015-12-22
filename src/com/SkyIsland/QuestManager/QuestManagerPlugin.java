@@ -25,6 +25,10 @@ import com.SkyIsland.QuestManager.Enemy.EnemyManager;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Fanciful.MessagePart;
 import com.SkyIsland.QuestManager.Fanciful.TextualComponent;
+import com.SkyIsland.QuestManager.Magic.Spell.SimpleSelfSpell;
+import com.SkyIsland.QuestManager.Magic.Spell.SpellManager;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.HealEffect;
 import com.SkyIsland.QuestManager.NPC.ForgeNPC;
 import com.SkyIsland.QuestManager.NPC.InnNPC;
 import com.SkyIsland.QuestManager.NPC.MuteNPC;
@@ -80,6 +84,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private EnemyManager enemyManager;
 	
+	private SpellManager spellManager;
+	
 	private QuestManager manager;
 	
 	private ChatGuiHandler chatGuiHandler;
@@ -93,6 +99,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	private File questDirectory;
 	
 	private File enemyDirectory;
+	
+	private File spellDirectory;
 	
 	private final static String configFileName = "QuestManagerConfig.yml";
 	
@@ -124,6 +132,11 @@ public class QuestManagerPlugin extends JavaPlugin {
 		enemyDirectory = new File(getDataFolder(), config.getEnemyPath());
 		if (!enemyDirectory.exists()) {
 			enemyDirectory.mkdirs();
+		}
+		
+		spellDirectory = new File(getDataFolder(), config.getSpellPath());
+		if (!spellDirectory.exists()) {
+			spellDirectory.mkdirs();
 		}
 	
 		//register our own requirements
@@ -179,6 +192,10 @@ public class QuestManagerPlugin extends JavaPlugin {
 		CuboidRegion.registerWithAliases();
 		SphericalRegion.registerWithAliases();
 		DefaultEnemy.registerWithAliases();
+		SimpleSelfSpell.registerWithAliases();
+		//SimpleTargetSpell.registerWithAliases();
+		HealEffect.registerWithAliases();
+		DamageEffect.registerWithAliases();
 
 		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		inventoryGuiHandler = new InventoryGuiHandler();
@@ -223,6 +240,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		enemyManager = new EnemyManager(enemyDirectory, 10);
 
+		spellManager = new SpellManager(spellDirectory);
 		
 //		///////////////////////////////////////////////////////////////////////////////
 //					
@@ -556,6 +574,10 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	public EnemyManager getEnemyManager() {
 		return enemyManager;
+	}
+	
+	public SpellManager getSpellManager() {
+		return spellManager;
 	}
 	
 }

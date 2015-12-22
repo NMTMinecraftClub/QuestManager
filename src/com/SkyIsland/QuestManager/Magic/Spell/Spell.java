@@ -3,9 +3,11 @@ package com.SkyIsland.QuestManager.Magic.Spell;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.SpellEffect;
 
-public abstract class Spell {
+public abstract class Spell implements ConfigurationSerializable {
 	
 	private int cost;
 	

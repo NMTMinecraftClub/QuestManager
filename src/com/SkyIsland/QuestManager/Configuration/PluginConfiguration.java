@@ -45,7 +45,8 @@ public class PluginConfiguration {
 		QUESTS("quests"),
 		QUESTDIR("questDir"),
 		SAVEDIR("saveDir"),
-		ENEMYDIR("enemyDir");
+		ENEMYDIR("enemyDir"),
+		SPELLDIR("spellDir");
 		
 		
 		private String key;
@@ -261,6 +262,14 @@ public class PluginConfiguration {
 	}
 	
 	/**
+	 * Returns the path to where spell configuration
+	 * @return
+	 */
+	public String getSpellPath() {
+		return config.getString(PluginConfigurationKey.SPELLDIR.key);
+	}
+	
+	/**
 	 * Sets up a default configuration file with blank values
 	 * @param configFile
 	 */
@@ -307,7 +316,8 @@ public class PluginConfiguration {
 		config.set(PluginConfigurationKey.QUESTDIR.key, "quests/");
 		config.set(PluginConfigurationKey.SAVEDIR.key, "savedata/");
 		config.set(PluginConfigurationKey.ENEMYDIR.key, "enemies/");
-		
+		config.set(PluginConfigurationKey.SPELLDIR.key, "spells/");
+				
 		try {
 			config.save(configFile);
 		} catch (IOException e) {
