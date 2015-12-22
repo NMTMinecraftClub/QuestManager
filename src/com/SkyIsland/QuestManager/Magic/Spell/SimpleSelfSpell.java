@@ -1,27 +1,30 @@
 package com.SkyIsland.QuestManager.Magic.Spell;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
+import org.bukkit.entity.Entity;
 
 import com.SkyIsland.QuestManager.Effects.ChargeEffect;
 import com.SkyIsland.QuestManager.Effects.QuestEffect;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.SpellEffect;
 
 public class SimpleSelfSpell extends SelfSpell {
-	
-	private double amount;
 	
 	private Effect castEffect;
 	
 	private Sound castSound;
 	
-	public SimpleSelfSpell(int cost, String name, String description, double amount) {
+	/**
+	 * Creates a simple spell made to be cast on the self.<br />
+	 * This spell will have no effects until added using 
+	 * {@link #addSpellEffect(com.SkyIsland.QuestManager.Magic.Spell.Effect.SpellEffect)}
+	 * @param cost
+	 * @param name
+	 * @param description
+	 */
+	public SimpleSelfSpell(int cost, String name, String description) {
 		super(cost, name, description);
-		this.amount = amount;
 		castEffect = null;
 		castSound = null;
 	}
@@ -37,27 +40,32 @@ public class SimpleSelfSpell extends SelfSpell {
 	@Override
 	public void cast(MagicUser caster) {
 		
-		QuestEffect ef = new ChargeEffect(Effect.WITCH_MAGIC);
-		ef.play(caster.getEntity(), null);
+		Entity e = caster.getEntity();
 		
-		if (caster.getEntity() instanceof LivingEntity) {
-			LivingEntity e = (LivingEntity) caster.getEntity();
-			EntityRegainHealthEvent event = new EntityRegainHealthEvent(e, amount, RegainReason.MAGIC);
-			Bukkit.getPluginManager().callEvent(event);
+		QuestEffect ef = new ChargeEffect(Effect.WITCH_MAGIC);
+		ef.play(e, null);
+		
+//		if (caster.getEntity() instanceof LivingEntity) {
+//			LivingEntity e = (LivingEntity) caster.getEntity();
+//			EntityRegainHealthEvent event = new EntityRegainHealthEvent(e, amount, RegainReason.MAGIC);
+//			Bukkit.getPluginManager().callEvent(event);
+//			
+//			if (event.isCancelled()) {
+//				return;
+//			}
+//			
+//			e.setHealth(Math.min(e.getMaxHealth(), 
+//			e.getHealth() + amount));
 			
-			if (event.isCancelled()) {
-				return;
-			}
-			
-			e.setHealth(Math.min(e.getMaxHealth(), 
-			e.getHealth() + amount));
-			
-			if (castEffect != null) {
-				e.getWorld().playEffect(e.getEyeLocation(), castEffect, 0);
-			}
-			if (castSound != null) {
-				e.getWorld().playSound(e.getLocation(), castSound, 1, 1);
-			}
+		for (SpellEffect effect : getSpellEffects()) {
+			effect.apply(e);
+		}
+		
+		if (castEffect != null) {
+			e.getWorld().playEffect(e.getLocation().clone().add(0,1.5,0), castEffect, 0);
+		}
+		if (castSound != null) {
+			e.getWorld().playSound(e.getLocation().clone().add(0,1.5,0), castSound, 1, 1);
 		}
 	}
 	
