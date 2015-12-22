@@ -7,10 +7,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
 import com.SkyIsland.QuestManager.Magic.MagicUser;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.SpellEffect;
 
 public class SimpleTargetSpell extends TargetSpell {
-
-	private double damage;
 	
 	private double speed;
 	
@@ -24,10 +23,9 @@ public class SimpleTargetSpell extends TargetSpell {
 	
 	private Sound contactSound;
 	
-	public SimpleTargetSpell(int cost, String name, String description, double damage, double speed,
+	public SimpleTargetSpell(int cost, String name, String description, double speed,
 			int maxDistance) {
 		super(cost, name, description);
-		this.damage = damage;
 		this.speed = speed;
 		this.maxDistance = maxDistance;
 		this.projectileEffect = null;
@@ -70,13 +68,19 @@ public class SimpleTargetSpell extends TargetSpell {
 
 	@Override
 	protected void onBlockHit(MagicUser caster, Location loc) {
-		//Do nothing
+		for (SpellEffect effect : getSpellEffects()) {
+			effect.apply(loc);
+		}
 	}
 
 	@Override
 	protected void onEntityHit(MagicUser caster, LivingEntity target) {
-		//do damage
-		target.damage(damage, caster.getEntity());
+		//do effects
+		
+		for (SpellEffect effect : getSpellEffects()) {
+			effect.apply(target, caster.getEntity());
+		}
+		
 		if (contactEffect != null) {
 			target.getWorld().playEffect(target.getEyeLocation(), contactEffect, 0);
 		}

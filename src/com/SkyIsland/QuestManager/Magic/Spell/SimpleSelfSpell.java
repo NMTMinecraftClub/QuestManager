@@ -58,7 +58,7 @@ public class SimpleSelfSpell extends SelfSpell {
 //			e.getHealth() + amount));
 			
 		for (SpellEffect effect : getSpellEffects()) {
-			effect.apply(e);
+			effect.apply(e, e);
 		}
 		
 		if (castEffect != null) {
