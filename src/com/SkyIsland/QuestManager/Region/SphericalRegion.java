@@ -102,7 +102,7 @@ public class SphericalRegion extends Region {
 		
 		Random rand = new Random();
 		double rad = rand.nextDouble() * radius;
-		double dir = rand.nextDouble() * 360;
+		double dir = rand.nextDouble() * (2 * Math.PI);
 		
 		loc.add(rad * Math.cos(dir), 0, rad * Math.sin(dir));
 		
