@@ -19,6 +19,7 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,6 +37,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
+import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Player.Utils.Compass;
 import com.SkyIsland.QuestManager.Player.Utils.CompassTrackable;
 import com.SkyIsland.QuestManager.Player.Utils.QuestJournal;
@@ -68,7 +70,7 @@ import de.inventivegames.util.title.TitleManager;
  * @author Skyler
  *
  */
-public class QuestPlayer implements Participant, Listener {
+public class QuestPlayer implements Participant, Listener, MagicUser {
 	
 	private UUID playerID;
 	
@@ -1107,5 +1109,15 @@ public class QuestPlayer implements Participant, Listener {
 				}
 			}
 		}
+	}
+
+	@Override
+	public Entity getEntity() {
+		OfflinePlayer p = getPlayer();
+		if (p.isOnline()) {
+			return (Player) p;
+		}
+
+		return null;
 	}
 }

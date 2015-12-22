@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -30,14 +31,17 @@ public class SpellProjectile implements Runnable {
 	
 	private Vector direction;
 	
+	private Effect effect;
+	
 	public SpellProjectile(TargetSpell source, MagicUser caster, Location start, Vector direction,
-			double speed, int maxDistance) {
+			double speed, int maxDistance, Effect paceEffect) {
 		this.sourceSpell = source;
 		this.distance = 0;
 		this.maxDistance = maxDistance;
 		this.location = start.clone();
 		this.direction = direction;
 		this.caster = caster;
+		this.effect = paceEffect;
 		
 		double rate = 20 / speed;
 		
@@ -58,6 +62,9 @@ public class SpellProjectile implements Runnable {
 			distance++;
 			//move forward a block, check for collision
 			location.add(direction);
+			
+			location.getWorld().playEffect(location, effect, 0);
+			
 			Collection<Entity> e = location.getWorld().getNearbyEntities(location, .5, .5, .5);
 			filterLiving(e);
 			
@@ -114,7 +121,8 @@ public class SpellProjectile implements Runnable {
 		Iterator<Entity> it = set.iterator();
 		
 		while (it.hasNext()) {
-			if (!(it.next() instanceof LivingEntity)) {
+			Entity next = it.next();
+			if (!(next instanceof LivingEntity) || next.equals(caster.getEntity())) {
 				it.remove();
 			}
 		}
