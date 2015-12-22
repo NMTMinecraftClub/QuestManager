@@ -36,8 +36,8 @@ public class ChargeEffect extends QuestEffect implements Runnable {
 
 	@Override
 	public void run() {
-		spark();
 		count++;
+		spark();
 		if (count < 4) {
 			Bukkit.getScheduler().runTaskLater(QuestManagerPlugin.questManagerPlugin, this, 
 					4);			
