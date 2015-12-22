@@ -63,7 +63,9 @@ public class SpellProjectile implements Runnable {
 			//move forward a block, check for collision
 			location.add(direction);
 			
-			location.getWorld().playEffect(location, effect, 0);
+			if (effect != null) {
+				location.getWorld().playEffect(location, effect, 0);
+			}
 			
 			Collection<Entity> e = location.getWorld().getNearbyEntities(location, .5, .5, .5);
 			filterLiving(e);
