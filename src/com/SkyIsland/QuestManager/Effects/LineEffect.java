@@ -8,7 +8,7 @@ import org.bukkit.util.Vector;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 
-public class MagicLineEffect extends QuestEffect implements Runnable {
+public class LineEffect extends QuestEffect implements Runnable {
 
 	private Location cur;
 	
@@ -23,9 +23,12 @@ public class MagicLineEffect extends QuestEffect implements Runnable {
 	private int delay;
 	
 	private int perTick;
+	
+	private Effect effect;
 
-	public MagicLineEffect(double blocksPerSecond) {
+	public LineEffect(Effect effect, double blocksPerSecond) {
 		this.speed = blocksPerSecond;
+		this.effect = effect;
 	}
 	
 	@Override
@@ -67,6 +70,6 @@ public class MagicLineEffect extends QuestEffect implements Runnable {
 	}
 	
 	private void spark() {
-		cur.getWorld().playEffect(cur, Effect.WITCH_MAGIC, 0);
+		cur.getWorld().playEffect(cur, effect, 0);
 	}
 }

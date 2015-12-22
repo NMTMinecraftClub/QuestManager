@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -23,7 +24,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.SkyIsland.QuestManager.Configuration.PluginConfiguration;
 import com.SkyIsland.QuestManager.Configuration.Utils.Chest;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
-import com.SkyIsland.QuestManager.Effects.MagicLineEffect;
+import com.SkyIsland.QuestManager.Effects.ChargeEffect;
+import com.SkyIsland.QuestManager.Effects.LineEffect;
 import com.SkyIsland.QuestManager.Enemy.DefaultEnemy;
 import com.SkyIsland.QuestManager.Enemy.EnemyManager;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
@@ -344,8 +346,10 @@ public class QuestManagerPlugin extends JavaPlugin {
 			Set<Material> set = null;
 			Location loc = p.getTargetBlock(set,  200).getLocation();
 			
-			MagicLineEffect ef = new MagicLineEffect(40);
+			LineEffect ef = new LineEffect(Effect.WITCH_MAGIC, 40);
 			ef.play(p, loc);
+			ChargeEffect cf = new ChargeEffect(Effect.FLYING_GLYPH);
+			cf.play(p, null);
 			
 			return true;
 		}
