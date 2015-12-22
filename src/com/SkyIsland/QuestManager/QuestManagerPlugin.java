@@ -25,8 +25,12 @@ import com.SkyIsland.QuestManager.Enemy.EnemyManager;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Fanciful.MessagePart;
 import com.SkyIsland.QuestManager.Fanciful.TextualComponent;
+import com.SkyIsland.QuestManager.Magic.Spell.SelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleSelfSpell;
+import com.SkyIsland.QuestManager.Magic.Spell.SimpleTargetSpell;
+import com.SkyIsland.QuestManager.Magic.Spell.Spell;
 import com.SkyIsland.QuestManager.Magic.Spell.SpellManager;
+import com.SkyIsland.QuestManager.Magic.Spell.TargetSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.HealEffect;
 import com.SkyIsland.QuestManager.NPC.ForgeNPC;
@@ -193,7 +197,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		SphericalRegion.registerWithAliases();
 		DefaultEnemy.registerWithAliases();
 		SimpleSelfSpell.registerWithAliases();
-		//SimpleTargetSpell.registerWithAliases();
+		SimpleTargetSpell.registerWithAliases();
 		HealEffect.registerWithAliases();
 		DamageEffect.registerWithAliases();
 
@@ -354,6 +358,31 @@ public class QuestManagerPlugin extends JavaPlugin {
 			qp.addQuestBook();
 			qp.addJournal();
 			
+			Spell spell = spellManager.getSpell("Heal");
+			if (spell instanceof SelfSpell) {
+				((SelfSpell) spell).cast(qp);
+			} else if (spell instanceof TargetSpell) {
+				((TargetSpell) spell).cast(qp, qp.getPlayer().getPlayer().getLocation().getDirection());
+			}
+			
+			
+			/////////////////////////
+//			SimpleTargetSpell FS = new SimpleTargetSpell(5, "Fireball", "inplace", 5.0, 15);
+//			FS.addSpellEffect(new DamageEffect(5.0));
+//			FS.setProjectileEffect(Effect.MOBSPAWNER_FLAMES);
+//			FS.setContactEffect(Effect.EXPLOSION_LARGE);
+//			FS.setCastSound(Sound.GHAST_FIREBALL);
+//			
+//			FS.cast(qp, qp.getPlayer().getPlayer().getLocation().getDirection());
+//			
+//			SimpleSelfSpell HS = new SimpleSelfSpell(4, "Heal", "temp");
+//			HS.addSpellEffect(new HealEffect(3.0));
+//			HS.setCastEffect(Effect.HAPPY_VILLAGER);
+//			HS.setCastSound(Sound.ORB_PICKUP);
+//			
+//			HS.cast(qp);
+			
+			/////////////////////////
 			return true;
 		}
 		
