@@ -1,6 +1,7 @@
 package com.SkyIsland.QuestManager.Magic.Spell.Effect;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Entity;
 
 /**
@@ -8,7 +9,7 @@ import org.bukkit.entity.Entity;
  * @author Skyler
  *
  */
-public abstract class SpellEffect {
+public abstract class SpellEffect implements ConfigurationSerializable {
 	
 	public abstract void apply(Entity e, Entity cause);
 	
