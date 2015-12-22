@@ -4,9 +4,12 @@ package com.SkyIsland.QuestManager;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,6 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.SkyIsland.QuestManager.Configuration.PluginConfiguration;
 import com.SkyIsland.QuestManager.Configuration.Utils.Chest;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
+import com.SkyIsland.QuestManager.Effects.MagicEffect;
 import com.SkyIsland.QuestManager.Enemy.DefaultEnemy;
 import com.SkyIsland.QuestManager.Enemy.EnemyManager;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
@@ -335,6 +339,14 @@ public class QuestManagerPlugin extends JavaPlugin {
 			
 			qp.addQuestBook();
 			qp.addJournal();
+			
+			Player p = (Player) sender;
+			Set<Material> set = null;
+			Location loc = p.getTargetBlock(set,  200).getLocation();
+			
+			MagicEffect ef = new MagicEffect(40);
+			ef.play(p, loc);
+			
 			return true;
 		}
 		
