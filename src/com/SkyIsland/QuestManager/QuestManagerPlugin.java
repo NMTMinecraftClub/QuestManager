@@ -33,6 +33,7 @@ import com.SkyIsland.QuestManager.Magic.Spell.SpellManager;
 import com.SkyIsland.QuestManager.Magic.Spell.TargetSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.HealEffect;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.StatusEffect;
 import com.SkyIsland.QuestManager.NPC.ForgeNPC;
 import com.SkyIsland.QuestManager.NPC.InnNPC;
 import com.SkyIsland.QuestManager.NPC.MuteNPC;
@@ -200,6 +201,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		SimpleTargetSpell.registerWithAliases();
 		HealEffect.registerWithAliases();
 		DamageEffect.registerWithAliases();
+		StatusEffect.registerWithAliases();
 
 		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		inventoryGuiHandler = new InventoryGuiHandler();
