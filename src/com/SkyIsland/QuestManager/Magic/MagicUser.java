@@ -1,5 +1,9 @@
 package com.SkyIsland.QuestManager.Magic;
 
-public interface MagicUser {
+import org.bukkit.entity.Entity;
 
+public interface MagicUser {
+	
+	public Entity getEntity();
+	
 }

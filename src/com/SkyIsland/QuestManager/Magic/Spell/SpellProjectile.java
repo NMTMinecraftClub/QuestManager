@@ -4,17 +4,19 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Magic.MagicUser;
 
 public class SpellProjectile implements Runnable {
 	
 	private TargetSpell sourceSpell;
+	
+	private MagicUser caster;
 	
 	private int maxDistance;
 	
@@ -28,13 +30,14 @@ public class SpellProjectile implements Runnable {
 	
 	private Vector direction;
 	
-	public SpellProjectile(TargetSpell source, Effect effect, Location start, Vector direction,
+	public SpellProjectile(TargetSpell source, MagicUser caster, Location start, Vector direction,
 			double speed, int maxDistance) {
 		this.sourceSpell = source;
 		this.distance = 0;
 		this.maxDistance = maxDistance;
 		this.location = start.clone();
 		this.direction = direction;
+		this.caster = caster;
 		
 		double rate = 20 / speed;
 		
@@ -67,14 +70,28 @@ public class SpellProjectile implements Runnable {
 					filterLiving(e);					
 				}
 				
-				Entity hit = e.iterator().next();
-				sourceSpell.onEntityHit(hit);
+				if (e.size() < 1) {
+					//too far
+					rad += .1; //step back
+					e = location.getWorld().getNearbyEntities(location, rad, rad, rad);
+					filterLiving(e);
+				}
+				
+				if (e.isEmpty()) {
+					//messed up
+					System.out.println("Messed up on magic projectile!");
+					continue;
+					
+				}
+				
+				LivingEntity hit = (LivingEntity) e.iterator().next();
+				sourceSpell.onEntityHit(caster, hit);
 				return;
 			}
 			
 			//didn't hit entity. Did it hit a block?
 			if (location.getBlock().getType().isSolid()) {
-				sourceSpell.onBlockHit(location);
+				sourceSpell.onBlockHit(caster, location);
 				return;
 			}
 			
