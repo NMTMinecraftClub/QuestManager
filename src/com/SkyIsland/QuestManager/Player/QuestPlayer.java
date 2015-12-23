@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -200,7 +201,6 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		this.journalNotes = new LinkedList<String>();
 		this.spells = new LinkedList<>();
 		this.storedSpells = new HashMap<>();
-		storedSpells.put(Material.RECORD_10, "Heal");
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
@@ -552,11 +552,20 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		map.put("unlockedtitles", unlockedTitles);
 		map.put("fame", fame);
 		map.put("money", money);
+		map.put("mp", mp);
+		map.put("maxmp", maxMp);
 		map.put("id", getPlayer().getUniqueId().toString());
 		map.put("portalloc", this.questPortal);
 		map.put("completedquests", completedQuests);
 		map.put("focusquest", focusQuest);
 		map.put("notes", journalNotes);
+		map.put("spells", spells);
+		
+		Map<String, String> stored = new TreeMap<>();
+		for (Material m : storedSpells.keySet()) {
+			stored.put(m.name(), storedSpells.get(m));
+		}
+		map.put("storedspells", stored);
 		
 		return map;
 	}
@@ -595,6 +604,39 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		qp.focusQuest = (String) map.get("focusquest");
 		qp.journalNotes = (List<String>) map.get("notes");
 		
+		////////Update code 1///////////
+		if (map.containsKey("mp")) {
+			qp.mp = (int) map.get("mp");
+		} //else handled by default constructor
+		
+		if (map.containsKey("maxMp")) {
+			qp.maxMp = (int) map.get("maxmp");
+		} //else again handled by default constructor
+		
+		if (map.containsKey("spells")) {
+			qp.spells = (List<String>) map.get("spells");
+		} // ""
+		
+		if (map.containsKey("storedspells")) {
+			Map<Material, String> stored = new HashMap<>();
+			Map<String, String> act = (Map<String, String>) map.get("storedspells");
+			
+			for (String name : act.keySet()) {
+				try {
+					stored.put(Material.valueOf(name), act.get(name));
+				} catch (Exception e) {
+					QuestManagerPlugin.questManagerPlugin.getLogger().warning(
+						"Failed to find material [" + name + "] when restoring player ["
+						+ qp.getIDString() + "]'s spells!");
+					continue;
+				}
+			}
+			
+			qp.storedSpells = stored;
+		}
+		
+		////////////////////////////////
+				
 		if (qp.completedQuests == null) {
 			qp.completedQuests = new LinkedList<String>();
 		}
@@ -754,6 +796,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		
 		if (SpellHolder.SpellHolderDefinition.isHolder(e.getItem())) {
 			castSpell(SpellHolder.getSpell(this, e.getItem()));
+			e.setCancelled(true);
+			return;
 		}
 		
 	}
@@ -1283,6 +1327,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	
 	private void castSpell(Spell spell) {
 		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		if (spell == null) {
 			return;
 		}
 		
