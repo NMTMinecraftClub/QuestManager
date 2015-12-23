@@ -73,7 +73,7 @@ public class DamageEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Location loc) {
+	public void apply(Location loc, Entity cause) {
 		//can't damage a location
 		//do nothing 
 		;

@@ -177,7 +177,7 @@ public class SimpleTargetSpell extends TargetSpell {
 	@Override
 	protected void onBlockHit(MagicUser caster, Location loc) {
 		for (SpellEffect effect : getSpellEffects()) {
-			effect.apply(loc);
+			effect.apply(loc, caster.getEntity());
 		}
 	}
 

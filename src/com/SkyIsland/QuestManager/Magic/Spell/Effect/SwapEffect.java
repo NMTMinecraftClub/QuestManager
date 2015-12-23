@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 
@@ -51,27 +50,18 @@ public class SwapEffect extends SpellEffect {
 	}
 	
 	public static SwapEffect valueOf(Map<String, Object> map) {
-		return new SwapEffect(
-				Material.valueOf((String) map.get("typefrom")),
-				Material.valueOf((String) map.get("typeto"))
-				);
+		return new SwapEffect();
 	}
 	
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		map.put("typefrom", typeFrom.name());
-		map.put("typeto", typeTo.name());
-		
 		return map;
 	}
 	
-	private Material typeFrom, typeTo;
 	
-	public SwapEffect(Material typeFrom, Material typeTo) {
-		this.typeFrom = typeFrom;
-		this.typeTo = typeTo;
+	public SwapEffect() {
 	}
 	
 	@Override
@@ -82,7 +72,7 @@ public class SwapEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Location loc) {
+	public void apply(Location loc, Entity cause) {
 		; //do nothing
 	}
 	
