@@ -169,7 +169,6 @@ public class PlayerManager implements Tickable {
 
 	@Override
 	public void tick() {
-		System.out.print("tick");
 		PluginConfiguration pc = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration();
 		int day = pc.getMagicRegenDay();
 		int night = pc.getMagicRegenNight();
@@ -178,17 +177,14 @@ public class PlayerManager implements Tickable {
 			if (qp.getPlayer().isOnline() && QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 					.getWorlds().contains(p.getPlayer().getWorld().getName())) {
 				//potential for regen
-				System.out.println("Potential");
 				long time = p.getPlayer().getWorld().getTime();
 				if (day != 0 && (time < 13000 || time >= 23000))
 				if (!pc.getMagicRegenOutside() || p.getPlayer().getLocation().getBlock().getLightFromSky() > 13){
 					qp.regenMP(day);
-					System.out.println("day regen");
 				}
 				if (night != 0 && (time >= 13000 && time < 23000)) 
 				if (!pc.getMagicRegenOutside() || p.getPlayer().getLocation().getBlock().getLightFromSky() > 13){
 					qp.regenMP(night);
-					System.out.println("night regen");
 				}
 			}
 		}

@@ -1149,19 +1149,18 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			Player p = (Player) getPlayer();
 			p.setExp( Math.min(.99f, (float) mp / (float) maxMp));
 			//p.setExp(mp / maxMp);
-			System.out.println("mp added!");
 		}
 	}
 	
 	/**
 	 * Regens the player's MP by the amount specified.<br />
-	 * If the amount is negative, the player regens a fraction of their max mp (-amount/100%)
+	 * If the amount is negative, the player regens a fraction of their max mp (-amount%)
 	 * @param amt
 	 */
 	public void regenMP(int amt) {
 		if (amt < 0) {
 			//it's a rate
-			addMP(this.maxMp * (amt / 100));
+			addMP((this.maxMp * -amt) / 100);
 		} else {
 			addMP(amt);
 		}
@@ -1209,15 +1208,9 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			case RABBIT_STEW:
 			case RAW_FISH:	
 				int amt = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenFood();
-				if (amt < 0) {
-					//it's a rate
-					addMP(this.maxMp * (amt / 100));
-				} else {
-					addMP(amt);
-				}		
+				regenMP(amt);	
 				break;
 			default:
-				;
 				break;
 			}
 		}
