@@ -51,6 +51,7 @@ public class PluginConfiguration {
 		XPREGEN("magic.regenOnXP"),
 		FOODREGEN("magic.regenOnFood"),
 		HOLDERNAME("interface.magic.holderName"),
+		ALTERTYPE("interface.magic.alterBlockType"),
 		WORLDS("questWorlds"),
 		QUESTS("quests"),
 		QUESTDIR("questDir"),
@@ -100,6 +101,7 @@ public class PluginConfiguration {
 		
 		if (getMagicEnabled()) {
 			SpellHolder.SpellHolderDefinition.setDisplayName(getSpellHolderName());
+			SpellHolder.SpellAlterTableDefinition.setBlockType(getAlterType());
 		}
 	}
 	
@@ -356,6 +358,14 @@ public class PluginConfiguration {
 	}
 	
 	/**
+	 * Gets the material block type used for spell holder alteration
+	 * @return
+	 */
+	public Material getAlterType() {
+		return Material.valueOf(config.getString(PluginConfigurationKey.ALTERTYPE.key));
+	}
+	
+	/**
 	 * Sets up a default configuration file with blank values
 	 * @param configFile
 	 */
@@ -396,6 +406,7 @@ public class PluginConfiguration {
 		config.set(PluginConfigurationKey.COMPASSTYPE.key, "COMPASS");
 		
 		config.set(PluginConfigurationKey.HOLDERNAME.key, "Magic Scroll");
+		config.set(PluginConfigurationKey.ALTERTYPE.key, "ENCHANTING_TABLE");
 		
 		//magic options
 		config.set(PluginConfigurationKey.ALLOWMAGIC.key, true);
