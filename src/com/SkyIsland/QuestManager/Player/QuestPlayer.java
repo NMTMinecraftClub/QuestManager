@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -38,12 +39,17 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
+import com.SkyIsland.QuestManager.Effects.ChargeEffect;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
+import com.SkyIsland.QuestManager.Magic.Spell.SelfSpell;
+import com.SkyIsland.QuestManager.Magic.Spell.Spell;
+import com.SkyIsland.QuestManager.Magic.Spell.TargetSpell;
 import com.SkyIsland.QuestManager.Player.Utils.Compass;
 import com.SkyIsland.QuestManager.Player.Utils.CompassTrackable;
 import com.SkyIsland.QuestManager.Player.Utils.QuestJournal;
 import com.SkyIsland.QuestManager.Player.Utils.QuestLog;
+import com.SkyIsland.QuestManager.Player.Utils.SpellHolder;
 import com.SkyIsland.QuestManager.Quest.Goal;
 import com.SkyIsland.QuestManager.Quest.Quest;
 import com.SkyIsland.QuestManager.Quest.History.History;
@@ -93,6 +99,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	private int mp;
 	
 	private int maxMp;
+	
+	private Map<Material, String> storedSpells;
+	
+	private List<String> spells;
 	
 	private String title;
 	
@@ -188,6 +198,9 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		this.title = "The Unknown";
 		this.unlockedTitles = new LinkedList<String>();
 		this.journalNotes = new LinkedList<String>();
+		this.spells = new LinkedList<>();
+		this.storedSpells = new HashMap<>();
+		storedSpells.put(Material.RECORD_10, "Heal");
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
@@ -469,6 +482,37 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
         
         getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.FIREWORK_TWINKLE, 10, 1);
 	}
+
+	public void addSpell(String spellName) {
+		if (this.spells.contains(spellName)) {
+			return;
+		}
+		this.spells.add(spellName);
+		
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		ChatMenu menu = new SimpleChatMenu(
+				new FancyMessage("You've learned the ")
+					.color(ChatColor.DARK_PURPLE)
+				.then(spellName)
+					.color(ChatColor.GOLD)
+					.style(ChatColor.BOLD)
+				.then(" spell!"));
+		
+		menu.show(getPlayer().getPlayer());
+		
+		TitleManager.sendTimings(getPlayer().getPlayer(), 30, 80, 30);
+
+//        TitleManager.sendSubTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
+//        		new FancyMessage(title).toOldMessageFormat()));
+
+        TitleManager.sendTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
+        		ChatColor.GREEN + "Spell Learned!"));
+        
+        getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.FIREWORK_TWINKLE, 10, 1);
+	}
 	
 //	/**
 //	 * Returns the currently-stored information in a YamlConfiguration. <br />
@@ -706,6 +750,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		if (Compass.CompassDefinition.isCompass(e.getItem())) {
 			updateCompass(false);
 			return;
+		}
+		
+		if (SpellHolder.SpellHolderDefinition.isHolder(e.getItem())) {
+			castSpell(SpellHolder.getSpell(this, e.getItem()));
 		}
 		
 	}
@@ -1216,6 +1264,47 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		}
 	}
 	
+	/**
+	 * Returns a map of potential spells stored against their materials
+	 * @see {@link com.SkyIsland.QuestManager.Player.Utils.SpellHolder SpellHolder}
+	 * @return
+	 */
+	public Map<Material, String> getStoredSpells() {
+		return storedSpells;
+	}
 	
+	/**
+	 * Returns all spells unlocked by the player
+	 * @return
+	 */
+	public List<String> getSpells() {
+		return spells;
+	}
 	
+	private void castSpell(Spell spell) {
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		if (mp < spell.getCost()) {
+			return;
+		}
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicEnabled()) {
+			return;
+		}
+		
+		new ChargeEffect(Effect.WITCH_MAGIC)
+			.play(getPlayer().getPlayer(), getPlayer().getPlayer().getLocation());
+		
+		addMP(-spell.getCost());
+		if (spell instanceof TargetSpell) {
+			((TargetSpell) spell).cast(this, getPlayer().getPlayer().getLocation().getDirection());
+			return;
+		}
+		if (spell instanceof SelfSpell) {
+			((SelfSpell) spell).cast(this);
+			return;
+		}
+	}
 }
