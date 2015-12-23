@@ -158,6 +158,15 @@ public class CuboidRegion extends Region {
 				return randomLocation(safe);
 			}
 		}
+		
+		//now move down to the ground
+		while (!loc.clone().add(0, -1, 0).getBlock().getType().isSolid()) {
+			//there's not ground below
+			loc.add(0, -1, 0);
+			if (loc.getY() < least.getY()) {
+				break;
+			}
+		}
 
 		loc.setX(Math.floor(loc.getX()) + .5);
 		loc.setZ(Math.floor(loc.getZ()) + .5);

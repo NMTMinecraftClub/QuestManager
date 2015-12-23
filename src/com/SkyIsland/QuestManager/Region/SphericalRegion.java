@@ -118,6 +118,15 @@ public class SphericalRegion extends Region {
 			}
 		}
 		
+		//now move down to the ground
+		while (!loc.clone().add(0, -1, 0).getBlock().getType().isSolid()) {
+			//there's not ground below
+			loc.add(0, -1, 0);
+			if (center.distance(loc.toVector()) > radius) {
+				break;
+			}
+		}
+		
 		loc.setX(Math.floor(loc.getX()) + .5);
 		loc.setZ(Math.floor(loc.getZ()) + .5);
 		loc.setY(Math.floor(loc.getY()));
