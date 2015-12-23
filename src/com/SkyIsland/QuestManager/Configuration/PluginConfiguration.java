@@ -13,6 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Player.Utils.Compass;
+import com.SkyIsland.QuestManager.Player.Utils.SpellHolder;
 
 /**
  * Wrapper class for configuration files needed by the plugin.<br />
@@ -49,6 +50,7 @@ public class PluginConfiguration {
 		KILLREGEN("magic.regenOnKill"),
 		XPREGEN("magic.regenOnXP"),
 		FOODREGEN("magic.regenOnFood"),
+		HOLDERNAME("interface.magic.holderName"),
 		WORLDS("questWorlds"),
 		QUESTS("quests"),
 		QUESTDIR("questDir"),
@@ -94,6 +96,10 @@ public class PluginConfiguration {
 		if (getCompassEnabled()) {
 			Compass.CompassDefinition.setCompassType(getCompassType());
 			Compass.CompassDefinition.setDisplayName(getCompassName());
+		}
+		
+		if (getMagicEnabled()) {
+			SpellHolder.SpellHolderDefinition.setDisplayName(getSpellHolderName());
 		}
 	}
 	
@@ -342,6 +348,14 @@ public class PluginConfiguration {
 	}
 	
 	/**
+	 * Gets the name of the spell holders
+	 * @return
+	 */
+	public String getSpellHolderName() {
+		return config.getString(PluginConfigurationKey.HOLDERNAME.key);
+	}
+	
+	/**
 	 * Sets up a default configuration file with blank values
 	 * @param configFile
 	 */
@@ -376,6 +390,12 @@ public class PluginConfiguration {
 		config.set(PluginConfigurationKey.PORTALS.key, true);
 		config.set(PluginConfigurationKey.ADJUSTXP.key, true);
 		config.set(PluginConfigurationKey.TITLECHAT.key, true);
+		
+		config.set(PluginConfigurationKey.COMPASS.key, true);
+		config.set(PluginConfigurationKey.COMPASSNAME.key, "Magic Compass");
+		config.set(PluginConfigurationKey.COMPASSTYPE.key, "COMPASS");
+		
+		config.set(PluginConfigurationKey.HOLDERNAME.key, "Magic Scroll");
 		
 		//magic options
 		config.set(PluginConfigurationKey.ALLOWMAGIC.key, true);
