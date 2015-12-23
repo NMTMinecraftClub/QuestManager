@@ -474,7 +474,7 @@ public class Quest implements Listener {
 	public String getJSONDescription() {
 		FancyMessage builder = new FancyMessage(template.getName())
 				.color(ChatColor.GOLD)
-				.tooltip(ChatColor.DARK_BLUE + "Click to set this quest", ChatColor.DARK_BLUE + "as your focus")
+				.tooltip(ChatColor.BLUE + "Click to set this quest", ChatColor.BLUE + "as your focus")
 				.command("/qhistory " + this.ID)
 			.then("\n" + template.getDescription() + "\n")
 				.color(ChatColor.DARK_BLUE)

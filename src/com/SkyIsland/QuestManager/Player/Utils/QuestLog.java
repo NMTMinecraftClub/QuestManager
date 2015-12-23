@@ -12,6 +12,7 @@ import org.bukkit.Note.Tone;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
@@ -68,6 +69,7 @@ public class QuestLog {
 			
 			bookMeta.setTitle("Quest Log");
 			bookMeta.setAuthor(play.getName());
+			bookMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 			
 			book.setItemMeta(bookMeta);
 			
@@ -136,10 +138,11 @@ public class QuestLog {
 		//get stats page
 		title = new FancyMessage(" " + qp.getPlayer().getName())
 				.color(ChatColor.DARK_PURPLE)
-			.then(" - ")
-				.color(ChatColor.BLACK)
+			.then("\n")
 			.then(qp.getTitle())
 				.color(ChatColor.DARK_RED)
+				.tooltip(ChatColor.BLUE + "Click to change your title")
+				.command("/player title")
 			.then("\n-----\n  Fame: " + qp.getFame() + "\n  Gold: " + qp.getMoney())
 				.color(ChatColor.GOLD)
 			.then("\n\n  Current Quests: " + qp.getCurrentQuests().size())
@@ -163,7 +166,7 @@ public class QuestLog {
 		
 		
 		//bind
-		builder += "], title:\"Quest Log\",author:" + play.getName() + ",ench:[{id:61s,lvl:5s}]}";
+		builder += "], title:\"Quest Log\",author:" + play.getName() + ",ench:[{id:61s,lvl:5s}],HideFlags:1}";
 
 		Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), builder);
 		

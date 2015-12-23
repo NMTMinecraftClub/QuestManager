@@ -799,6 +799,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			//check for alter first
 			if (e.getClickedBlock() != null)
 			if (SpellHolder.SpellAlterTableDefinition.isTable(e.getClickedBlock())) {
+				
 				showSpellAlterMenu(e.getItem());
 				e.setCancelled(true);
 				return;

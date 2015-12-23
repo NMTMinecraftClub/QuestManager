@@ -186,7 +186,7 @@ public class QuestJournal {
 		}
 		
 		//bind
-		builder += "], title:\"Journal\",author:" + play.getName() + ",ench:[{id:61s,lvl:5s}]}";
+		builder += "], title:\"Journal\",author:" + play.getName() + ",ench:[{id:61s,lvl:5s}],HideFlags:1}";
 
 		Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), builder);
 		
