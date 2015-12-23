@@ -12,17 +12,20 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import com.SkyIsland.QuestManager.Configuration.PluginConfiguration;
 import com.SkyIsland.QuestManager.Configuration.Utils.GUID;
 import com.SkyIsland.QuestManager.Player.Participant;
 import com.SkyIsland.QuestManager.Player.Party;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Scheduling.IntervalScheduler;
+import com.SkyIsland.QuestManager.Scheduling.Tickable;
 
 /**
  * Stores a database of QuestPlayers for lookup and loading
  * @author Skyler
  *
  */
-public class PlayerManager {
+public class PlayerManager implements Tickable {
 	
 	private Map<UUID, QuestPlayer> players;
 	
@@ -53,6 +56,13 @@ public class PlayerManager {
 		for (String key : gSex.getKeys(false)) {
 			parties.put(
 					GUID.valueOf(key), (Party) gSex.get(key));
+		}
+		
+		//check if we need to do day/night regen
+		PluginConfiguration pc = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration();
+		if (pc.getMagicEnabled())
+		if (pc.getMagicRegenDay() != 0 || pc.getMagicRegenNight() != 0) {
+			IntervalScheduler.getScheduler().register(this);
 		}
 		
 	}
@@ -154,6 +164,33 @@ public class PlayerManager {
 			config.save(saveFile);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void tick() {
+		System.out.print("tick");
+		PluginConfiguration pc = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration();
+		int day = pc.getMagicRegenDay();
+		int night = pc.getMagicRegenNight();
+		for (QuestPlayer qp : players.values()) {
+			OfflinePlayer p = qp.getPlayer();
+			if (qp.getPlayer().isOnline() && QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+					.getWorlds().contains(p.getPlayer().getWorld().getName())) {
+				//potential for regen
+				System.out.println("Potential");
+				long time = p.getPlayer().getWorld().getTime();
+				if (day != 0 && (time < 13000 || time >= 23000))
+				if (!pc.getMagicRegenOutside() || p.getPlayer().getLocation().getBlock().getLightFromSky() > 13){
+					qp.regenMP(day);
+					System.out.println("day regen");
+				}
+				if (night != 0 && (time >= 13000 && time < 23000)) 
+				if (!pc.getMagicRegenOutside() || p.getPlayer().getLocation().getBlock().getLightFromSky() > 13){
+					qp.regenMP(night);
+					System.out.println("night regen");
+				}
+			}
 		}
 	}
 	

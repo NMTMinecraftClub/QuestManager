@@ -23,11 +23,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerEditBookEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
@@ -180,6 +182,9 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	private QuestPlayer() {
 		this.fame = 0;
 		this.money = 0;
+		this.maxMp = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
+				.getStartingMana();
+		this.mp = maxMp;
 		this.title = "The Unknown";
 		this.unlockedTitles = new LinkedList<String>();
 		this.journalNotes = new LinkedList<String>();
@@ -647,6 +652,12 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 
 		money += e.getAmount();
 		p.setLevel(money);
+		
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicEnabled()
+				 && QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenXP() != 0) {
+			int amt = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenXP();
+			regenMP(amt);
+		}
 		
 		e.setAmount(0);
 	}
@@ -1133,7 +1144,85 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	@Override
 	public void addMP(int amount) {
 		mp = Math.max(Math.min(maxMp, mp + amount), 0);
+		
+		if (getPlayer().isOnline()) {
+			Player p = (Player) getPlayer();
+			p.setExp( Math.min(.99f, (float) mp / (float) maxMp));
+			//p.setExp(mp / maxMp);
+			System.out.println("mp added!");
+		}
 	}
+	
+	/**
+	 * Regens the player's MP by the amount specified.<br />
+	 * If the amount is negative, the player regens a fraction of their max mp (-amount/100%)
+	 * @param amt
+	 */
+	public void regenMP(int amt) {
+		if (amt < 0) {
+			//it's a rate
+			addMP(this.maxMp * (amt / 100));
+		} else {
+			addMP(amt);
+		}
+	}
+	
+	@EventHandler
+	public void onEntityDeathEvent(EntityDeathEvent e) {
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicEnabled()
+		 && QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenKill() != 0)
+		if (e.getEntity().getKiller() != null && 
+				e.getEntity().getKiller().equals(getPlayer())) {
+			//we killed it; regen mana
+			int amt = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenKill();
+			regenMP(amt);
+		}
+	}
+	
+	@EventHandler
+	public void onFoodEat(PlayerItemConsumeEvent e) {
+		if (e.getPlayer().getUniqueId().equals(getPlayer().getUniqueId())) {
+			//do mana regen, if it counts as food
+			if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicEnabled()
+					 && QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenFood() != 0)
+			switch (e.getItem().getType()) {
+			case RAW_BEEF:
+			case COOKED_BEEF:
+			case RAW_CHICKEN:
+			case COOKED_CHICKEN:
+			case APPLE:
+			case CARROT_ITEM:
+			case BAKED_POTATO:
+			case POTATO_ITEM:
+			case BREAD:
+			case COOKED_FISH:
+			case COOKED_MUTTON:
+			case COOKED_RABBIT:
+			case COOKIE:
+			case GRILLED_PORK:
+			case MELON:
+			case MUSHROOM_SOUP:
+			case MUTTON:
+			case PORK:
+			case PUMPKIN_PIE:
+			case RABBIT:
+			case RABBIT_STEW:
+			case RAW_FISH:	
+				int amt = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenFood();
+				if (amt < 0) {
+					//it's a rate
+					addMP(this.maxMp * (amt / 100));
+				} else {
+					addMP(amt);
+				}		
+				break;
+			default:
+				;
+				break;
+			}
+		}
+	}
+	
 	
 	
 }

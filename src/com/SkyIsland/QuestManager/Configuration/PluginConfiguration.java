@@ -41,6 +41,14 @@ public class PluginConfiguration {
 		COMPASS("interface.compass.enabled"),
 		COMPASSTYPE("interface.compass.type"),
 		COMPASSNAME("interface.compass.name"),
+		ALLOWMAGIC("magic.enabled"),
+		MANADEFAULT("magic.startingMana"),
+		DAYREGEN("magic.dayRegen"),
+		NIGHTREGEN("magic.nightRegen"),
+		OUTSIDEREGEN("magic.outsideRegen"),
+		KILLREGEN("magic.regenOnKill"),
+		XPREGEN("magic.regenOnXP"),
+		FOODREGEN("magic.regenOnFood"),
 		WORLDS("questWorlds"),
 		QUESTS("quests"),
 		QUESTDIR("questDir"),
@@ -186,6 +194,70 @@ public class PluginConfiguration {
 	}
 	
 	/**
+	 * Returns whether or not magic is set to be enabled
+	 * @return
+	 */
+	public boolean getMagicEnabled() {
+		return config.getBoolean(PluginConfigurationKey.ALLOWMAGIC.key);
+	}
+	
+	/**
+	 * Gets the specified default mana allotment, for new players
+	 * @return
+	 */
+	public int getStartingMana() {
+		return config.getInt(PluginConfigurationKey.MANADEFAULT.key);
+	}
+	
+	/**
+	 * Returns the amount of mp to regen in the day.<br />
+	 * Negative amounts indicate a percentage to regen rather than a constant (-(return)%)
+	 * @return The amount to regen; positive values indicate a constant, negative a rate (out of 100)
+	 */
+	public int getMagicRegenDay() {
+		return config.getInt(PluginConfigurationKey.DAYREGEN.key);
+	}
+	
+	/**
+	 * Amount to regen at night
+	 * @return The amount to regen; positive values indicate a constant, negative a rate (out of 100)
+	 */
+	public int getMagicRegenNight() {
+		return config.getInt(PluginConfigurationKey.NIGHTREGEN.key);
+	}
+	
+	/**
+	 * @return whether or not mp should regen only when outside
+	 */
+	public boolean getMagicRegenOutside() {
+		return config.getBoolean(PluginConfigurationKey.OUTSIDEREGEN.key);
+	}
+	
+	/**
+	 * The amount of mp to regen when a player gets a kill
+	 * @return The amount to regen; positive values indicate a contant, negative a rate (out of 100)
+	 */
+	public int getMagicRegenKill() {
+		return config.getInt(PluginConfigurationKey.KILLREGEN.key);
+	}
+	
+	/**
+	 * The amount to regen per xp picked up by a player
+	 * @return The amount to regen; positive values indicate a constant, negative a rate (out of 100)
+	 */
+	public int getMagicRegenXP() {
+		return config.getInt(PluginConfigurationKey.XPREGEN.key);
+	}
+	
+	/**
+	 * Amount to regen when a player consumes a food item
+	 * @return The amount to regen; positive values indicate a constant, negative a rate (out of 100)
+	 */
+	public int getMagicRegenFood() {
+		return config.getInt(PluginConfigurationKey.FOODREGEN.key);
+	}
+	
+	/**
 	 * Indicates whether or not menus should print out extra messages about expired menus.<br />
 	 * This can be used as a security feature to avoid players from spamming old menus!
 	 * @return
@@ -304,6 +376,16 @@ public class PluginConfiguration {
 		config.set(PluginConfigurationKey.PORTALS.key, true);
 		config.set(PluginConfigurationKey.ADJUSTXP.key, true);
 		config.set(PluginConfigurationKey.TITLECHAT.key, true);
+		
+		//magic options
+		config.set(PluginConfigurationKey.ALLOWMAGIC.key, true);
+		config.set(PluginConfigurationKey.MANADEFAULT.key, 20);
+		config.set(PluginConfigurationKey.DAYREGEN.key, 1);
+		config.set(PluginConfigurationKey.NIGHTREGEN.key, 1);
+		config.set(PluginConfigurationKey.OUTSIDEREGEN.key, false);
+		config.set(PluginConfigurationKey.KILLREGEN.key, 0);
+		config.set(PluginConfigurationKey.XPREGEN.key, 0);
+		config.set(PluginConfigurationKey.FOODREGEN.key, 0);
 		
 		List<String> worlds = new ArrayList<String>();
 		worlds.add("QuestWorld");
