@@ -163,14 +163,20 @@ public class ShopInventory extends GuiInventory {
 			int key = Integer.valueOf(slotString);
 			
 			int cost, fame;
-			ItemStack display, item;
+			ItemStack display;
+			Object item;
 			
 			display = section.getItemStack("display");
-			item = section.getItemStack("item");
 			cost = section.getInt("cost");
 			fame = section.getInt("fame");
 			
-			ShopItem ii = new ShopItem(item, display, cost, fame);
+			item = section.get("item");
+			ShopItem ii;
+			if (item instanceof String) {
+				ii = new ShopSpell((String) item, display, cost, fame);
+			} else {
+				ii = new ShopItem((ItemStack) item, display, cost, fame);
+			}
 			
 			map.put(key, ii);
 			
