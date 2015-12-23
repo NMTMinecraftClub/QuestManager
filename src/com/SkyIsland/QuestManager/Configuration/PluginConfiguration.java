@@ -99,10 +99,8 @@ public class PluginConfiguration {
 			Compass.CompassDefinition.setDisplayName(getCompassName());
 		}
 		
-		if (getMagicEnabled()) {
-			SpellHolder.SpellHolderDefinition.setDisplayName(getSpellHolderName());
-			SpellHolder.SpellAlterTableDefinition.setBlockType(getAlterType());
-		}
+		SpellHolder.SpellHolderDefinition.setDisplayName(getSpellHolderName());
+		SpellHolder.SpellAlterTableDefinition.setBlockType(getAlterType());
 	}
 	
 	/**
