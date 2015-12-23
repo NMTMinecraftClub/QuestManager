@@ -1,5 +1,7 @@
 package com.SkyIsland.QuestManager.Player.Utils;
 
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,6 +40,24 @@ public class SpellHolder {
 
 		public static void setEnchant(Enchantment enchant) {
 			SpellHolderDefinition.enchant = enchant;
+		}
+		
+	}
+	
+	public static class SpellAlterTableDefinition {
+		
+		private static Material blockType = Material.ENCHANTMENT_TABLE;
+		
+		public static boolean isTable(Block block) {
+			if (block == null || block.getType() != blockType) {
+				return false;
+			}
+			
+			return true;
+		}
+
+		public static void setBlockType(Material blockType) {
+			SpellAlterTableDefinition.blockType = blockType;
 		}
 		
 	}

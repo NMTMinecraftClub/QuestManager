@@ -61,6 +61,7 @@ import com.SkyIsland.QuestManager.UI.Menu.ChatMenuOption;
 import com.SkyIsland.QuestManager.UI.Menu.MultioptionChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.SimpleChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Action.BootFromPartyAction;
+import com.SkyIsland.QuestManager.UI.Menu.Action.ChangeSpellHolderAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ChangeTitleAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ForgeAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.PartyInviteAction;
@@ -795,6 +796,14 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		}
 		
 		if (SpellHolder.SpellHolderDefinition.isHolder(e.getItem())) {
+			//check for alter first
+			if (e.getClickedBlock() != null)
+			if (SpellHolder.SpellAlterTableDefinition.isTable(e.getClickedBlock())) {
+				showSpellAlterMenu(e.getItem());
+				e.setCancelled(true);
+				return;
+			}
+			
 			castSpell(SpellHolder.getSpell(this, e.getItem()));
 			e.setCancelled(true);
 			return;
@@ -1060,7 +1069,31 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		
 		menu.show(getPlayer().getPlayer());
 		
+	}
+	
+	public void showSpellAlterMenu(ItemStack holder) {
+		if (!getPlayer().isOnline()) {
+			return;
+		}
 		
+		if (this.spells.isEmpty()) {
+			ChatMenu menu = new SimpleChatMenu(new FancyMessage("You have not unlocked any spells!").color(ChatColor.DARK_RED));
+			menu.show(getPlayer().getPlayer());
+			return;
+		}
+		
+		LinkedList<ChatMenuOption> opts = new LinkedList<ChatMenuOption>();
+		
+		for (String t : spells) {
+			opts.add(new ChatMenuOption(
+					new PlainMessage(t),
+					new ChangeSpellHolderAction(this, holder, t)));
+		}
+		
+
+		MultioptionChatMenu menu = new MultioptionChatMenu(new PlainMessage("Choose your title:"), opts);
+		
+		menu.show(getPlayer().getPlayer());
 	}
 	
 	public OfflinePlayer getPlayer() {
