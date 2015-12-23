@@ -88,6 +88,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	
 	private int money;
 	
+	private int mp;
+	
+	private int maxMp;
+	
 	private String title;
 	
 	private List<String> unlockedTitles;
@@ -1120,4 +1124,16 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 
 		return null;
 	}
+
+	@Override
+	public int getMP() {
+		return mp;
+	}
+
+	@Override
+	public void addMP(int amount) {
+		mp = Math.max(Math.min(maxMp, mp + amount), 0);
+	}
+	
+	
 }
