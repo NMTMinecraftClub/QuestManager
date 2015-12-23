@@ -26,6 +26,7 @@ import com.SkyIsland.QuestManager.Quest.Goal;
  * <li> REWARDS | rewards | <i>Empty List</i> </li>
  * <li> MONEYREWARD | moneyreward | 0 </li>
  * <li> TITLEREWARD | titlereward | <i>null</i> </li>
+ * <li> SPELLREWARD | spellreward | <i>null</i></li>
  * <li> ENDHINT | turninhint | "Turn In"</li>
  * </ul>
  * </p>
@@ -49,6 +50,7 @@ public enum QuestConfigurationField {
 	REWARDS("rewards", new LinkedList<ItemStack>()),
 	MONEYREWARD("moneyreward", 0),
 	TITLEREWARD("titlereward", null),
+	SPELLREWARD("spellreward", null),
 	ENDHINT("turninhint", "Turn In");
 	
 	private Object def;

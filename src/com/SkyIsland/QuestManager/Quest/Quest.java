@@ -78,6 +78,8 @@ public class Quest implements Listener {
 	
 	private String titleReward;
 	
+	private String spellReward;
+	
 	private int moneyReward;
 	
 	private History history;
@@ -291,6 +293,10 @@ public class Quest implements Listener {
 
 				if (titleReward != null && !titleReward.trim().isEmpty()) {
 					qp.addTitle(titleReward);
+				}
+				
+				if (spellReward != null && !spellReward.trim().isEmpty()) {
+					qp.addSpell(spellReward);
 				}
 				
 			    QuestManagerPlugin.questManagerPlugin.getManager().removeQuest(this);
@@ -579,6 +585,14 @@ public class Quest implements Listener {
 
 	public void setTitleReward(String titleReward) {
 		this.titleReward = titleReward;
+	}
+
+	public String getSpellReward() {
+		return spellReward;
+	}
+
+	public void setSpellReward(String spellReward) {
+		this.spellReward = spellReward;
 	}
 
 	public int getMoneyReward() {

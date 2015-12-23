@@ -240,6 +240,7 @@ public class QuestConfiguration {
 		//get fame and reward info
 		quest.setFame(config.getInt(QuestConfigurationField.FAME.getKey()));
 		quest.setTitleReward(config.getString(QuestConfigurationField.TITLEREWARD.getKey()));
+		quest.setSpellReward(config.getString(QuestConfigurationField.SPELLREWARD.getKey()));
 		quest.setMoneyReward(config.getInt(QuestConfigurationField.MONEYREWARD.getKey()));
 		
 		@SuppressWarnings("unchecked")
