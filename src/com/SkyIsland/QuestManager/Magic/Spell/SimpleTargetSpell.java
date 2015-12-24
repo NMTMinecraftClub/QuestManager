@@ -179,6 +179,13 @@ public class SimpleTargetSpell extends TargetSpell {
 		for (SpellEffect effect : getSpellEffects()) {
 			effect.apply(loc, caster.getEntity());
 		}
+		
+		if (contactEffect != null) {
+			loc.getWorld().playEffect(loc, contactEffect, 0);
+		}
+		if (contactSound != null) {
+			loc.getWorld().playSound(loc, contactSound, 1, 1);
+		}
 	}
 
 	@Override

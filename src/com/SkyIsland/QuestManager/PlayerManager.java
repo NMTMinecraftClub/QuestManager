@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -178,12 +179,15 @@ public class PlayerManager implements Tickable {
 					.getWorlds().contains(p.getPlayer().getWorld().getName())) {
 				//potential for regen
 				long time = p.getPlayer().getWorld().getTime();
+				Location ploc = p.getPlayer().getLocation();
 				if (day != 0 && (time < 13000 || time >= 23000))
-				if (!pc.getMagicRegenOutside() || p.getPlayer().getLocation().getBlock().getLightFromSky() > 13){
+				if (!pc.getMagicRegenOutside() || (ploc.getBlockY() < ploc.getWorld().getMaxHeight()
+						&& ploc.getBlock().getLightFromSky() > 13)) {
 					qp.regenMP(day);
 				}
 				if (night != 0 && (time >= 13000 && time < 23000)) 
-				if (!pc.getMagicRegenOutside() || p.getPlayer().getLocation().getBlock().getLightFromSky() > 13){
+				if (!pc.getMagicRegenOutside() || (ploc.getBlockY() < ploc.getWorld().getMaxHeight()
+						&& p.getPlayer().getLocation().getBlock().getLightFromSky() > 13)) {
 					qp.regenMP(night);
 				}
 			}

@@ -275,13 +275,13 @@ public class QuestManager implements Listener {
 		}
 		
 		//remove starting NPCs
-		if (!questNPCs.isEmpty()) {
-			for (NPC npc : questNPCs) {
-				if (npc.getEntity() != null) {
-					npc.removeEntity();
-				}
-			}
-		}
+//		if (!questNPCs.isEmpty()) {
+//			for (NPC npc : questNPCs) {
+//				if (npc.getEntity() != null) {
+//					npc.removeEntity();
+//				}
+//			}
+//		}
 	}
 	
 	/**
