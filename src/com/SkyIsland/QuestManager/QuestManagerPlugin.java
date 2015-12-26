@@ -22,6 +22,7 @@ import com.SkyIsland.QuestManager.Configuration.Utils.Chest;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
 import com.SkyIsland.QuestManager.Enemy.DefaultEnemy;
 import com.SkyIsland.QuestManager.Enemy.EnemyManager;
+import com.SkyIsland.QuestManager.Enemy.NormalEnemy;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Fanciful.MessagePart;
 import com.SkyIsland.QuestManager.Fanciful.TextualComponent;
@@ -201,6 +202,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		CuboidRegion.registerWithAliases();
 		SphericalRegion.registerWithAliases();
 		DefaultEnemy.registerWithAliases();
+		NormalEnemy.registerWithAliases();
 		SimpleSelfSpell.registerWithAliases();
 		SimpleTargetSpell.registerWithAliases();
 		HealEffect.registerWithAliases();

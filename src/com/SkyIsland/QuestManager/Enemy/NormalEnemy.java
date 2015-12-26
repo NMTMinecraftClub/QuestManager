@@ -7,12 +7,11 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.EntityType;
 
 /**
- * Default enemy type for default mobs in minecraft.<br />
- * Wrapper for QM enemies
+ * Enemy type with very limited, straightforward customization; namely attributes
  * @author Skyler
  *
  */
-public class DefaultEnemy extends Enemy {
+public class NormalEnemy extends Enemy {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -20,7 +19,7 @@ public class DefaultEnemy extends Enemy {
 	 */
 	public static void registerWithAliases() {
 		for (aliases alias : aliases.values()) {
-			ConfigurationSerialization.registerClass(DefaultEnemy.class, alias.getAlias());
+			ConfigurationSerialization.registerClass(NormalEnemy.class, alias.getAlias());
 		}
 	}
 	
@@ -28,13 +27,13 @@ public class DefaultEnemy extends Enemy {
 	 * Registers this class as configuration serializable with only the default alias
 	 */
 	public static void registerWithoutAliases() {
-		ConfigurationSerialization.registerClass(DefaultEnemy.class);
+		ConfigurationSerialization.registerClass(NormalEnemy.class);
 	}
 	
 
 	private enum aliases {
-		DEFAULT(DefaultEnemy.class.getName()),
-		SIMPLE("DefaultEnemy");
+		DEFAULT(NormalEnemy.class.getName()),
+		SIMPLE("NormaltEnemy");
 		
 		private String alias;
 		
@@ -47,8 +46,14 @@ public class DefaultEnemy extends Enemy {
 		}
 	}
 	
-	public DefaultEnemy(String name, EntityType type) {
+	private double hp;
+	
+	private double attack;
+	
+	public NormalEnemy(String name, EntityType type, double hp, double attack) {
 		super(name, type);
+		this.hp = hp;
+		this.attack = attack;
 	}
 	
 	@Override
@@ -57,11 +62,13 @@ public class DefaultEnemy extends Enemy {
 		
 		map.put("type", type.name());
 		map.put("name", name);
+		map.put("hp", hp);
+		map.put("attack", attack);
 		
 		return map;
 	}
 	
-	public static DefaultEnemy valueOf(Map<String, Object> map) {
+	public static NormalEnemy valueOf(Map<String, Object> map) {
 		
 		String type = (String) map.get("type");
 		EntityType et;
@@ -74,8 +81,10 @@ public class DefaultEnemy extends Enemy {
 		}
 		
 		String name = (String) map.get("name");
+		Double hp = (Double) map.get("hp");
+		Double attack = (Double) map.get("attack");
 		
-		return new DefaultEnemy(name, et);
+		return new NormalEnemy(name, et, hp, attack);
 	}
 	
 }

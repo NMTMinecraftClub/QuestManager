@@ -2,6 +2,7 @@ package com.SkyIsland.QuestManager.Enemy;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 /*
@@ -13,12 +14,16 @@ public abstract class Enemy implements ConfigurationSerializable {
 	
 	protected EntityType type;
 	
-	public Enemy(EntityType type) {
+	protected String name;
+	
+	public Enemy(String name, EntityType type) {
+		this.name = name;
 		this.type = type;
 	}
 	
 	public void spawn(Location loc) {
-		loc.getWorld().spawnEntity(loc, type);
+		Entity e = loc.getWorld().spawnEntity(loc, type);
+		e.setCustomName(name);
 	}
 	
 }
