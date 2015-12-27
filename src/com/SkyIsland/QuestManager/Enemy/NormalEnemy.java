@@ -3,8 +3,12 @@ package com.SkyIsland.QuestManager.Enemy;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.CommandBlock;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.EntityType;
+
+import com.SkyIsland.QuestManager.QuestManagerPlugin;
 
 /**
  * Enemy type with very limited, straightforward customization; namely attributes
@@ -33,7 +37,7 @@ public class NormalEnemy extends Enemy {
 
 	private enum aliases {
 		DEFAULT(NormalEnemy.class.getName()),
-		SIMPLE("NormaltEnemy");
+		SIMPLE("NormalEnemy");
 		
 		private String alias;
 		
@@ -46,12 +50,15 @@ public class NormalEnemy extends Enemy {
 		}
 	}
 	
-	private double hp;
+	protected double hp;
 	
-	private double attack;
+	protected double attack;
 	
-	public NormalEnemy(String name, EntityType type, double hp, double attack) {
-		super(name, type);
+	protected String type;
+	
+	public NormalEnemy(String name, String type, double hp, double attack) {
+		super(name, null);
+		this.type = type;
 		this.hp = hp;
 		this.attack = attack;
 	}
@@ -60,7 +67,7 @@ public class NormalEnemy extends Enemy {
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<>();
 		
-		map.put("type", type.name());
+		map.put("type", type);
 		map.put("name", name);
 		map.put("hp", hp);
 		map.put("attack", attack);
@@ -70,21 +77,39 @@ public class NormalEnemy extends Enemy {
 	
 	public static NormalEnemy valueOf(Map<String, Object> map) {
 		
-		String type = (String) map.get("type");
-		EntityType et;
-		try {
-			et = EntityType.valueOf(type);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Invalid entity type: " + type + "! Defaulting to Zombie!");
-			et = EntityType.ZOMBIE;
-		}
-		
+		String type = (String) map.get("type");		
 		String name = (String) map.get("name");
 		Double hp = (Double) map.get("hp");
 		Double attack = (Double) map.get("attack");
 		
-		return new NormalEnemy(name, et, hp, attack);
+		return new NormalEnemy(name, type, hp, attack);
+	}
+	
+	@Override
+	public void spawn(Location loc) {
+		
+		String cmd = "summon "
+				+ this.type + " " + loc.getX() + " " + loc.getY() + " " + loc.getZ() + " "
+				+ "{CustomName:" + name + ",CustomNameVisible:1,Attributes:["
+				+ "{Name:generic.maxHealth,Base:" + hp + "},"
+				+ "{Name:generic.attackDamage,Base:" + attack + "}]}";
+		
+		//Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+		System.out.println("normal...");
+		CommandBlock sender = QuestManagerPlugin.questManagerPlugin.getManager().getAnchor(loc.getWorld().getName());
+		//Entity sender = Bukkit.getPlayer("dove_bren");
+
+		if (sender == null) {
+			System.out.println("Null!");
+		}
+			
+		Location ol = sender.getLocation().clone().add(0,1,0);
+		sender.setCommand(cmd);
+		ol.getBlock().setType(Material.REDSTONE_BLOCK);
+		ol.getBlock().getState().update(true);
+		sender.update(true);
+		ol.getBlock().setType(Material.STONE);
+		
 	}
 	
 }

@@ -2,9 +2,11 @@ package com.SkyIsland.QuestManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -12,6 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.CommandBlock;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -51,6 +54,8 @@ public class QuestManager implements Listener {
 	private Scoreboard scoreboard;
 	
 	private Set<NPC> questNPCs;
+	
+	private Map<String, CommandBlock> anchors;
 	
 	/**
 	 * Constructs a manager with the given directory information and a config file with
@@ -227,7 +232,7 @@ public class QuestManager implements Listener {
 				
 						
 			}
-			
+			makeAnchors();
 
 			QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager finished!");	
 			
@@ -608,6 +613,32 @@ public class QuestManager implements Listener {
 				}
 			}
 		}
+	}
+	
+	private void makeAnchors() {
+		this.anchors = new HashMap<>();
+		
+		for (String worldName : QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()) {
+			World world = Bukkit.getWorld(worldName);
+			if (world == null) {
+				continue;
+			}
+			
+			Location loc = world.getSpawnLocation().clone();
+			loc.setY(5);
+			//Entity vil = world.spawnEntity(loc, EntityType.);
+			//vil.setRemoveWhenFarAway(false);
+			//vil.setCustomName("Anchor");
+			loc.getBlock().setType(Material.COMMAND);
+			//vil.setOp(true);
+			
+			
+			anchors.put(worldName, (CommandBlock) loc.getBlock().getState());
+		}
+	}
+	
+	public CommandBlock getAnchor(String worldName) {
+		return anchors.get(worldName);
 	}
 	
 }
