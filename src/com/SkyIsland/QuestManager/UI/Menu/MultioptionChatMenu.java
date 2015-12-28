@@ -130,7 +130,8 @@ public class MultioptionChatMenu extends ChatMenu implements RespondableMenu {
 		if (!options.isEmpty())
 		for (String key : options.keySet()) {
 			ChatMenuOption opt = options.get(key);
-			msg.then("    " + opt.getLabel().getFormattedMessage()).command(ChatGuiHandler.cmdBase + " " + key)
+			msg.then("    ")
+			.then(opt.getLabel().getFormattedMessage()).command(ChatGuiHandler.cmdBase + " " + key)
 				.color(ChatColor.DARK_GREEN)
 				.style(ChatColor.ITALIC);
 			if (opt.getTooltip() != null) {
