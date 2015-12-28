@@ -3,6 +3,7 @@ package com.SkyIsland.QuestManager.NPC;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,6 +22,7 @@ import com.SkyIsland.QuestManager.UI.ChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.BioptionChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Action.LevelupHealthAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.LevelupManaAction;
+import com.SkyIsland.QuestManager.UI.Menu.Action.ShowChatMenuAction;
 import com.SkyIsland.QuestManager.UI.Menu.Message.BioptionMessage;
 
 /**
@@ -193,19 +195,64 @@ public class LevelupNPC extends SimpleNPC {
 		return npc;
 	}
 
+//	@Override
+//	protected void interact(Player player) {
+//		QuestPlayer p = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player);
+//		int hp, mp, fame;
+//		
+//		fame = ((int) ((p.getLevel() - 1) * fameRate)) + fameBase;
+//		
+//		//amt = (player.stat * (Rate)) + Base;
+//		hp = ((int) (p.getMaxHp() * hpRate)) + hpBase;
+//		mp = ((int) (p.getMaxMp() * mpRate)) + mpBase;
+//		
+//		ChatMenuOption hpOpt, mpOpt;
+//		hpOpt = new ChatMenuOption(new PlainMessage("Health (2)"), 
+//				new LevelupHealthAction(p, fame, hp));
+//		mpOpt = new ChatMenuOption(new PlainMessage("Mana (5)"), 
+//				new LevelupManaAction(p, fame, mp));
+//		FancyMessage fmsg = new FancyMessage("") .then("This will cost you")
+//				.color(ChatColor.RED)
+//			.then(" " + fame + " ")
+//				.color(ChatColor.GOLD)
+//			.then("fame!");
+//		Message msg = new PlainMessage(fmsg);
+//
+//		
+//		ChatMenu levelChat = new MultioptionChatMenu(msg, hpOpt, mpOpt);
+//		//ChatMenu levelChat = new SimpleChatMenu(new FancyMessage("inplace"));
+//
+//		ChatMenu messageChat = new BioptionChatMenu(chat, new ShowChatMenuAction(levelChat, player), null);
+//		messageChat.show(player);
+//	}
+	
 	@Override
 	protected void interact(Player player) {
 		QuestPlayer p = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player);
 		int hp, mp, fame;
 		
-		fame = ((int) (p.getLevel() * fameRate)) + fameBase;
+		fame = ((int) ((p.getLevel() - 1) * fameRate)) + fameBase;
 		
 		//amt = (player.stat * (Rate)) + Base;
 		hp = ((int) (p.getMaxHp() * hpRate)) + hpBase;
 		mp = ((int) (p.getMaxMp() * mpRate)) + mpBase;
-		ChatMenu messageChat = new BioptionChatMenu(chat, 
-				new LevelupHealthAction(p, fame, hp), 
-				new LevelupManaAction(p, fame, mp));
+		
+		FancyMessage fmsg = new FancyMessage("This will cost you")
+				.color(ChatColor.RED)
+			.then(" " + fame + " ")
+				.color(ChatColor.GOLD)
+			.then("fame!");
+		BioptionMessage msg = new BioptionMessage(fmsg, 
+				new FancyMessage("Health (2)").color(ChatColor.DARK_GREEN).tooltip("Increase your maximum health by 2"), 
+				new FancyMessage("Mana (5)").color(ChatColor.DARK_PURPLE).tooltip("Increase your maximum mana by 5"),
+				new FancyMessage("Very Well"), 
+				new FancyMessage("Very Well"));
+
+		
+		ChatMenu levelChat = new BioptionChatMenu(msg, new LevelupHealthAction(p, fame, hp), new LevelupManaAction(p, fame, mp));
+		//ChatMenu levelChat = new SimpleChatMenu(new FancyMessage("inplace"));
+
+		ChatMenu messageChat = new BioptionChatMenu(chat, new ShowChatMenuAction(levelChat, player), null);
 		messageChat.show(player);
 	}
 

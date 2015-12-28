@@ -65,6 +65,20 @@ public class BioptionMessage extends Message {
 	
 	private FancyMessage option2Msg;
 	
+	private BioptionMessage() {
+		super();
+	}
+	
+	public BioptionMessage(FancyMessage body, FancyMessage option1Label, FancyMessage option2Label,
+			FancyMessage option1Msg, FancyMessage option2Msg) {
+		super();
+		this.body = body;
+		this.option1Label = option1Label;
+		this.option2Label = option2Label;
+		this.option1Msg = option1Msg;
+		this.option2Msg = option2Msg;
+	}
+
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>();
