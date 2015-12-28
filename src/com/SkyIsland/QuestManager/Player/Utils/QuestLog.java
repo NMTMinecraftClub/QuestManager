@@ -144,6 +144,7 @@ public class QuestLog {
 				.tooltip(ChatColor.BLUE + "Click to change your title")
 				.command("/player title")
 			.then("\nLevel: " + qp.getLevel())
+				.color(ChatColor.BLACK)
 			.then("\n-----\n  Fame: " + qp.getFame() + "\n  Gold: " + qp.getMoney())
 				.color(ChatColor.GOLD)
 			.then("\n\n  Current Quests: " + qp.getCurrentQuests().size())

@@ -10,10 +10,13 @@ import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.EquipmentConfiguration;
@@ -238,6 +241,27 @@ public class LevelupNPC extends SimpleNPC {
 
 		ChatMenu messageChat = new BioptionChatMenu(chat, new ShowChatMenuAction(levelChat, player), null);
 		messageChat.show(player);
+	}
+	
+	@Override
+	/**
+	 * Render this NPC imobile using slowness instead of teleporting them
+	 */
+	public void tick() {
+		Entity e = getEntity();
+		
+		if (e == null) {
+			return;
+		}
+		
+
+		if (!e.getLocation().getChunk().isLoaded()) {
+			return;
+		}
+		
+		if (e instanceof LivingEntity) {
+			((LivingEntity) e).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 99999999, 10, false, false), true);
+		}
 	}
 	
 //	@Override
