@@ -6,7 +6,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
+import com.SkyIsland.QuestManager.Magic.Spell.Spell;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Utils.SpellHolder;
 import com.SkyIsland.QuestManager.UI.Menu.SimpleChatMenu;
@@ -56,8 +58,14 @@ public class ChangeSpellHolderAction implements MenuAction {
 				return;
 			}
 			
+			String desc = "No Description";
+			Spell s = QuestManagerPlugin.questManagerPlugin.getSpellManager().getSpell(newSpell);
+			if (s != null) {
+				desc = s.getDescription();
+			}
 			ItemMeta meta = holder.getItemMeta();
-			meta.setLore(Lists.newArrayList("Current Spell:", "  " + ChatColor.DARK_RED + newSpell));
+			meta.setLore(Lists.newArrayList("Current Spell:", "  " + ChatColor.DARK_RED + newSpell,
+					desc));
 			holder.setItemMeta(meta);
 			
 			inv.setItem(slot, holder);

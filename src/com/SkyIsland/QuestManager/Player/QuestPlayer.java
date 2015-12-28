@@ -1126,9 +1126,15 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		LinkedList<ChatMenuOption> opts = new LinkedList<ChatMenuOption>();
 		
 		for (String t : spells) {
+			String desc = "No Description";
+			Spell sp = QuestManagerPlugin.questManagerPlugin.getSpellManager().getSpell(t);
+			if (sp != null) {
+				desc = sp.getDescription();
+			}
 			opts.add(new ChatMenuOption(
 					new PlainMessage(t),
-					new ChangeSpellHolderAction(this, holder, t)));
+					new ChangeSpellHolderAction(this, holder, t),
+					new FancyMessage("").then(desc)));
 		}
 		
 
