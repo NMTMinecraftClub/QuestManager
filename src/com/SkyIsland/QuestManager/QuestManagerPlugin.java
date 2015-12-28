@@ -372,16 +372,6 @@ public class QuestManagerPlugin extends JavaPlugin {
 			qp.addQuestBook();
 			qp.addJournal();
 			
-			Spell spell = spellManager.getSpell("Heal");
-			if (qp.getMP() >= spell.getCost()) {
-				qp.addMP(-spell.getCost());
-				if (spell instanceof SelfSpell) {
-					((SelfSpell) spell).cast(qp);
-				} else if (spell instanceof TargetSpell) {
-					((TargetSpell) spell).cast(qp, qp.getPlayer().getPlayer().getLocation().getDirection());
-				}
-			}
-			
 			
 			/////////////////////////
 //			SimpleTargetSpell FS = new SimpleTargetSpell(5, "Fireball", "inplace", 5.0, 15);

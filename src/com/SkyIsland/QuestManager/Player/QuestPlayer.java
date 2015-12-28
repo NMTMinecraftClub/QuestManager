@@ -32,6 +32,7 @@ import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
@@ -97,6 +98,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	private int fame;
 	
 	private int money;
+	
+	private int level;
+	
+	private int maxHp;
 	
 	private int mp;
 	
@@ -197,6 +202,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		this.maxMp = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 				.getStartingMana();
 		this.mp = maxMp;
+		this.maxHp = 20;
+		this.level = 1;
 		this.title = "The Unknown";
 		this.unlockedTitles = new LinkedList<String>();
 		this.journalNotes = new LinkedList<String>();
@@ -448,6 +455,28 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 				getPlayer().getPlayer().setLevel(this.money);
 			}
 	}
+	
+	public void levelUp(int hpIncrease, int mpIncrease) {
+		level++;
+		maxHp += hpIncrease;
+		maxMp += mpIncrease;
+		mp = maxMp;
+		if (getPlayer().isOnline()) {
+			Player p = getPlayer().getPlayer();
+			p.setMaxHealth(maxHp);
+			p.setHealth(maxHp);
+			
+			refreshPlayer();
+		}
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public int getMaxHp() {
+		return maxHp;
+	}
 
 	public void setTitle(String title) {
 		this.title = title;
@@ -553,6 +582,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		map.put("unlockedtitles", unlockedTitles);
 		map.put("fame", fame);
 		map.put("money", money);
+		map.put("level", level);
+		map.put("maxhp", maxHp);
 		map.put("mp", mp);
 		map.put("maxmp", maxMp);
 		map.put("id", getPlayer().getUniqueId().toString());
@@ -613,6 +644,14 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		if (map.containsKey("maxMp")) {
 			qp.maxMp = (int) map.get("maxmp");
 		} //else again handled by default constructor
+		
+		if (map.containsKey("maxhp")) {
+			qp.maxHp = (int) map.get("maxhp");
+		} //""
+		
+		if (map.containsKey("level")) {
+			qp.level = (int) map.get("level");
+		} //""
 		
 		if (map.containsKey("spells")) {
 			qp.spells = (List<String>) map.get("spells");
@@ -1338,6 +1377,27 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 				break;
 			default:
 				break;
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent e) {
+		if (e.getPlayer().getUniqueId().equals(this.playerID)) {
+			refreshPlayer();
+		}
+	}
+	
+	public void refreshPlayer() {
+		if (getPlayer().isOnline()) {
+			Player p = getPlayer().getPlayer();
+			if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
+					.contains(p.getWorld().getName())) {
+				
+				//go through with the update
+				p.setMaxHealth(maxHp);
+				addMP(0);
+				p.setLevel(this.money);
 			}
 		}
 	}
