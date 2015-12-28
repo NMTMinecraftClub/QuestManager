@@ -136,13 +136,14 @@ public class QuestLog {
 		builder += ",";
 		
 		//get stats page
-		title = new FancyMessage(" " + qp.getPlayer().getName())
+		title = new FancyMessage(qp.getPlayer().getName())
 				.color(ChatColor.DARK_PURPLE)
 			.then("\n")
 			.then(qp.getTitle())
 				.color(ChatColor.DARK_RED)
 				.tooltip(ChatColor.BLUE + "Click to change your title")
 				.command("/player title")
+			.then("\nLevel: " + qp.getLevel())
 			.then("\n-----\n  Fame: " + qp.getFame() + "\n  Gold: " + qp.getMoney())
 				.color(ChatColor.GOLD)
 			.then("\n\n  Current Quests: " + qp.getCurrentQuests().size())
