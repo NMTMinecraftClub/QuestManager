@@ -1306,6 +1306,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	public int getMP() {
 		return mp;
 	}
+	
+	public int getMaxMp() {
+		return maxMp;
+	}
 
 	@Override
 	public void addMP(int amount) {
