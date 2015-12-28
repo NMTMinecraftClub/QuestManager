@@ -217,15 +217,15 @@ public class LevelupNPC extends SimpleNPC {
 		Collection<ChatMenuOption> opts = new LinkedList<>();
 		if (hpRate != 0 || hpBase != 0) {
 			int hp = ((int) (p.getMaxHp() * hpRate)) + hpBase;
-			opts.add(new ChatMenuOption(new PlainMessage("Health (2)"), 
+			opts.add(new ChatMenuOption(new PlainMessage("Health (" + hp + ")"), 
 					new LevelupHealthAction(p, fame, hp),
-					new FancyMessage("").then("This will permanently increase your maximum health by 2")));
+					new FancyMessage("").then("This will permanently increase your maximum health by " + hp)));
 		}
 		if (mpRate != 0 || mpBase != 0) { 
 			int mp = ((int) (p.getMaxMp() * mpRate)) + mpBase;
-			opts.add(new ChatMenuOption(new PlainMessage("Mana (5)"), 
+			opts.add(new ChatMenuOption(new PlainMessage("Mana (" + mp + ")"), 
 				new LevelupManaAction(p, fame, mp),
-				new FancyMessage("").then("This will permanently increase your maximum mana by 5")));
+				new FancyMessage("").then("This will permanently increase your maximum mana by " + mp)));
 		}
 		FancyMessage fmsg = new FancyMessage("") .then("This will cost you")
 				.color(ChatColor.RED)
