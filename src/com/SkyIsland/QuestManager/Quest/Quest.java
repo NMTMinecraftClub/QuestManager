@@ -127,12 +127,28 @@ public class Quest implements Listener {
 //			qp.addQuest(this);
 //		}
 		
+		if (participant != null && template.getStartingLocation() != null) {
+			for (QuestPlayer qp : participant.getParticipants()) {
+				if (qp.getPlayer().isOnline()) {
+					qp.getPlayer().getPlayer().teleport(template.getStartingLocation());
+				}
+			}
+		}
+		
 		
 		itemRewards = new LinkedList<ItemStack>();
 		
 		this.ID = Quest.nextID();
 		
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
+	}
+	
+	public void removePlayer(QuestPlayer player) {
+		if (participant.getParticipants().contains(player)) {
+			if (template.getExitLocation() != null && player.getPlayer().isOnline()) {
+				player.getPlayer().getPlayer().teleport(template.getExitLocation());
+			}
+		}
 	}
 	
 	/**
@@ -370,10 +386,10 @@ public class Quest implements Listener {
 			return;
 		}
 		
-//		//just remove players
-//		for (QuestPlayer player : players) {
-//			removePlayer(player);
-//		}
+		//just remove players
+		for (QuestPlayer player : participant.getParticipants()) {
+			removePlayer(player);
+		}
 		
 		//remove NPCs
 //		if (!npcs.isEmpty()) 

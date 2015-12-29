@@ -19,6 +19,9 @@ import com.SkyIsland.QuestManager.Quest.Goal;
  * <li>REPEATABLE | repeatable | false </li>
  * <li>USEPARTY | useparty | false </li>
  * <li>REQUIREPARTY | requireparty | false </li>
+ * <li>FAILONDEATH | failondeath | false </li>
+ * <li>STARTLOC | startlocation | <i>null</i></li>
+ * <li>EXIT | exitlocation | <i>null</i></li>
  * <li>NPCS | npcs | <i>Empty List</i></li>
  * <li>START | start | <i>null</i> </li>
  * <li>PREREQS | requiredquests | <i>Empty List</i></li>
@@ -46,6 +49,9 @@ public enum QuestConfigurationField {
 	START("start", null),
 	PREREQS("requiredquests", new LinkedList<String>()),
 	REQUIREPARTY("requireparty", false),
+	FAILONDEATH("failondeath", false),
+	STARTLOC("startlocation", null),
+	EXIT("exitlocation", null),
 	USEPARTY("useparty", false),
 	END("end", "same"),
 	FAME("fame", 100),

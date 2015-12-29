@@ -4,12 +4,14 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
 import com.SkyIsland.QuestManager.NPC.NPC;
 import com.SkyIsland.QuestManager.NPC.SimpleQuestStartNPC;
 import com.SkyIsland.QuestManager.Player.Participant;
@@ -146,6 +148,22 @@ public class QuestConfiguration {
 		return config.getBoolean(
 				QuestConfigurationField.REQUIREPARTY.getKey(),
 				(Boolean) QuestConfigurationField.REQUIREPARTY.getDefault());
+	}
+	
+	public Location getStartingLocation() {
+		LocationState ls = (LocationState) config.get(QuestConfigurationField.STARTLOC.getKey());
+		if (ls == null) {
+			return null;
+		}
+		return ls.getLocation();
+	}
+	
+	public Location getExitLocation() {
+		LocationState ls = (LocationState) config.get(QuestConfigurationField.EXIT.getKey());
+		if (ls == null) {
+			return null;
+		}
+		return ls.getLocation();
 	}
 	
 	public Collection<NPC> getAuxNPCs() {
