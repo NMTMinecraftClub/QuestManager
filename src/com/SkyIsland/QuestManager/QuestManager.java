@@ -641,4 +641,20 @@ public class QuestManager implements Listener {
 		return anchors.get(worldName);
 	}
 	
+	/**
+	 * Looks up an NPC by it's name.
+	 * If there are multiple NPC's by the same name, lookup behavior is undefined.
+	 * @param name
+	 * @return An NPC with the given name, or null if it doesn't exist
+	 */
+	public NPC getNPC(String name) {
+		for (NPC npc : questNPCs) {
+			if (npc.getName().equals(name)) {
+				return npc;
+			}
+		}
+		
+		return null;
+	}
+	
 }

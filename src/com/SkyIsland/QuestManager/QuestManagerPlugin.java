@@ -60,6 +60,7 @@ import com.SkyIsland.QuestManager.Quest.Requirements.InteractRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.PositionRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.PossessRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.SlayRequirement;
+import com.SkyIsland.QuestManager.Quest.Requirements.TalkRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.TimeRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.VanquishRequirement;
 import com.SkyIsland.QuestManager.Region.CuboidRegion;
@@ -169,6 +170,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 				new InteractRequirement.InteractFactory());
 		reqManager.registerFactory("CHEST", 
 				new ChestRequirement.ChestRequirementFactory());
+		reqManager.registerFactory("TALK", 
+				new TalkRequirement.TalkRequirementFactory());
 		
 	}
 	
