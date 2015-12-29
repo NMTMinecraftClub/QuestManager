@@ -97,7 +97,13 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		
 		if (requirement.startsWith("*")) {
 			String req = requirement.substring(1);
-			return (player.getCurrentQuests().contains(req));
+			for (Quest q : player.getCurrentQuests()) {
+				if (q.getName().equals(req)) {
+					return true;
+				}
+			}
+			
+			return false;
 		}
 		
 		//not |'s or *----, so regular
