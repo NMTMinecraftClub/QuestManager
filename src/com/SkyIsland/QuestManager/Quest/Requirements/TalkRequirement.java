@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.NPC.NPC;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Utils.CompassTrackable;
@@ -17,6 +18,7 @@ import com.SkyIsland.QuestManager.Quest.Goal;
 import com.SkyIsland.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 import com.SkyIsland.QuestManager.UI.ChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Message.Message;
+import com.SkyIsland.QuestManager.UI.Menu.Message.SimpleMessage;
 
 /**
  * Requirement that a participant must talk to an npc.
@@ -118,7 +120,12 @@ public class TalkRequirement extends Requirement implements Listener, CompassTra
 			(String) config.getString("npc")
 				);
 		
-		menu = ChatMenu.getDefaultMenu((Message) config.get("message"));
+		Message message = (Message) config.get("message");
+		
+		if (message instanceof SimpleMessage) {
+			((SimpleMessage) message).setSourceLabel(new FancyMessage(npc.getName()));
+		}
+		menu = ChatMenu.getDefaultMenu(message);
 		
 		this.desc = config.getString("description", config.getString("action", "Right")
 				+ " click the area");
