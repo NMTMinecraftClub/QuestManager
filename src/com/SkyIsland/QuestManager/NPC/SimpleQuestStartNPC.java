@@ -213,13 +213,22 @@ public class SimpleQuestStartNPC extends SimpleStaticBioptionNPC implements Comp
 			for (String req : reqs) {
 				//check for optionals/sets
 				if (req.contains("|")) {
+					meetreqs = false;
 					//just need one completed
-					String[] r = req.split("|");
+					String[] r = req.split("\\|");
 					for (String i : r) {
 						if (qp.hasCompleted(i)) {
-							continue;
+							meetreqs = true;
+							break;
 						}
 					}
+
+					if (meetreqs) {
+						continue;
+					} else {
+						break;
+					}
+					
 					//get here means doesn't meet. Let continue incase the |'s are part of a quest name
 				}
 				

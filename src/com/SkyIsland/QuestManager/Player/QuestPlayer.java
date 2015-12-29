@@ -1409,6 +1409,9 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 				p.setMaxHealth(maxHp);
 				addMP(0);
 				p.setLevel(this.money);
+				this.updateQuestLog(true);
+				this.updateQuestLog(true);
+				this.updateCompass(true);
 			}
 		}
 	}
