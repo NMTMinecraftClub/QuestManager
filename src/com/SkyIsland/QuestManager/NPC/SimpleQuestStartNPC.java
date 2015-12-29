@@ -211,29 +211,8 @@ public class SimpleQuestStartNPC extends SimpleStaticBioptionNPC implements Comp
 		if (reqs != null && !reqs.isEmpty()) {
 			//go through reqs, see if the player has those quests completed
 			for (String req : reqs) {
-				//check for optionals/sets
-				if (req.contains("|")) {
+				if (!QuestPlayer.meetsRequirement(qp, req)) {
 					meetreqs = false;
-					//just need one completed
-					String[] r = req.split("\\|");
-					for (String i : r) {
-						if (qp.hasCompleted(i)) {
-							meetreqs = true;
-							break;
-						}
-					}
-
-					if (meetreqs) {
-						continue;
-					} else {
-						break;
-					}
-					
-					//get here means doesn't meet. Let continue incase the |'s are part of a quest name
-				}
-				
-				if (!qp.hasCompleted(req)) {
-					meetreqs=false;
 					break;
 				}
 			}

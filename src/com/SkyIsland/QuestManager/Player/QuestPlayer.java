@@ -83,6 +83,27 @@ import de.inventivegames.util.title.TitleManager;
  */
 public class QuestPlayer implements Participant, Listener, MagicUser {
 	
+	public static boolean meetsRequirement(QuestPlayer player, String requirement) {
+		if (requirement.contains("|")) {
+			String[] reqs = requirement.split("\\|");
+			for (String req : reqs) {
+				if (meetsRequirement(player, req)) {
+					return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		if (requirement.startsWith("*")) {
+			String req = requirement.substring(1);
+			return (player.getCurrentQuests().contains(req));
+		}
+		
+		//not |'s or *----, so regular
+		return player.getCompletedQuests().contains(requirement);
+	}
+	
 	private UUID playerID;
 	
 	private History history;
