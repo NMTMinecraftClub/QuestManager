@@ -256,8 +256,9 @@ public class QuestConfiguration {
 			return null;
 		}
 		
-		if (isSession() && QuestManagerPlugin.questManagerPlugin.getManager().getRunningQuests()
-				.contains(getName())) {
+		if (isSession())
+		for (Quest q : QuestManagerPlugin.questManagerPlugin.getManager().getRunningQuests())
+		if (q.getName().equals(getName())){
 			//can't instantiate it, cause one's already going
 			throw new SessionConflictException();
 		}
