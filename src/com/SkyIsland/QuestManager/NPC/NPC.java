@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -111,8 +112,9 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 	}
 	
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerInteract(PlayerInteractEntityEvent e) {
+		if (!e.isCancelled())
 		if (e.getRightClicked().getUniqueId().equals(id)) {
 			e.setCancelled(true);
 			this.interact(e.getPlayer());

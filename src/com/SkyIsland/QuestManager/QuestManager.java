@@ -649,7 +649,7 @@ public class QuestManager implements Listener {
 	 */
 	public NPC getNPC(String name) {
 		for (NPC npc : questNPCs) {
-			if (npc.getName().equals(name)) {
+			if (npc.getName() != null && npc.getName().equals(name)) {
 				return npc;
 			}
 		}

@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -16,6 +15,8 @@ import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Utils.CompassTrackable;
 import com.SkyIsland.QuestManager.Quest.Goal;
 import com.SkyIsland.QuestManager.Quest.Requirements.Factory.RequirementFactory;
+import com.SkyIsland.QuestManager.UI.ChatMenu;
+import com.SkyIsland.QuestManager.UI.Menu.Message.Message;
 
 /**
  * Requirement that a participant must talk to an npc.
@@ -39,14 +40,17 @@ public class TalkRequirement extends Requirement implements Listener, CompassTra
 	
 	private NPC npc;
 	
+	private ChatMenu menu;
+	
 	private TalkRequirement(Goal goal) {
 		super(goal);
 	}
 	
-	public TalkRequirement(Goal goal, NPC npc) {
+	public TalkRequirement(Goal goal, NPC npc, ChatMenu menu) {
 		this(goal);
 		this.npc = npc;
 		this.state = false;
+		this.menu = menu;
 	}
 
 	@Override
@@ -60,7 +64,7 @@ public class TalkRequirement extends Requirement implements Listener, CompassTra
 	 * Catches a player's interaction and sees if it's the one we've been waiting for
 	 * @param e
 	 */
-	@EventHandler(priority= EventPriority.HIGH)
+	@EventHandler
 	public void onInteract(PlayerInteractEntityEvent e) {
 		
 		if (state) {
@@ -81,6 +85,8 @@ public class TalkRequirement extends Requirement implements Listener, CompassTra
 						this.state = true;
 						HandlerList.unregisterAll(this);
 						updateQuest();
+						
+						menu.show(e.getPlayer());
 					}
 				}
 			}
@@ -101,15 +107,18 @@ public class TalkRequirement extends Requirement implements Listener, CompassTra
 		/*
 		 * type: talk
 		 * npc: [name]
+		 * message: [menu]
 		 */
 		
-		if (!config.contains("type") || !config.getString("type").equals("intr")) {
-			throw new InvalidConfigurationException("\n  ---Invalid type! Expected '' but got " + config.get("type", "null"));
+		if (!config.contains("type") || !config.getString("type").equals("talk")) {
+			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'talk' but got " + config.get("type", "null"));
 		}
 		
 		npc = QuestManagerPlugin.questManagerPlugin.getManager().getNPC(
 			(String) config.getString("npc")
 				);
+		
+		menu = ChatMenu.getDefaultMenu((Message) config.get("message"));
 		
 		this.desc = config.getString("description", config.getString("action", "Right")
 				+ " click the area");
