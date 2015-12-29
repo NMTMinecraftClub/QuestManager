@@ -27,6 +27,7 @@ import com.SkyIsland.QuestManager.UI.ChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.BioptionChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.ChatMenuOption;
 import com.SkyIsland.QuestManager.UI.Menu.MultioptionChatMenu;
+import com.SkyIsland.QuestManager.UI.Menu.SimpleChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Action.LevelupHealthAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.LevelupManaAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ShowChatMenuAction;
@@ -227,6 +228,12 @@ public class LevelupNPC extends SimpleNPC {
 				new LevelupManaAction(p, fame, mp),
 				new FancyMessage("").then("This will permanently increase your maximum mana by " + mp)));
 		}
+		
+		ChatMenu cMenu = new SimpleChatMenu(new FancyMessage("Very well."));
+		opts.add(
+				new ChatMenuOption(new PlainMessage("Cancel"),
+					new ShowChatMenuAction(cMenu, player))
+				);
 		FancyMessage fmsg = new FancyMessage("") .then("This will cost you")
 				.color(ChatColor.RED)
 			.then(" " + fame + " ")

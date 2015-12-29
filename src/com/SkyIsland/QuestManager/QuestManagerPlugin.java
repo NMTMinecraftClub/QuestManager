@@ -255,7 +255,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 				saveDirectory,
 				config.getQuests());
 		
-		enemyManager = new EnemyManager(enemyDirectory, 1);
+		enemyManager = new EnemyManager(enemyDirectory, 3);
 
 		spellManager = new SpellManager(spellDirectory);
 		
