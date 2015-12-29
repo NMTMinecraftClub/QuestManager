@@ -15,6 +15,7 @@ import com.SkyIsland.QuestManager.Quest.Goal;
  * <li>DESCRIPTION | description | "No Description"</li>
  * <li>GOALS | goals | <i>Empty List</i></li>
  * <li>SAVESTATE | savestate | false</li>
+ * <li>SESSION | issession | false</li>
  * <li>REPEATABLE | repeatable | false </li>
  * <li>USEPARTY | useparty | false </li>
  * <li>REQUIREPARTY | requireparty | false </li>
@@ -40,6 +41,7 @@ public enum QuestConfigurationField {
 	GOALS("goals", new LinkedList<Goal>()),
 	SAVESTATE("savestate", false),
 	REPEATABLE("repeatable", false),
+	SESSION("session", false),
 	NPCS("npcs", new LinkedList<Goal>()),
 	START("start", null),
 	PREREQS("requiredquests", new LinkedList<String>()),

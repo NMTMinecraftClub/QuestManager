@@ -116,6 +116,16 @@ public class QuestConfiguration {
 				(boolean) QuestConfigurationField.REPEATABLE.getDefault());
 	}
 	
+	/**
+	 * Is this quest a session quest? Session quests can only have one instantiation at a time,
+	 * or one session at a time.
+	 * @return
+	 */
+	public boolean isSession() {
+		return config.getBoolean(QuestConfigurationField.SESSION.getKey(), 
+				(boolean) QuestConfigurationField.SESSION.getDefault());
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<String> getRequiredQuests() {
 		if (!config.contains(QuestConfigurationField.PREREQS.getKey())) {
@@ -208,13 +218,20 @@ public class QuestConfiguration {
 	 * Subsequent calls to this method return new instances of the represented quest. It is
 	 * up to the caller to keep track of returned quests and optimize performance when simply
 	 * needing a reference to previously-instantiated Quests
-	 * @return
-	 * @throws InvalidConfigurationException 
+	 * @return A new quest instance
+	 * @throws InvalidConfigurationException, SessionConflictException 
 	 */
-	public Quest instanceQuest(Participant participant) throws InvalidConfigurationException {
+	public Quest instanceQuest(Participant participant) throws InvalidConfigurationException,
+		SessionConflictException {
 				
 		if (!config.contains(QuestConfigurationField.GOALS.getKey())) {
 			return null;
+		}
+		
+		if (isSession() && QuestManagerPlugin.questManagerPlugin.getManager().getRunningQuests()
+				.contains(getName())) {
+			//can't instantiate it, cause one's already going
+			throw new SessionConflictException();
 		}
 		
 		ConfigurationSection questSection = config.getConfigurationSection(

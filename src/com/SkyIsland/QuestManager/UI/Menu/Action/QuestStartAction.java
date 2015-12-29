@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.QuestConfiguration;
+import com.SkyIsland.QuestManager.Configuration.SessionConflictException;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Player.Participant;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
@@ -26,6 +27,8 @@ public class QuestStartAction implements MenuAction {
 	private Player player;
 	
 	private static final String partyDenial = ChatColor.YELLOW + "This quest requires a party..." + ChatColor.RESET;
+	
+	private static final String sessionDenial = ChatColor.YELLOW + "A session of this quest is already going! Please wait until it's finished." + ChatColor.RESET;
 	
 	public QuestStartAction(QuestConfiguration questTemplate, FancyMessage start, FancyMessage accept, Player player) {
 		this.template = questTemplate;
@@ -64,6 +67,9 @@ public class QuestStartAction implements MenuAction {
 					"Could not instance quest for player " + player.getName());
 			player.sendMessage("An error occured. Please notify your administrator with what you " +
 					"did to get this message, and the following message:\n Invalid Quest Template!");
+			return;
+		} catch (SessionConflictException e) {
+			player.sendMessage(sessionDenial);
 			return;
 		}
 

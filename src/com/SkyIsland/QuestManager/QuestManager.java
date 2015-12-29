@@ -37,6 +37,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scoreboard.Scoreboard;
 
 import com.SkyIsland.QuestManager.Configuration.QuestConfiguration;
+import com.SkyIsland.QuestManager.Configuration.SessionConflictException;
 import com.SkyIsland.QuestManager.Configuration.State.QuestState;
 import com.SkyIsland.QuestManager.NPC.NPC;
 import com.SkyIsland.QuestManager.Player.Party;
@@ -197,6 +198,10 @@ public class QuestManager implements Listener {
 				} catch (NullPointerException e) {
 					QuestManagerPlugin.questManagerPlugin.getLogger().warning("Missing quest template for save data: "
 							+ questName);
+					continue;
+				} catch (SessionConflictException e) {
+					QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to restore "
+							+ "quest state due to session conflict!");
 					continue;
 				}
 				
@@ -655,6 +660,10 @@ public class QuestManager implements Listener {
 		}
 		
 		return null;
+	}
+	
+	public List<Quest> getRunningQuests() {
+		return runningQuests;
 	}
 	
 }
