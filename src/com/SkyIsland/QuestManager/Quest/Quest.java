@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
@@ -657,6 +658,19 @@ public class Quest implements Listener {
 		}
 	}
 	
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent e) {
+		if (participant == null) {
+			return;
+		}
+		
+		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(e.getEntity());
+		if (participant.getParticipants().contains(qp))
+		if (template.getFailOnDeath()) {
+			fail();
+		}
+	}
+	
 	public void fail() {
 		for (QuestPlayer qp : this.participant.getParticipants()) {
 			qp.removeQuest(this);
@@ -664,10 +678,9 @@ public class Quest implements Listener {
 				qp.getPlayer().getPlayer().sendMessage(ChatColor.RED + "You have failed the quest "
 				+ ChatColor.DARK_PURPLE + template.getName() + ChatColor.RED + "!" + ChatColor.RESET);
 			}
-			
-			QuestManagerPlugin.questManagerPlugin.getManager().removeQuest(this);
-			halt();
 		}
+		QuestManagerPlugin.questManagerPlugin.getManager().removeQuest(this);
+		halt();
 	}
 	
 	/**

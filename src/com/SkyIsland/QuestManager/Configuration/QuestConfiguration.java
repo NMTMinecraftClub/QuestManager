@@ -71,8 +71,8 @@ public class QuestConfiguration {
 		//Check each field and put in defaults if they aren't there (niave approach)
 		for (QuestConfigurationField field : QuestConfigurationField.values()) {
 			if (!config.contains(field.getKey())) {
-				QuestManagerPlugin.questManagerPlugin.getLogger().warning("Failed to "
-						+ "find field information: " + field.name());
+				QuestManagerPlugin.questManagerPlugin.getLogger().warning("[" + getName() + "] "
+						+ "Failed to find field information: " + field.name());
 				QuestManagerPlugin.questManagerPlugin.getLogger().info("Adding default value...");
 				config.set(field.getKey(), field.getDefault());
 			}
@@ -151,19 +151,29 @@ public class QuestConfiguration {
 	}
 	
 	public Location getStartingLocation() {
-		LocationState ls = (LocationState) config.get(QuestConfigurationField.STARTLOC.getKey());
-		if (ls == null) {
+		Object o = config.get(QuestConfigurationField.STARTLOC.getKey());
+		if (o instanceof LocationState) {
+			LocationState ls = (LocationState) o;
+			return ls.getLocation();
+		} else {
 			return null;
 		}
-		return ls.getLocation();
 	}
 	
 	public Location getExitLocation() {
-		LocationState ls = (LocationState) config.get(QuestConfigurationField.EXIT.getKey());
-		if (ls == null) {
+		Object o = config.get(QuestConfigurationField.EXIT.getKey());
+		if (o instanceof LocationState) {
+			LocationState ls = (LocationState) o;
+			return ls.getLocation();
+		} else {
 			return null;
 		}
-		return ls.getLocation();
+	}
+	
+	public boolean getFailOnDeath() {
+		return config.getBoolean(
+				QuestConfigurationField.FAILONDEATH.getKey(),
+				(Boolean) QuestConfigurationField.FAILONDEATH.getDefault());
 	}
 	
 	public Collection<NPC> getAuxNPCs() {
