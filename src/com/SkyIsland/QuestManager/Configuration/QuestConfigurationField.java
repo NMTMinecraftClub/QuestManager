@@ -41,7 +41,7 @@ public enum QuestConfigurationField {
 	GOALS("goals", new LinkedList<Goal>()),
 	SAVESTATE("savestate", false),
 	REPEATABLE("repeatable", false),
-	SESSION("session", false),
+	SESSION("issession", false),
 	NPCS("npcs", new LinkedList<Goal>()),
 	START("start", null),
 	PREREQS("requiredquests", new LinkedList<String>()),
