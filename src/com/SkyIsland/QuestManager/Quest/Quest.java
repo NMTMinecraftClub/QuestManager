@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.QuestConfiguration;
+import com.SkyIsland.QuestManager.Configuration.QuestConfiguration.EndType;
 import com.SkyIsland.QuestManager.Configuration.State.QuestState;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Player.Participant;
@@ -734,6 +735,12 @@ public class Quest implements Listener {
 		
 		if (goals.size() <= goalIndex) {
 			this.ready = true;
+			
+			//check if end is to just finish
+			if (template.getEndType() == EndType.NOTURNIN) {
+				this.completeQuest(false);
+				return;
+			}
 			if (goals.size() == goalIndex)
 				tellParticipants("The quest " + ChatColor.GOLD + getName() + ChatColor.RESET + " is ready to turn in!");
 			return;

@@ -28,6 +28,12 @@ import com.SkyIsland.QuestManager.UI.Menu.Message.Message;
  */
 public class QuestConfiguration {
 	
+	public static enum EndType {
+		SAME,
+		OTHERNPC,
+		NOTURNIN;
+	}
+	
 	public static final double configVersion = 1.00;
 	
 	private YamlConfiguration config;
@@ -239,6 +245,15 @@ public class QuestConfiguration {
 		}
 		
 		return startingNPC;
+	}
+	
+	public EndType getEndType() {
+		try {
+			return EndType.valueOf((String) config.getString(QuestConfigurationField.END.getKey()
+				+ ".type").toUpperCase());
+		} catch (Exception e) {
+			return EndType.SAME;
+		}
 	}
 	
 	/**

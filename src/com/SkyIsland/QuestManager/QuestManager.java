@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.PortalType;
 import org.bukkit.World;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -23,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -30,7 +32,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -601,31 +602,59 @@ public class QuestManager implements Listener {
 		}
 	}
 	
-	@EventHandler
-	public void onChunkLoad(ChunkLoadEvent e) {
-		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(e.getWorld().getName())) {
-			boolean trip;
-			if (questNPCs == null || questNPCs.isEmpty() || e.getChunk().getEntities().length == 0) {
-				return;
-			}
-			for (Entity entity : e.getChunk().getEntities()) {
-				trip = false;
-				for (NPC npc : questNPCs) {
-					if (npc.getEntity() == null) {
-						return;
-					}
-					if (npc.getEntity().getUniqueId().equals(entity.getUniqueId())) {
-						trip = true;
-						break;
-					}
-				}
-				
-				if (trip != true) {
-					entity.remove();
-				}
-			}
-		}
-	}
+//	@EventHandler
+//	public void onChunkLoad(ChunkLoadEvent e) {
+//		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(e.getWorld().getName())) {
+//			boolean trip;
+//			if (questNPCs == null || questNPCs.isEmpty() || e.getChunk().getEntities().length == 0) {
+//				return;
+//			}
+//			for (Entity entity : e.getChunk().getEntities()) {
+//				trip = false;
+//				for (NPC npc : questNPCs) {
+//					if (npc.getEntity() == null) {
+//						return;
+//					}
+//					if (npc.getEntity().getUniqueId().equals(entity.getUniqueId())) {
+//						trip = true;
+//						break;
+//					}
+//				}
+//				
+//				
+//				if (trip != true) {
+//					entity.remove();
+//				}
+//			}
+//		}
+//	}
+	
+//	@EventHandler
+//	public void onChunkUnload(ChunkUnloadEvent e) {
+//		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(e.getWorld().getName())) {
+//			boolean trip;
+//			if (questNPCs == null || questNPCs.isEmpty() || e.getChunk().getEntities().length == 0) {
+//				return;
+//			}
+//			for (Entity entity : e.getChunk().getEntities()) {
+//				trip = false;
+//				for (NPC npc : questNPCs) {
+//					if (npc.getEntity() == null) {
+//						return;
+//					}
+//					if (npc.getEntity().getUniqueId().equals(entity.getUniqueId())) {
+//						trip = true;
+//						break;
+//					}
+//				}
+//				
+//				
+//				if (trip == true) {
+//					entity.remove();
+//				}
+//			}
+//		}
+//	}
 	
 	private void makeAnchors() {
 		this.anchors = new HashMap<>();
@@ -671,6 +700,16 @@ public class QuestManager implements Listener {
 	
 	public List<Quest> getRunningQuests() {
 		return runningQuests;
+	}
+	
+	@EventHandler
+	public void onPortal(EntityCreatePortalEvent e) {
+		if (e.getPortalType() == PortalType.ENDER && e.getEntity().getType() == EntityType.ENDER_DRAGON)
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(
+				e.getEntity().getWorld().getName())) {
+			e.setCancelled(true);
+			return;
+		}
 	}
 	
 }
