@@ -255,8 +255,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 		//parse config & instantiate manager
 		manager = new QuestManager(
 				questDirectory, 
-				saveDirectory,
-				config.getQuests());
+				saveDirectory);
+		
+		manager.init(config.getQuests());
 		
 		enemyManager = new EnemyManager(enemyDirectory, 3);
 

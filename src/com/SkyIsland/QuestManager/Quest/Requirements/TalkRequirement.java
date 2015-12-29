@@ -115,9 +115,11 @@ public class TalkRequirement extends Requirement implements Listener, CompassTra
 		if (!config.contains("type") || !config.getString("type").equals("talk")) {
 			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'talk' but got " + config.get("type", "null"));
 		}
-		
+		if (config.getString("npc") == null) {
+			System.out.println("npc-null");
+		}
 		npc = QuestManagerPlugin.questManagerPlugin.getManager().getNPC(
-			(String) config.getString("npc")
+			config.getString("npc")
 				);
 		
 		Message message = (Message) config.get("message");

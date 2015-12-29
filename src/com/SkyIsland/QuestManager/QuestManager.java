@@ -52,6 +52,8 @@ public class QuestManager implements Listener {
 	
 	private File saveDirectory;
 	
+	private File questDirectory;
+	
 	private Scoreboard scoreboard;
 	
 	private Set<NPC> questNPCs;
@@ -63,8 +65,7 @@ public class QuestManager implements Listener {
 	 * the manager configuration section ready. The config passed is expected to have
 	 * one key (the name of the manager) and the value be a list of strings (name of quests)
 	 */
-	public QuestManager(File questDirectory, File saveDirectory, 
-			List<String> questNames) {
+	public QuestManager(File questDirectory, File saveDirectory) {
 		
 		runningQuests = new LinkedList<Quest>();
 		questTemplates = new LinkedList<QuestConfiguration>();
@@ -98,7 +99,16 @@ public class QuestManager implements Listener {
 		Party.maxSize = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMaxPartySize();
 		
 		this.saveDirectory = saveDirectory;
+		this.questDirectory = questDirectory;
 		
+		
+		makeAnchors();
+
+		QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager finished!");	
+
+	}
+	
+	public void init(List<String> questNames) {
 		if (questNames.isEmpty()) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().info(
 					"There were no quest templates to load!\n  "
@@ -196,6 +206,7 @@ public class QuestManager implements Listener {
 					
 					continue;
 				} catch (NullPointerException e) {
+					e.printStackTrace();
 					QuestManagerPlugin.questManagerPlugin.getLogger().warning("Missing quest template for save data: "
 							+ questName);
 					continue;
@@ -237,10 +248,6 @@ public class QuestManager implements Listener {
 				
 						
 			}
-			makeAnchors();
-
-			QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager finished!");	
-			
 		}
 	}
 	
