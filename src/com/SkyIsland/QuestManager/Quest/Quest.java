@@ -678,6 +678,7 @@ public class Quest implements Listener {
 				qp.getPlayer().getPlayer().sendMessage(ChatColor.RED + "You have failed the quest "
 				+ ChatColor.DARK_PURPLE + template.getName() + ChatColor.RED + "!" + ChatColor.RESET);
 			}
+			qp.refreshPlayer();
 		}
 		QuestManagerPlugin.questManagerPlugin.getManager().removeQuest(this);
 		halt();
