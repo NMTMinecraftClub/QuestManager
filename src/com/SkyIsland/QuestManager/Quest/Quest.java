@@ -641,6 +641,19 @@ public class Quest implements Listener {
 		}
 	}
 	
+	public void fail() {
+		for (QuestPlayer qp : this.participant.getParticipants()) {
+			qp.removeQuest(this);
+			if (qp.getPlayer().isOnline()) {
+				qp.getPlayer().getPlayer().sendMessage(ChatColor.RED + "You have failed the quest "
+				+ ChatColor.DARK_PURPLE + template.getName() + ChatColor.RED + "!" + ChatColor.RESET);
+			}
+			
+			QuestManagerPlugin.questManagerPlugin.getManager().removeQuest(this);
+			halt();
+		}
+	}
+	
 	/**
 	 * Updates the quest information, including contained goals and requirements.
 	 */
