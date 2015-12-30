@@ -121,7 +121,6 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 	public void onPlayerInteract(PlayerInteractAtEntityEvent e) {
 		if (!e.isCancelled())
 		if (e.getRightClicked().getUniqueId().equals(id)) {
-			System.out.println("Interact");
 			e.setCancelled(true);
 			this.interact(e.getPlayer());
 		}

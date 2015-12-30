@@ -298,10 +298,7 @@ public class QuestManager implements Listener {
 		if (!questNPCs.isEmpty()) {
 			for (NPC npc : questNPCs) {
 				if (npc.getEntity() != null) {
-					System.out.println("Asking to remove entity");
 					npc.removeEntity(true);
-				} else {
-					System.out.println("Entity is null!");
 				}
 			}
 		}
