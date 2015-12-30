@@ -7,7 +7,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
@@ -67,7 +67,7 @@ public class TalkRequirement extends Requirement implements Listener, CompassTra
 	 * @param e
 	 */
 	@EventHandler
-	public void onInteract(PlayerInteractEntityEvent e) {
+	public void onInteract(PlayerInteractAtEntityEvent e) {
 		
 		if (state) {
 			HandlerList.unregisterAll(this);
