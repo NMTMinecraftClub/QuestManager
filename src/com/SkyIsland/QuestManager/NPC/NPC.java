@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
@@ -113,12 +114,21 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 	
 	
 	@EventHandler(priority = EventPriority.HIGH)
-	public void onPlayerInteract(PlayerInteractEntityEvent e) {
+	public void onPlayerInteract(PlayerInteractAtEntityEvent e) {
 		if (!e.isCancelled())
 		if (e.getRightClicked().getUniqueId().equals(id)) {
+			System.out.println("Interact");
 			e.setCancelled(true);
 			this.interact(e.getPlayer());
 		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onPlayerInteract(PlayerInteractEntityEvent e){
+		if (!e.isCancelled())
+			if (e.getRightClicked().getUniqueId().equals(id)) {
+				e.setCancelled(true);
+			}
 	}
 	
 	@EventHandler
