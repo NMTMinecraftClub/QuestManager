@@ -976,6 +976,12 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			party.removePlayer(this, "You've been disconnected!");
 			party = null;
 		}
+		
+		for (Quest q : currentQuests) {
+			if (q.getTemplate().isSession()) {
+				q.fail();
+			}
+		}
 	}
 	
 	@EventHandler
