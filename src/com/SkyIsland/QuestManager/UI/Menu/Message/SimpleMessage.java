@@ -51,8 +51,6 @@ public class SimpleMessage extends Message {
 	
 	private FancyMessage message;
 	
-	private FancyMessage label;
-	
 	private SimpleMessage() {
 		super();
 	}
@@ -91,17 +89,11 @@ public class SimpleMessage extends Message {
 		return msg;
 	}
 
-	
-	@Override
-	public void setSourceLabel(FancyMessage label) {
-		this.label = label;
-	}
-
 	@Override
 	public FancyMessage getFormattedMessage() {
 		return new FancyMessage("")
-		.then(label == null ? 
-				new FancyMessage("Unknown")	: label)
+		.then(sourceLabel == null ? 
+				new FancyMessage("Unknown")	: sourceLabel)
 			.color(ChatColor.DARK_GRAY)
 			.style(ChatColor.BOLD)
 		.then(":\n")

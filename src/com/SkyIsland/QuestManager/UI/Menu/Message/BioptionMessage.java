@@ -53,8 +53,6 @@ public class BioptionMessage extends Message {
 		}
 	}
 	
-	private FancyMessage sourceLabel;
-	
 	private FancyMessage body;
 	
 	private FancyMessage option1Label;
@@ -183,11 +181,6 @@ public class BioptionMessage extends Message {
 			.style(ChatColor.BOLD)
 		.then(":\n")
 		.then(option2Msg);
-	}
-	
-	@Override
-	public void setSourceLabel(FancyMessage label) {
-		this.sourceLabel = label;
 	}
 
 }

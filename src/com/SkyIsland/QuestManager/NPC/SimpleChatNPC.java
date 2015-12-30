@@ -67,7 +67,7 @@ public class SimpleChatNPC extends SimpleNPC {
 		}
 	}
 	
-	private SimpleMessage chat;
+	private Message chat;
 	
 	private SimpleChatNPC(Location startingLoc) {
 		super(startingLoc);
@@ -145,7 +145,7 @@ public class SimpleChatNPC extends SimpleNPC {
 		//UPDATE: We wanna also accept regular strings, too :P
 		Object msgObj = map.get("message");
 		if (msgObj instanceof Message) {
-			npc.chat = (SimpleMessage) map.get("message");
+			npc.chat = (Message) map.get("message");
 		} else if (msgObj instanceof FancyMessage) { 
 			npc.chat = new SimpleMessage((FancyMessage) msgObj);
 		} else if (msgObj instanceof String){
@@ -164,7 +164,7 @@ public class SimpleChatNPC extends SimpleNPC {
 
 	@Override
 	protected void interact(Player player) {
-		ChatMenu messageChat = new SimpleChatMenu(chat.getFormattedMessage());
+		ChatMenu messageChat = ChatMenu.getDefaultMenu(chat);
 		messageChat.show(player);
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player); 
 		this.updateQuestHistory(qp, this.chat.getFormattedMessage().toOldMessageFormat()

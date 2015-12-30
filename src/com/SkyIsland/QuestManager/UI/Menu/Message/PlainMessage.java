@@ -88,16 +88,9 @@ public class PlainMessage extends Message {
 		return msg;
 	}
 
-	
-	@Override
-	public void setSourceLabel(FancyMessage label) {
-		;
-	}
-
 	@Override
 	public FancyMessage getFormattedMessage() {
 		return message;
-		
 	}
 	
 	

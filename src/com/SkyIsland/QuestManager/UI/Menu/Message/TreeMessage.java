@@ -72,8 +72,6 @@ public class TreeMessage extends Message {
 		}
 	}
 	
-	private FancyMessage sourceLabel;
-	
 	private FancyMessage body;
 	
 	private List<Option> options;
@@ -164,11 +162,6 @@ public class TreeMessage extends Message {
 			.then(body);
 		
 		return msg;
-	}
-	
-	@Override
-	public void setSourceLabel(FancyMessage label) {
-		this.sourceLabel = label;
 	}
 	
 	public List<Option> getOptions() {

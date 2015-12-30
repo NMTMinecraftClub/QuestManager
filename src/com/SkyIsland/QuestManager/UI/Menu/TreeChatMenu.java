@@ -28,24 +28,7 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 	
 	private int keyindex;
 	
-	/**
-	 * Creates (but does not show!) a menu with zero or more options. Each option is associated with<br />
-	 * The provided MenuActions allow for more control over the action of the menu buttons. If
-	 * there is no desired action for a corresponding action, <i>null</i> should be passed.
-	 * @param msg The fully-encoded message used for menu text
-	 * @param opt1 Action enacted when option 1 is clicked by the user
-	 * @param opt2 Action enacted when option 2 is clicked by the user
-	 */
-	public TreeChatMenu(Message body, Option option) {
-		super(body.getFormattedMessage());
-		
-		options = new TreeMap<String, Option>();
-		addOption(option);
-		
-		keyindex = 1;
-		
-		this.setMessage(formatMessage(body));
-	}
+	private FancyMessage sourceLabel;
 	
 	public TreeChatMenu(TreeMessage body) {
 		this(body, body.getOptions());
@@ -64,6 +47,8 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 		}
 		
 		this.setMessage(formatMessage(body));
+		
+		this.sourceLabel = body.getSourceLabel();
 	}
 	
 	public TreeChatMenu(Message body, Collection<Option> options) {
@@ -79,6 +64,8 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 		}
 		
 		this.setMessage(formatMessage(body));
+		
+		this.sourceLabel = body.getSourceLabel();
 	}
 	
 	/**
@@ -100,6 +87,9 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 			if (key.equals(arg)) {
 				Option opt = options.get(key);
 				Message msg = opt.getResult();
+				
+				msg.setSourceLabel(sourceLabel);
+				
 				ChatMenu.getDefaultMenu(msg).show(player);
 				return true;
 			}

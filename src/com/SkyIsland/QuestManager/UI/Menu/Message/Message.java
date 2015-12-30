@@ -11,7 +11,15 @@ import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
  */
 public abstract class Message implements ConfigurationSerializable {
 	
-	public abstract void setSourceLabel(FancyMessage label);
+	protected FancyMessage sourceLabel;
+	
+	public void setSourceLabel(FancyMessage label) {
+		this.sourceLabel = label;
+	}
+	
+	public FancyMessage getSourceLabel() {
+		return sourceLabel;
+	}
 	
 	public abstract FancyMessage getFormattedMessage();
 	
