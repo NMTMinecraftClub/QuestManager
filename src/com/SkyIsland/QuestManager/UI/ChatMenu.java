@@ -6,8 +6,10 @@ import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.UI.Menu.BioptionChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.SimpleChatMenu;
+import com.SkyIsland.QuestManager.UI.Menu.TreeChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Message.BioptionMessage;
 import com.SkyIsland.QuestManager.UI.Menu.Message.Message;
+import com.SkyIsland.QuestManager.UI.Menu.Message.TreeMessage;
 
 /**
  * A menu represented in chat buttons and links
@@ -88,7 +90,9 @@ public abstract class ChatMenu {
 			return new BioptionChatMenu((BioptionMessage) message, null, null);
 		}
 
-		
+		if (message instanceof TreeMessage) {
+			return new TreeChatMenu((TreeMessage) message);
+		}
 		
 		
 		

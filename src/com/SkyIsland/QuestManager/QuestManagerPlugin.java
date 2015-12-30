@@ -72,6 +72,7 @@ import com.SkyIsland.QuestManager.UI.Menu.Inventory.ServiceInventory;
 import com.SkyIsland.QuestManager.UI.Menu.Inventory.ShopInventory;
 import com.SkyIsland.QuestManager.UI.Menu.Message.BioptionMessage;
 import com.SkyIsland.QuestManager.UI.Menu.Message.SimpleMessage;
+import com.SkyIsland.QuestManager.UI.Menu.Message.TreeMessage;
 
 /**
  * Provided API and Command Line interaction between enlisted quest managers and
@@ -191,6 +192,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		TeleportNPC.registerWithAliases();
 		SimpleMessage.registerWithAliases();
 		BioptionMessage.registerWithAliases();
+		TreeMessage.registerWithAliases();
 		ShopInventory.registerWithAliases();
 		ServiceInventory.registerWithAliases();
 		ServiceCraft.registerWithAliases();
