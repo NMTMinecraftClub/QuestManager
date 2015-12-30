@@ -100,6 +100,10 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 		this.id = id;
 	}
 	
+	public UUID getID() {
+		return id;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -151,21 +155,25 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 		}
 	}
 	
-	public void removeEntity() {
+	public void removeEntity(boolean now) {
 		final Entity e = getEntity();
 		
 		e.getLocation().getChunk().load();
-
-		Bukkit.getScheduler().runTaskLater(QuestManagerPlugin.questManagerPlugin, 
-				new Runnable(){
-
-					@Override
-					public void run() {
-						e.remove();
-					}
-				
-				}, 1
-		);
+		
+		if (now) {
+			e.remove();
+		} else {
+			Bukkit.getScheduler().runTaskLater(QuestManagerPlugin.questManagerPlugin, 
+					new Runnable(){
+	
+						@Override
+						public void run() {
+							e.remove();
+						}
+					
+					}, 1
+			);
+		}
 	}
 	
 	protected abstract void interact(Player player);

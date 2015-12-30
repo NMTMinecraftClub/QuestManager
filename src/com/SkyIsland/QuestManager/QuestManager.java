@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,6 +33,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -293,13 +295,16 @@ public class QuestManager implements Listener {
 		}
 		
 		//remove starting NPCs
-//		if (!questNPCs.isEmpty()) {
-//			for (NPC npc : questNPCs) {
-//				if (npc.getEntity() != null) {
-//					npc.removeEntity();
-//				}
-//			}
-//		}
+		if (!questNPCs.isEmpty()) {
+			for (NPC npc : questNPCs) {
+				if (npc.getEntity() != null) {
+					System.out.println("Asking to remove entity");
+					npc.removeEntity(true);
+				} else {
+					System.out.println("Entity is null!");
+				}
+			}
+		}
 	}
 	
 	/**
@@ -632,25 +637,36 @@ public class QuestManager implements Listener {
 //	@EventHandler
 //	public void onChunkUnload(ChunkUnloadEvent e) {
 //		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(e.getWorld().getName())) {
-//			boolean trip;
+//			
 //			if (questNPCs == null || questNPCs.isEmpty() || e.getChunk().getEntities().length == 0) {
 //				return;
 //			}
+////			for (Entity entity : e.getChunk().getEntities()) {
+////				trip = false;
+////				for (NPC npc : questNPCs) {
+////					if (npc.getEntity() == null) {
+////						return;
+////					}
+////					if (npc.getEntity().getUniqueId().equals(entity.getUniqueId())) {
+////						trip = true;
+////						break;
+////					}
+////				}
+////				
+////				
+////				if (trip == true) {
+////					entity.remove();
+////				}
+////			}
+//			
+//			Set<UUID> ids = new HashSet<UUID>();
 //			for (Entity entity : e.getChunk().getEntities()) {
-//				trip = false;
-//				for (NPC npc : questNPCs) {
-//					if (npc.getEntity() == null) {
-//						return;
-//					}
-//					if (npc.getEntity().getUniqueId().equals(entity.getUniqueId())) {
-//						trip = true;
-//						break;
-//					}
-//				}
-//				
-//				
-//				if (trip == true) {
-//					entity.remove();
+//				ids.add(entity.getUniqueId());
+//			}
+//			
+//			for (NPC npc : questNPCs) {
+//				if (ids.contains(npc.getID())) {
+//					npc.removeEntity();
 //				}
 //			}
 //		}
