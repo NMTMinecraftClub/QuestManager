@@ -74,6 +74,7 @@ public abstract class ChatMenu {
 	 * Shows this menu to the provided player.
 	 * @param player
 	 */
+	@Deprecated
 	public void show(Player player) {
 		show(player, questBacker);
 	}
@@ -82,7 +83,7 @@ public abstract class ChatMenu {
 	 * Shows this menu to the provided player and logs the menu's outcome into a history event
 	 * for the provided quest
 	 * @param player
-	 * @param updateQuest
+	 * @param updateQuest The quest to log this menu under, or null for non-quest menues
 	 */
 	public void show(Player player, Quest updateQuest) {
 		handler.showMenu(player, this);
@@ -90,6 +91,8 @@ public abstract class ChatMenu {
 		if (updateQuest == null) {
 			return;
 		}
+		
+		this.questBacker = updateQuest;
 		updateQuestHistory(updateQuest, message.toOldMessageFormat()
 				.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + ""));
 	}

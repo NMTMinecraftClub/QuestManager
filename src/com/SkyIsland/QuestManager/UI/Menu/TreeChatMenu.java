@@ -90,7 +90,7 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 				
 				msg.setSourceLabel(sourceLabel);
 				
-				ChatMenu.getDefaultMenu(msg).show(player);
+				ChatMenu.getDefaultMenu(msg).show(player, this.getQuestBacker());
 				return true;
 			}
 		}

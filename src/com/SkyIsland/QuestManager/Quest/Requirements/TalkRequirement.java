@@ -95,7 +95,7 @@ public class TalkRequirement extends Requirement implements Listener, CompassTra
 						desc = desc.replace("-", "");
 						updateQuestHistory(qp, desc);
 						
-						menu.show(e.getPlayer());
+						menu.show(e.getPlayer(), getGoal().getQuest());
 					}
 				}
 			}
