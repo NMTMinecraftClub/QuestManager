@@ -28,23 +28,11 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 	
 	private int keyindex;
 	
-	private FancyMessage previousLabel;
-	
-	private FancyMessage sourceLabel;
-	
 	public TreeChatMenu(TreeMessage body) {
-		this(body, null, body.getOptions());
+		this(body, body.getOptions());
 	}
 	
-	public TreeChatMenu(TreeMessage body, FancyMessage previousLabel) {
-		this(body, previousLabel, body.getOptions());
-	}
-	
-	public TreeChatMenu(Message body, Option ... options) {
-		this(body, null, options);
-	}
-	
-	public TreeChatMenu(Message body, FancyMessage previousLabel, Option ...options) {		
+	public TreeChatMenu(Message body, Option ... options) {		
 		super(body.getFormattedMessage());
 
 		
@@ -56,18 +44,10 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 			addOption(opt);
 		}
 		
-		this.previousLabel = previousLabel;
-		
 		this.setMessage(formatMessage(body));
-		
-		this.sourceLabel = body.getSourceLabel();
 	}
 	
 	public TreeChatMenu(Message body, Collection<? extends Option> options) {
-		this(body, null, options);
-	}
-	
-	public TreeChatMenu(Message body, FancyMessage previousLabel, Collection<? extends Option> options) {
 		super(body.getFormattedMessage());
 
 		
@@ -79,11 +59,7 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 			addOption(opt);
 		}
 		
-		this.previousLabel = previousLabel;
-		
 		this.setMessage(formatMessage(body));
-		
-		this.sourceLabel = body.getSourceLabel();
 	}
 
 	/**
@@ -106,7 +82,7 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 				Option opt = options.get(key);
 				Message msg = opt.getResult();
 				
-				msg.setSourceLabel(previousLabel == null ? sourceLabel : previousLabel.color(ChatColor.DARK_BLUE));
+				msg.setSourceLabel(opt.getLabel());
 				
 				ChatMenu.getDefaultMenu(msg).show(player, this.getQuestBacker());
 				return true;

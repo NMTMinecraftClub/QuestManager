@@ -255,7 +255,16 @@ public class SimpleQuestStartNPC extends SimpleStaticBioptionNPC implements Comp
 				}
 			}
 			if (messageChat == null) {
+				Quest qInst = null;
+				for (Quest q : qp.getCurrentQuests()) {
+					if (q.getName().equals(quest.getName())) {
+						qInst = q;
+						break;
+					}
+				}
+				
 				messageChat = ChatMenu.getDefaultMenu(duringMessage);
+				messageChat.setQuestBacker(qInst);
 			}
 		} else {
 			messageChat = new BioptionChatMenu(chat, 
@@ -264,8 +273,8 @@ public class SimpleQuestStartNPC extends SimpleStaticBioptionNPC implements Comp
 		}
 
 		messageChat.show(player);
-		this.updateQuestHistory(qp, messageChat.getMessage().toOldMessageFormat()
-				.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + ""));
+		//this.updateQuestHistory(qp, messageChat.getMessage().toOldMessageFormat()
+		//		.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + ""));
 	}
 	
 	@Override
