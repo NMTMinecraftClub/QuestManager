@@ -1,9 +1,12 @@
 package com.SkyIsland.QuestManager.UI;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
+import com.SkyIsland.QuestManager.Quest.Quest;
+import com.SkyIsland.QuestManager.Quest.History.HistoryEvent;
 import com.SkyIsland.QuestManager.UI.Menu.BioptionChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.SimpleChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.TreeChatMenu;
@@ -40,6 +43,8 @@ public abstract class ChatMenu {
 	
 	private FancyMessage message;
 	
+	private Quest questBacker;
+	
 	/**
 	 * Constructs a menu around the provided FancyMessage.
 	 * @param msg 
@@ -53,11 +58,40 @@ public abstract class ChatMenu {
 	}
 	
 	/**
+	 * Sets this menu to be backed by the provided quest.<br />
+	 * Backed menus will be logged into backer quests' histories.
+	 * @param quest
+	 */
+	public void setQuestBacker(Quest quest) {
+		this.questBacker = quest;
+	}
+	
+	public Quest getQuestBacker() {
+		return questBacker;
+	}
+	
+	/**
 	 * Shows this menu to the provided player.
 	 * @param player
 	 */
 	public void show(Player player) {
+		show(player, questBacker);
+	}
+	
+	/**
+	 * Shows this menu to the provided player and logs the menu's outcome into a history event
+	 * for the provided quest
+	 * @param player
+	 * @param updateQuest
+	 */
+	public void show(Player player, Quest updateQuest) {
 		handler.showMenu(player, this);
+		
+		if (updateQuest == null) {
+			return;
+		}
+		updateQuestHistory(updateQuest, message.toOldMessageFormat()
+				.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + ""));
 	}
 	
 	
@@ -100,6 +134,21 @@ public abstract class ChatMenu {
 		//if message instanceof SimpleMessage (or DEFAULT)
 		return new SimpleChatMenu(message.getFormattedMessage());
 		
+	}
+	
+	private void updateQuestHistory(Quest quest, String desc) {
+		if (quest == null || desc == null) {
+			return;
+		}
+
+		for (HistoryEvent event : quest.getHistory().events()) {
+			if (ChatColor.stripColor(event.getDescription()).equals(ChatColor.stripColor(desc))) {
+				return; //already in there
+			}
+		}
+		
+		//wasn't in there, so add one
+		quest.addHistoryEvent(new HistoryEvent(desc));
 	}
 	
 }
