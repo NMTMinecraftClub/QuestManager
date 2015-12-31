@@ -1,6 +1,7 @@
 package com.SkyIsland.QuestManager.Quest.Requirements;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -15,10 +16,11 @@ import com.SkyIsland.QuestManager.NPC.NPC;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Utils.CompassTrackable;
 import com.SkyIsland.QuestManager.Quest.Goal;
+import com.SkyIsland.QuestManager.Quest.Quest;
+import com.SkyIsland.QuestManager.Quest.History.HistoryEvent;
 import com.SkyIsland.QuestManager.Quest.Requirements.Factory.RequirementFactory;
 import com.SkyIsland.QuestManager.UI.ChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Message.Message;
-import com.SkyIsland.QuestManager.UI.Menu.Message.SimpleMessage;
 
 /**
  * Requirement that a participant must talk to an npc.
@@ -88,12 +90,35 @@ public class TalkRequirement extends Requirement implements Listener, CompassTra
 						HandlerList.unregisterAll(this);
 						updateQuest();
 						
+						String desc = menu.getMessage().toOldMessageFormat()
+								.replaceAll(ChatColor.WHITE + "", ChatColor.BLACK + "");
+						desc = desc.replace("-", "");
+						updateQuestHistory(qp, desc);
+						
 						menu.show(e.getPlayer());
 					}
 				}
 			}
 		}
 		
+	}
+	
+	private void updateQuestHistory(QuestPlayer qp, String desc) {
+		if (qp == null) {
+			return;
+		}
+		
+		Quest quest = getGoal().getQuest();
+		
+		for (HistoryEvent event : quest.getHistory().events()) {
+			if (ChatColor.stripColor(event.getDescription()).equals(ChatColor.stripColor(desc))) {
+				return; //already in there
+			}
+		}
+		
+		//wasn't in there, so add one
+		quest.addHistoryEvent(new HistoryEvent(desc));
+		qp.addJournal();
 	}
 	
 	/**
@@ -124,9 +149,8 @@ public class TalkRequirement extends Requirement implements Listener, CompassTra
 		
 		Message message = (Message) config.get("message");
 		
-		if (message instanceof SimpleMessage) {
-			((SimpleMessage) message).setSourceLabel(new FancyMessage(npc.getName()));
-		}
+		message.setSourceLabel(new FancyMessage(npc.getName()));
+
 		menu = ChatMenu.getDefaultMenu(message);
 		
 		this.desc = config.getString("description", config.getString("action", "Right")
