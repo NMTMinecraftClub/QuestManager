@@ -114,8 +114,7 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 	}
 
 	private FancyMessage formatMessage(Message rawBody) {
-		FancyMessage msg = new FancyMessage("--------------------------------------------\n")
-					.style(ChatColor.BOLD)
+		FancyMessage msg = new FancyMessage("")
 				.then(rawBody.getFormattedMessage())
 				.then("\n\n");
 				
