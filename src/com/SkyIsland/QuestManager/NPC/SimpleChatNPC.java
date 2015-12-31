@@ -19,7 +19,6 @@ import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.UI.ChatMenu;
-import com.SkyIsland.QuestManager.UI.Menu.SimpleChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Message.Message;
 import com.SkyIsland.QuestManager.UI.Menu.Message.SimpleMessage;
 

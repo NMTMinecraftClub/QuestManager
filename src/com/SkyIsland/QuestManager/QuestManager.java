@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,7 +33,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -604,32 +604,41 @@ public class QuestManager implements Listener {
 		}
 	}
 	
-//	@EventHandler
-//	public void onChunkLoad(ChunkLoadEvent e) {
-//		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(e.getWorld().getName())) {
-//			boolean trip;
-//			if (questNPCs == null || questNPCs.isEmpty() || e.getChunk().getEntities().length == 0) {
-//				return;
-//			}
-//			for (Entity entity : e.getChunk().getEntities()) {
-//				trip = false;
-//				for (NPC npc : questNPCs) {
-//					if (npc.getEntity() == null) {
-//						return;
+	@EventHandler
+	public void onChunkLoad(ChunkLoadEvent e) {
+		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(e.getWorld().getName())) {
+			boolean trip;
+			if (questNPCs == null || questNPCs.isEmpty() || e.getChunk().getEntities().length == 0) {
+				return;
+			}
+			for (Entity entity : e.getChunk().getEntities()) {
+				if (entity.getCustomName() == null || entity.getCustomName().isEmpty()) {
+					continue;
+				}
+				
+				trip = false;
+				for (NPC npc : questNPCs) {
+					if (npc.getEntity() == null) {
+						return;
+					}
+					if (npc.getEntity().getUniqueId().equals(entity.getUniqueId())) {
+						trip = true;
+						break;
+					}
+				}
+				
+				
+				if (trip != true) {
+//					if (entity instanceof LivingEntity) {
+//						if (!((LivingEntity) entity).getRemoveWhenFarAway()) {
+//							continue;
+//						}
 //					}
-//					if (npc.getEntity().getUniqueId().equals(entity.getUniqueId())) {
-//						trip = true;
-//						break;
-//					}
-//				}
-//				
-//				
-//				if (trip != true) {
-//					entity.remove();
-//				}
-//			}
-//		}
-//	}
+					entity.remove();
+				}
+			}
+		}
+	}
 	
 //	@EventHandler
 //	public void onChunkUnload(ChunkUnloadEvent e) {
@@ -663,7 +672,7 @@ public class QuestManager implements Listener {
 //			
 //			for (NPC npc : questNPCs) {
 //				if (ids.contains(npc.getID())) {
-//					npc.removeEntity();
+//					npc.removeEntity(true);
 //				}
 //			}
 //		}
@@ -722,6 +731,25 @@ public class QuestManager implements Listener {
 				e.getEntity().getWorld().getName())) {
 			e.setCancelled(true);
 			return;
+		}
+	}
+	
+	/**
+	 * Registers an NPC as an aux NPC to avoid removal.<br />
+	 * These NPCs are not cleaned up and are the responsibility of the creator to use {@link #unregisterNPC(NPC)}
+	 * @param questNPC
+	 */
+	public void registerNPC(NPC questNPC) {
+		this.questNPCs.add(questNPC);
+	}
+	
+	public void unregisterNPC(NPC questNPC) {
+		Iterator<NPC> it = questNPCs.iterator();
+		while (it.hasNext()) {
+			if (it.next().getID().equals(questNPC.getID())) {
+				it.remove();
+				return;
+			}
 		}
 	}
 	

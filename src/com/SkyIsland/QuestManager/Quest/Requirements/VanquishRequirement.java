@@ -23,6 +23,8 @@ import com.SkyIsland.QuestManager.Configuration.EquipmentConfiguration;
 import com.SkyIsland.QuestManager.Configuration.State.RequirementState;
 import com.SkyIsland.QuestManager.Configuration.State.StatekeepingRequirement;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
+import com.SkyIsland.QuestManager.NPC.NPC;
+import com.SkyIsland.QuestManager.NPC.QuestMonsterNPC;
 import com.SkyIsland.QuestManager.Player.Utils.CompassTrackable;
 import com.SkyIsland.QuestManager.Quest.Goal;
 import com.SkyIsland.QuestManager.Quest.Requirements.Factory.RequirementFactory;
@@ -50,6 +52,8 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	}
 	
 	private LivingEntity foe;
+	
+	private NPC foeNPC;
 	
 	private RequirementState foeStateRecord;
 	
@@ -113,6 +117,12 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 			desc = foeState.getString("description", "Slay " + foe.getCustomName());
 		}
 		
+		//add as NPC for non-removal
+		foeNPC = new QuestMonsterNPC();
+		foeNPC.setEntity(foe);
+		
+		QuestManagerPlugin.questManagerPlugin.getManager().registerNPC(foeNPC);
+		
 		update();
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
@@ -142,6 +152,9 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		
 		if (!state && foe.isDead()) {
 			state = true;
+			
+			//remove NPC
+			QuestManagerPlugin.questManagerPlugin.getManager().unregisterNPC(foeNPC);
 			
 			//unregister listen, as we'll never need to check again
 			HandlerList.unregisterAll(this);
@@ -217,6 +230,10 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 	}
 	
 	public void stop() {
+		
+		//cleanup NPC
+		QuestManagerPlugin.questManagerPlugin.getManager().unregisterNPC(foeNPC);
+		
 		//load chunk
 		Chunk chunk = foe.getLocation().getChunk();
 		

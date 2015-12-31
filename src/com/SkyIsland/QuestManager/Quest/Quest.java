@@ -738,7 +738,7 @@ public class Quest implements Listener {
 			
 			//check if end is to just finish
 			if (template.getEndType() == EndType.NOTURNIN) {
-				this.completeQuest(false);
+				this.completeQuest(true);
 				return;
 			}
 			if (goals.size() == goalIndex)
