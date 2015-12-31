@@ -74,7 +74,6 @@ public abstract class ChatMenu {
 	 * Shows this menu to the provided player.
 	 * @param player
 	 */
-	@Deprecated
 	public void show(Player player) {
 		show(player, questBacker);
 	}

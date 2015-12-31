@@ -65,7 +65,7 @@ public class TeleportAction implements MenuAction {
 						
 			ChatMenu menu = new SimpleChatMenu(denial.getFormattedMessage());
 			
-			menu.show(player.getPlayer().getPlayer());
+			menu.show(player.getPlayer().getPlayer(), null);
 		}
 		
 	}
