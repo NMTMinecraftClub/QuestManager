@@ -28,13 +28,23 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 	
 	private int keyindex;
 	
+	private FancyMessage previousLabel;
+	
 	private FancyMessage sourceLabel;
 	
 	public TreeChatMenu(TreeMessage body) {
-		this(body, body.getOptions());
+		this(body, null, body.getOptions());
+	}
+	
+	public TreeChatMenu(TreeMessage body, FancyMessage previousLabel) {
+		this(body, previousLabel, body.getOptions());
 	}
 	
 	public TreeChatMenu(Message body, Option ... options) {
+		this(body, null, options);
+	}
+	
+	public TreeChatMenu(Message body, FancyMessage previousLabel, Option ...options) {		
 		super(body.getFormattedMessage());
 
 		
@@ -46,12 +56,18 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 			addOption(opt);
 		}
 		
+		this.previousLabel = previousLabel;
+		
 		this.setMessage(formatMessage(body));
 		
 		this.sourceLabel = body.getSourceLabel();
 	}
 	
-	public TreeChatMenu(Message body, Collection<Option> options) {
+	public TreeChatMenu(Message body, Collection<? extends Option> options) {
+		this(body, null, options);
+	}
+	
+	public TreeChatMenu(Message body, FancyMessage previousLabel, Collection<? extends Option> options) {
 		super(body.getFormattedMessage());
 
 		
@@ -63,11 +79,13 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 			addOption(opt);
 		}
 		
+		this.previousLabel = previousLabel;
+		
 		this.setMessage(formatMessage(body));
 		
 		this.sourceLabel = body.getSourceLabel();
 	}
-	
+
 	/**
 	 * Adds the given option to the list of options used in the menu.
 	 * @param option
@@ -88,7 +106,7 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 				Option opt = options.get(key);
 				Message msg = opt.getResult();
 				
-				msg.setSourceLabel(sourceLabel);
+				msg.setSourceLabel(previousLabel == null ? sourceLabel : previousLabel.color(ChatColor.DARK_BLUE));
 				
 				ChatMenu.getDefaultMenu(msg).show(player, this.getQuestBacker());
 				return true;
@@ -114,8 +132,7 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 	}
 
 	private FancyMessage formatMessage(Message rawBody) {
-		FancyMessage msg = new FancyMessage("")
-				.then(rawBody.getFormattedMessage())
+		FancyMessage msg = new FancyMessage("").then(rawBody.getFormattedMessage())
 				.then("\n\n");
 				
 		if (!options.isEmpty())
