@@ -142,6 +142,7 @@ public abstract class ChatMenu {
 		if (quest == null || desc == null) {
 			return;
 		}
+		desc = desc.replace("-", "");
 
 		for (HistoryEvent event : quest.getHistory().events()) {
 			if (ChatColor.stripColor(event.getDescription()).equals(ChatColor.stripColor(desc))) {
