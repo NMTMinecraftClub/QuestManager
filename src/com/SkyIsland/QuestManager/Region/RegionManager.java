@@ -1,4 +1,4 @@
-package com.SkyIsland.QuestManager.Enemy;
+package com.SkyIsland.QuestManager.Region;
 
 import java.io.File;
 import java.util.HashMap;
@@ -11,12 +11,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
-import com.SkyIsland.QuestManager.Region.Region;
+import com.SkyIsland.QuestManager.Enemy.Enemy;
+import com.SkyIsland.QuestManager.Enemy.EnemyAlarms;
 import com.SkyIsland.QuestManager.Scheduling.Alarm;
 import com.SkyIsland.QuestManager.Scheduling.Alarmable;
 import com.SkyIsland.QuestManager.util.WeightedList;
 
-public final class EnemyManager implements Alarmable<EnemyAlarms> {
+public final class RegionManager implements Alarmable<EnemyAlarms> {
 	
 	private Map<Region, WeightedList<Enemy>> enemyMap;
 	
@@ -25,7 +26,7 @@ public final class EnemyManager implements Alarmable<EnemyAlarms> {
 	/**
 	 * Creates an empty enemy manager with a default spawnrate of 3 seconds
 	 */
-	public EnemyManager() {
+	public RegionManager() {
 		this(3.0);
 	}
 	
@@ -33,7 +34,7 @@ public final class EnemyManager implements Alarmable<EnemyAlarms> {
 	 * Creates an enemy manager with the provided spawn rate
 	 * @param spawnrate
 	 */
-	public EnemyManager(double spawnrate) {
+	public RegionManager(double spawnrate) {
 		enemyMap = new HashMap<Region, WeightedList<Enemy>>();
 		this.spawnrate = spawnrate;
 		
@@ -45,7 +46,7 @@ public final class EnemyManager implements Alarmable<EnemyAlarms> {
 	 * Spawnrate defaults to 3.0
 	 * @param target The file to load or the directory to search for files to load
 	 */
-	public EnemyManager(File target) {
+	public RegionManager(File target) {
 		this(target, 3.0);
 	}
 	
@@ -54,7 +55,7 @@ public final class EnemyManager implements Alarmable<EnemyAlarms> {
 	 * @param target The file to load or the directory to search for files to load
 	 * @param spawnrate
 	 */
-	public EnemyManager(File target, double spawnrate) {
+	public RegionManager(File target, double spawnrate) {
 		this(spawnrate);
 		load(target);
 	}

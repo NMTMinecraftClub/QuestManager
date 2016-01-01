@@ -21,7 +21,6 @@ import com.SkyIsland.QuestManager.Configuration.PluginConfiguration;
 import com.SkyIsland.QuestManager.Configuration.Utils.Chest;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
 import com.SkyIsland.QuestManager.Enemy.DefaultEnemy;
-import com.SkyIsland.QuestManager.Enemy.EnemyManager;
 import com.SkyIsland.QuestManager.Enemy.NormalEnemy;
 import com.SkyIsland.QuestManager.Enemy.StandardEnemy;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
@@ -64,6 +63,7 @@ import com.SkyIsland.QuestManager.Quest.Requirements.TalkRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.TimeRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.VanquishRequirement;
 import com.SkyIsland.QuestManager.Region.CuboidRegion;
+import com.SkyIsland.QuestManager.Region.RegionManager;
 import com.SkyIsland.QuestManager.Region.SphericalRegion;
 import com.SkyIsland.QuestManager.UI.ChatGuiHandler;
 import com.SkyIsland.QuestManager.UI.InventoryGuiHandler;
@@ -93,7 +93,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private PlayerManager playerManager;
 	
-	private EnemyManager enemyManager;
+	private RegionManager regionManager;
 	
 	private SpellManager spellManager;
 	
@@ -261,7 +261,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		manager.init(config.getQuests());
 		
-		enemyManager = new EnemyManager(enemyDirectory, 3);
+		regionManager = new RegionManager(enemyDirectory, 3);
 
 		spellManager = new SpellManager(spellDirectory);
 		
@@ -272,11 +272,11 @@ public class QuestManagerPlugin extends JavaPlugin {
 //		Region r = new SphericalRegion(Bukkit.getWorld("QuestWorld"), v1, 4);
 //		Enemy e = new DefaultEnemy(EntityType.ZOMBIE);
 //		
-//		enemyManager.registerRegion(r);
-//		enemyManager.addEnemy(r, e);
+//		regionManager.registerRegion(r);
+//		regionManager.addEnemy(r, e);
 //		
 //		e = new DefaultEnemy(EntityType.SKELETON);
-//		enemyManager.addEnemy(r, e);
+//		regionManager.addEnemy(r, e);
 //		
 //		///////////////////////////////////////////////////////////////////////////////		
 	}
@@ -613,8 +613,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 		return manager;
 	}
 	
-	public EnemyManager getEnemyManager() {
-		return enemyManager;
+	public RegionManager getEnemyManager() {
+		return regionManager;
 	}
 	
 	public SpellManager getSpellManager() {
