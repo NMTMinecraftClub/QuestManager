@@ -141,7 +141,7 @@ public final class RegionManager implements Alarmable<EnemyAlarms> {
 		}
 		
 		for (RegionRecord r : regionMap.values()) {
-			r.enemies.clear();
+			r.getEnemies().clear();
 		}
 		
 		regionMap.clear();
