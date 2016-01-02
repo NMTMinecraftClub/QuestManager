@@ -1159,11 +1159,41 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		LinkedList<ChatMenuOption> opts = new LinkedList<ChatMenuOption>();
 		
 		for (String t : spells) {
-			String desc = "No Description";
+			List<String> descList = new LinkedList<>();
 			Spell sp = QuestManagerPlugin.questManagerPlugin.getSpellManager().getSpell(t);
 			if (sp != null) {
+				String desc;
 				desc = sp.getDescription();
+				
+				String mid;
+				int pos;
+				while (desc.length() > 30) {
+					
+					desc = desc.trim();
+					
+					//find first space before 30
+					mid = desc.substring(0, 30);
+					pos = mid.lastIndexOf(" ");
+					if (pos == -1) {
+						descList.add(mid);
+						desc = desc.substring(30);
+						continue;
+					}
+					//else we found a space
+					descList.add(mid.substring(0, pos));
+					desc = desc.substring(pos);
+				}
+				
+				descList.add(desc.trim());
+			} else {
+				descList.add("No Description");
 			}
+			
+			String desc = "";
+			for (int i = 0; i < descList.size() - 1; i++) {
+				desc += descList.get(i) + "\n";
+			}
+			desc += descList.get(descList.size() - 1);
 			opts.add(new ChatMenuOption(
 					new PlainMessage(t),
 					new ChangeSpellHolderAction(this, holder, t),
