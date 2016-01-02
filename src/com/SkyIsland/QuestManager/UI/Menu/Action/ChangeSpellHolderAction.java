@@ -67,12 +67,20 @@ public class ChangeSpellHolderAction implements MenuAction {
 			}
 			ItemMeta meta = holder.getItemMeta();
 			List<String> descList = new LinkedList<String>();
-			descList.add("Current Spell:  " + ChatColor.DARK_RED + newSpell);
-			String mid;
+			String mid = "";
+			for (int i = 0; i < 15 - (newSpell.length() / 2); i++) {
+				mid = mid + " ";
+			}
+			descList.add(mid + ChatColor.DARK_RED + newSpell);
+			if (s != null) {
+				descList.add(
+						ChatColor.BLUE + "Cost: " + s.getCost()
+						);
+			}
 			int pos;
 			while (desc.length() > 30) {
 				
-				desc = desc.trim();
+				desc = ChatColor.GOLD + desc.trim();
 				
 				//find first space before 30
 				mid = desc.substring(0, 30);
@@ -87,7 +95,7 @@ public class ChangeSpellHolderAction implements MenuAction {
 				desc = desc.substring(pos);
 			}
 			
-			descList.add(desc.trim());	
+			descList.add(ChatColor.GOLD + desc.trim());	
 			meta.setLore(descList);
 			
 			
