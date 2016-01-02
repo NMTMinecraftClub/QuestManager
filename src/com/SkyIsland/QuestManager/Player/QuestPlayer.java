@@ -57,6 +57,7 @@ import com.SkyIsland.QuestManager.Quest.Quest;
 import com.SkyIsland.QuestManager.Quest.History.History;
 import com.SkyIsland.QuestManager.Quest.History.HistoryEvent;
 import com.SkyIsland.QuestManager.Quest.Requirements.Requirement;
+import com.SkyIsland.QuestManager.Scheduling.Alarm;
 import com.SkyIsland.QuestManager.UI.ChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.ChatMenuOption;
 import com.SkyIsland.QuestManager.UI.Menu.MultioptionChatMenu;
@@ -147,6 +148,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	private Party party;
 	
 	private CompassTrackable compassTarget;
+
+	private boolean musicPlaying;
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -236,6 +239,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		this.journalNotes = new LinkedList<String>();
 		this.spells = new LinkedList<>();
 		this.storedSpells = new HashMap<>();
+		this.musicPlaying = false;
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
@@ -1496,4 +1500,20 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			return;
 		}
 	}
+	
+	public boolean isMusicPlaying() {
+		return musicPlaying;
+	}
+	
+	public void playMusic(Material musicDisc) {
+		if (getPlayer().isOnline()) {
+			
+			Player player = getPlayer().getPlayer();
+			player.playEffect(player.getLocation(), Effect.RECORD_PLAY, musicDisc);
+			
+			this.isMusicPlaying() = true;
+			Alarm.getScheduler().schedule(this, MUSIC_STOP, seconds)
+		}
+	}
+	
 }
