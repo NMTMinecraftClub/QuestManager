@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -19,7 +21,33 @@ import com.SkyIsland.QuestManager.util.WeightedList;
 
 public final class RegionManager implements Alarmable<EnemyAlarms> {
 	
-	private Map<Region, WeightedList<Enemy>> enemyMap;
+	/**
+	 * Holds the enemy list and the music to play for the region
+	 * @author Skyler
+	 *
+	 */
+	private static class RegionRecord {
+		
+		private Material record;
+		
+		private WeightedList<Enemy> enemies;
+		
+		public RegionRecord(Material sound, WeightedList<Enemy> enemies) {
+			this.record = sound;
+			this.enemies = enemies;
+		}
+		
+		public Material getSound() {
+			return record;
+			
+		}
+		
+		public WeightedList<Enemy> getEnemies() {
+			return enemies;
+		}
+	}
+	
+	private Map<Region, RegionRecord> regionMap;
 	
 	private double spawnrate;
 	
@@ -35,7 +63,7 @@ public final class RegionManager implements Alarmable<EnemyAlarms> {
 	 * @param spawnrate
 	 */
 	public RegionManager(double spawnrate) {
-		enemyMap = new HashMap<Region, WeightedList<Enemy>>();
+		regionMap = new HashMap<Region, RegionRecord>();
 		this.spawnrate = spawnrate;
 		
 		Alarm.getScheduler().schedule(this, EnemyAlarms.SPAWN, spawnrate);
@@ -67,11 +95,11 @@ public final class RegionManager implements Alarmable<EnemyAlarms> {
 	 * @return false if the region is null or already in the map, true otherwise
 	 */
 	public boolean registerRegion(Region region) {
-		if (region == null || enemyMap.containsKey(region)) {
+		if (region == null || regionMap.containsKey(region)) {
 			return false;
 		}
 		
-		enemyMap.put(region, new WeightedList<Enemy>());
+		regionMap.put(region, new RegionRecord(null, new WeightedList<Enemy>()));
 		
 		return true;
 	}
@@ -86,11 +114,11 @@ public final class RegionManager implements Alarmable<EnemyAlarms> {
 	 * @return false if the region is not in the map, true otherwise
 	 */
 	public boolean addEnemy(Region key, Enemy enemy, double weight) {
-		if (!enemyMap.containsKey(key)) {
+		if (!regionMap.containsKey(key)) {
 			return false;
 		}
 		
-		WeightedList<Enemy> list = enemyMap.get(key);
+		WeightedList<Enemy> list = (regionMap.get(key)).enemies;
 		list.add(enemy, weight);
 		
 		return true;
@@ -108,15 +136,15 @@ public final class RegionManager implements Alarmable<EnemyAlarms> {
 	}
 	
 	public void clear() {
-		if (enemyMap.isEmpty()) {
+		if (regionMap.isEmpty()) {
 			return;
 		}
 		
-		for (WeightedList<Enemy> l : enemyMap.values()) {
-			l.clear();
+		for (RegionRecord r : regionMap.values()) {
+			r.enemies.clear();
 		}
 		
-		enemyMap.clear();
+		regionMap.clear();
 	}
 
 	public double getSpawnrate() {
@@ -145,9 +173,14 @@ public final class RegionManager implements Alarmable<EnemyAlarms> {
 			if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds().contains(
 					player.getWorld().getName())) {
 				//is in a quest world
-				for (Region r : enemyMap.keySet()) {
+				for (Region r : regionMap.keySet()) {
 					if (r.isIn(player)) {
 						spawnInRegion(r);
+						
+						if (regionMap.get(r).getSound() != null) {
+							player.playEffect(player.getLocation(), Effect.RECORD_PLAY,
+									regionMap.get(r).getSound());
+						}
 						break;
 					}
 				}
@@ -161,7 +194,7 @@ public final class RegionManager implements Alarmable<EnemyAlarms> {
 	 */
 	private void spawnInRegion(Region region) {
 		Enemy e;
-		WeightedList<Enemy> l = enemyMap.get(region);
+		WeightedList<Enemy> l = (regionMap.get(region)).enemies;
 		
 		e = l.getRandom();
 		
@@ -231,6 +264,12 @@ public final class RegionManager implements Alarmable<EnemyAlarms> {
 			registerRegion(region);
 			for (Enemy e : enemies) {
 				addEnemy(region, e);
+			}
+			
+
+			if (regionSection.contains("music")) {
+				regionMap.get(region).record = Material.valueOf((String) regionSection.get("music"));
+				
 			}
 			//TODO add enemy weights?
 		}
