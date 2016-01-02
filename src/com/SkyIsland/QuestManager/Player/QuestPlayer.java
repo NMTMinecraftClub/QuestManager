@@ -501,6 +501,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		return level;
 	}
 
+	public int getLevel() {
+		return level;
+	}
+
 	public int getMaxHp() {
 		return maxHp;
 	}
@@ -668,7 +672,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			qp.mp = (int) map.get("mp");
 		} //else handled by default constructor
 		
-		if (map.containsKey("maxMp")) {
+		if (map.containsKey("maxmp")) {
 			qp.maxMp = (int) map.get("maxmp");
 		} //else again handled by default constructor
 		
