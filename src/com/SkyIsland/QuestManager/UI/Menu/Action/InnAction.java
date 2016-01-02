@@ -62,6 +62,9 @@ public class InnAction implements MenuAction {
 			if (!e.isCancelled()) {
 				p.setHealth(p.getMaxHealth());
 			}
+			
+			player.regenMP(-100);
+			
 			p.setFoodLevel(20);
 			p.setExhaustion(0f);
 			p.setSaturation(20f);
