@@ -1,5 +1,8 @@
 package com.SkyIsland.QuestManager.UI.Menu.Action;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -12,7 +15,6 @@ import com.SkyIsland.QuestManager.Magic.Spell.Spell;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Utils.SpellHolder;
 import com.SkyIsland.QuestManager.UI.Menu.SimpleChatMenu;
-import com.google.common.collect.Lists;
 
 public class ChangeSpellHolderAction implements MenuAction {
 
@@ -64,8 +66,31 @@ public class ChangeSpellHolderAction implements MenuAction {
 				desc = s.getDescription();
 			}
 			ItemMeta meta = holder.getItemMeta();
-			meta.setLore(Lists.newArrayList("Current Spell:", "  " + ChatColor.DARK_RED + newSpell,
-					desc));
+			List<String> descList = new LinkedList<String>();
+			descList.add("Current Spell:  " + ChatColor.DARK_RED + newSpell);
+			String mid;
+			int pos;
+			while (desc.length() > 30) {
+				
+				desc = desc.trim();
+				
+				//find first space before 30
+				mid = desc.substring(0, 30);
+				pos = mid.lastIndexOf(" ");
+				if (pos == -1) {
+					descList.add(mid);
+					desc = desc.substring(30);
+					continue;
+				}
+				//else we found a space
+				descList.add(mid.substring(0, pos));
+				desc = desc.substring(pos);
+			}
+			
+			descList.add(desc.trim());	
+			meta.setLore(descList);
+			
+			
 			holder.setItemMeta(meta);
 			
 			inv.setItem(slot, holder);
