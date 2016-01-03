@@ -100,6 +100,8 @@ public class DummyNPC extends SimpleNPC {
 		npc.setEntity(loc.getWorld().spawnEntity(loc, type));
 		npc.setStartingLoc(loc);
 		npc.getEntity().setCustomName((String) map.get("name"));
+		
+		npc.name = (String) map.get("name");
 
 		if (npc.getEntity() instanceof LivingEntity) {
 			EntityEquipment equipment = ((LivingEntity) npc.getEntity()).getEquipment();
