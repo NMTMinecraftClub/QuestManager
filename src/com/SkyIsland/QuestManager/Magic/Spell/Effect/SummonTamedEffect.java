@@ -8,6 +8,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 
@@ -61,11 +62,16 @@ public class SummonTamedEffect extends SpellEffect {
 	
 	public static SummonTamedEffect valueOf(Map<String, Object> map) {
 		
+		int hp = -1;
+		if (map.containsKey("hp")) {
+			hp = (Integer) map.get("hp");
+		}
+		
 		return new SummonTamedEffect(
 				(Integer) map.get("duration"),
 				EntityType.valueOf((String) map.get("type")),
-				(Integer) map.get("count")
-				);
+				(Integer) map.get("count"),
+				hp);
 	}
 	
 	@Override
@@ -75,6 +81,7 @@ public class SummonTamedEffect extends SpellEffect {
 		map.put("type", type.name());
 		map.put("duration", duration);
 		map.put("count", count);
+		map.put("hp", hp);
 		
 		return map;
 	}
@@ -96,12 +103,19 @@ public class SummonTamedEffect extends SpellEffect {
 	
 	private EntityType type;
 	
+	private int hp;
+	
 	private int count;
 	
 	public SummonTamedEffect(int duration, EntityType type, int count) {
+		this(duration, type, count, -1);
+	}
+	
+	public SummonTamedEffect(int duration, EntityType type, int count, int hp) {
 		this.duration = duration;
 		this.type = type;
 		this.count = count;
+		this.hp = hp;
 		if (!isTameable(type)) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning(
 					"WARNING! Summon'ed type [" + type + "] may not be tameable, and could "
@@ -144,8 +158,18 @@ public class SummonTamedEffect extends SpellEffect {
 			manager.registerSummon(s);
 		}
 		
-		((Tameable) ent).setTamed(true);
-		((Tameable) ent).setOwner((AnimalTamer) cause);
+		Tameable tame = (Tameable) ent;
+		tame.setTamed(true);
+		tame.setOwner((AnimalTamer) cause);
+		
+		if (ent instanceof LivingEntity) {
+			LivingEntity live = (LivingEntity) ent;
+			if (hp > 0) {
+					live.setMaxHealth(hp);
+					live.setHealth(hp);
+			}
+
+		}
 	}
 	
 	@Override

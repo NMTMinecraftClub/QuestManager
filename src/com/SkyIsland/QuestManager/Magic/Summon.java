@@ -11,10 +11,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.NPC.QuestMonsterNPC;
 import com.SkyIsland.QuestManager.Scheduling.Alarm;
 import com.SkyIsland.QuestManager.Scheduling.Alarmable;
 
-public class Summon implements Alarmable<Integer>, Listener {
+public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Listener {
 	
 	private UUID entityID;
 	
