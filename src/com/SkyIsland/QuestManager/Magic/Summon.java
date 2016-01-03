@@ -6,12 +6,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Scheduling.Alarm;
 import com.SkyIsland.QuestManager.Scheduling.Alarmable;
 
-public class Summon implements Alarmable<Integer> {
+public class Summon implements Alarmable<Integer>, Listener {
 	
 	private UUID entityID;
 	
@@ -98,4 +101,14 @@ public class Summon implements Alarmable<Integer> {
 		return casterID;
 	}
 	
+	@EventHandler
+	public void onSummonDeath(EntityDeathEvent e) {
+		if (e.getEntity().getUniqueId() == entityID) {
+			Alarm.getScheduler().unregister(this);
+			for (int i = 0; i < 10; i++)
+				e.getEntity().getLocation().getWorld().playEffect(e.getEntity().getLocation(), Effect.SMOKE, 0);
+			
+			QuestManagerPlugin.questManagerPlugin.getSummonManager().unregisterSummon(this);
+		}
+	}
 }

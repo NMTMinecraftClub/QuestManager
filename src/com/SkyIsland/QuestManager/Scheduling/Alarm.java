@@ -102,7 +102,7 @@ private static final int ticksPerSecond = 20;
 	 * @param tickable
 	 * @return Whether or not this was successful, including whther there was something waiting
 	 */
-	public boolean unregister(Tickable tickable) {
+	public boolean unregister(Alarmable<? extends Object> tickable) {
 		if (map.containsKey(tickable)) {
 			map.get(tickable).cancel();
 			return map.remove(tickable) != null;
