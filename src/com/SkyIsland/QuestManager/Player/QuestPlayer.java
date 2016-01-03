@@ -907,7 +907,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 				continue;
 			}
 			
-			if (ForgeAction.Repairable.isRepairable(item.getType())) {
+			if (ForgeAction.Repairable.isRepairable(item.getType()))
+			if (!item.getItemMeta().spigot().isUnbreakable()) {
 				trip = true;
 				item.setDurability((short) Math.min(item.getType().getMaxDurability() - 1, 
 						item.getDurability() + item.getType().getMaxDurability() / 2));
