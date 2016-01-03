@@ -122,6 +122,7 @@ public class SummonTamedEffect extends SpellEffect {
 		SummonManager manager = QuestManagerPlugin.questManagerPlugin.getSummonManager();
 		
 		Location tmp = e.getLocation().clone();
+		tmp.add(0, 1.5, 0);
 		tmp.add(e.getLocation().getDirection().normalize().multiply(2));
 		Entity ent = tmp.getWorld().spawnEntity(tmp, type);
 		if (!(ent instanceof Tameable)) {

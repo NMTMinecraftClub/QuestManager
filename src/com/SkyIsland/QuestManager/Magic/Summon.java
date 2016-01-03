@@ -106,7 +106,7 @@ public class Summon implements Alarmable<Integer>, Listener {
 	@EventHandler
 	public void onSummonDeath(EntityDeathEvent e) {
 		if (e.getEntity().getUniqueId().equals(entityID)) {
-			System.out.println("unregister: " + Alarm.getScheduler().unregister(this));
+			Alarm.getScheduler().unregister(this);
 			for (int i = 0; i < 10; i++)
 				e.getEntity().getLocation().getWorld().playEffect(e.getEntity().getLocation(), Effect.SMOKE, 0);
 			
