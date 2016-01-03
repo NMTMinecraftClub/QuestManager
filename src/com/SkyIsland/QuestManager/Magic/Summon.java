@@ -17,9 +17,12 @@ public class Summon implements Alarmable<Integer> {
 	
 	private Entity entity;
 	
-	public Summon(Entity entity, int duration) {
+	private UUID casterID;
+	
+	public Summon(UUID casterID, Entity entity, int duration) {
 		this.entityID = entity.getUniqueId();
 		this.entity = entity;
+		this.casterID = casterID;
 		
 		Alarm.getScheduler().schedule(this, 0, duration);
 	}
@@ -89,6 +92,10 @@ public class Summon implements Alarmable<Integer> {
 		}
 		
 		entity.remove();
+	}
+	
+	public UUID getCasterID() {
+		return casterID;
 	}
 	
 }

@@ -301,6 +301,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		//save user database
 		playerManager.save(new File(getDataFolder(), playerConfigFileName));
 		stopAllQuests();
+		summonManager.removeSummons();
 		
 		
 	}
