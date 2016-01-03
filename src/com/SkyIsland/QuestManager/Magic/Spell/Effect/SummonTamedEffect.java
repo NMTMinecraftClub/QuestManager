@@ -8,9 +8,12 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Magic.Summon;
+import com.SkyIsland.QuestManager.Magic.SummonManager;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -56,13 +59,22 @@ public class SummonTamedEffect extends SpellEffect {
 		}
 	}
 	
-	public static SummonWolfEffect valueOf(Map<String, Object> map) {
-		return new SummonWolfEffect();
+	public static SummonTamedEffect valueOf(Map<String, Object> map) {
+		
+		return new SummonTamedEffect(
+				(Integer) map.get("duration"),
+				EntityType.valueOf((String) map.get("type")),
+				(Integer) map.get("count")
+				);
 	}
 	
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("type", type.name());
+		map.put("duration", duration);
+		map.put("count", count);
 		
 		return map;
 	}
@@ -86,8 +98,6 @@ public class SummonTamedEffect extends SpellEffect {
 	
 	private int count;
 	
-	private Map<String, Entity> summonMap;
-	
 	public SummonTamedEffect(int duration, EntityType type, int count) {
 		this.duration = duration;
 		this.type = type;
@@ -99,8 +109,6 @@ public class SummonTamedEffect extends SpellEffect {
 					+ "use one of those instead!");
 		}
 		
-		this.summonMap = new HashMap<String, Entity>();
-		
 	}
 	
 	@Override
@@ -111,16 +119,32 @@ public class SummonTamedEffect extends SpellEffect {
 			return;
 		}
 		
+		SummonManager manager = QuestManagerPlugin.questManagerPlugin.getSummonManager();
+		
 		Location tmp = e.getLocation().clone();
 		tmp.add(e.getLocation().getDirection().normalize().multiply(2));
 		Entity ent = tmp.getWorld().spawnEntity(tmp, type);
-		if (ent instanceof Tameable) {
-			((Tameable) ent).setTamed(true);
-			((Tameable) ent).setOwner((AnimalTamer) cause);
-		} else {
+		if (!(ent instanceof Tameable)) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to summon tamed"
 					+ " entity, as entity type is not tameable: [" + type + "]");
+			ent.remove();
+			return;
 		}
+		
+		Summon s = new Summon(cause.getUniqueId(), ent, duration);
+		
+		if (cause instanceof Player) {
+			if (!manager.registerSummon((Player) cause, s)) {
+				ent.remove();
+				cause.sendMessage(summonDenial);
+				return;
+			}
+		} else {
+			manager.registerSummon(s);
+		}
+		
+		((Tameable) ent).setTamed(true);
+		((Tameable) ent).setOwner((AnimalTamer) cause);
 	}
 	
 	@Override
