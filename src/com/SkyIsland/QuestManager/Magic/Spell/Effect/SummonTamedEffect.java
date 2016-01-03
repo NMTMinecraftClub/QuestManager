@@ -5,10 +5,14 @@ import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Tameable;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+
+import net.md_5.bungee.api.ChatColor;
 
 /**
  * Summons a tamed creature for the caster 
@@ -74,6 +78,8 @@ public class SummonTamedEffect extends SpellEffect {
 		}
 	}
 	
+	public static final String summonDenial = ChatColor.YELLOW + "You cannot summon this, as you already have too many summons!";
+	
 	private int duration;
 	
 	private EntityType type;
@@ -99,9 +105,22 @@ public class SummonTamedEffect extends SpellEffect {
 	
 	@Override
 	public void apply(Entity e, Entity cause) {
+		if (!(cause instanceof AnimalTamer)) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to summon tamed "
+					+ "entity to caster, because they aren't an AnimalTamer: " + cause.getCustomName());
+			return;
+		}
+		
 		Location tmp = e.getLocation().clone();
-		e.teleport(cause);
-		cause.teleport(tmp);
+		tmp.add(e.getLocation().getDirection().normalize().multiply(2));
+		Entity ent = tmp.getWorld().spawnEntity(tmp, type);
+		if (ent instanceof Tameable) {
+			((Tameable) ent).setTamed(true);
+			((Tameable) ent).setOwner((AnimalTamer) cause);
+		} else {
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to summon tamed"
+					+ " entity, as entity type is not tameable: [" + type + "]");
+		}
 	}
 	
 	@Override

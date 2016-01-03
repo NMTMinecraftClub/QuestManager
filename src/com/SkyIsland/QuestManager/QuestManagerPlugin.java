@@ -26,6 +26,7 @@ import com.SkyIsland.QuestManager.Enemy.StandardEnemy;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Fanciful.MessagePart;
 import com.SkyIsland.QuestManager.Fanciful.TextualComponent;
+import com.SkyIsland.QuestManager.Magic.SummonManager;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleSelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleTargetSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.SpellManager;
@@ -97,6 +98,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	private RegionManager regionManager;
 	
 	private SpellManager spellManager;
+	
+	private SummonManager summonManager;
 	
 	private QuestManager manager;
 	
@@ -266,6 +269,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 		regionManager = new RegionManager(enemyDirectory, 3);
 
 		spellManager = new SpellManager(spellDirectory);
+		
+		summonManager = new SummonManager();
 		
 //		///////////////////////////////////////////////////////////////////////////////
 //					
@@ -623,4 +628,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		return spellManager;
 	}
 	
+	public SummonManager getSummonManager() {
+		return summonManager;
+	}
 }
