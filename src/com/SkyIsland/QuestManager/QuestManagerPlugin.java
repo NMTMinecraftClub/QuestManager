@@ -36,6 +36,7 @@ import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageMPEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.HealEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.StatusEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.SwapEffect;
+import com.SkyIsland.QuestManager.NPC.DummyNPC;
 import com.SkyIsland.QuestManager.NPC.ForgeNPC;
 import com.SkyIsland.QuestManager.NPC.InnNPC;
 import com.SkyIsland.QuestManager.NPC.LevelupNPC;
@@ -199,6 +200,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		ServiceOffer.registerWithAliases();
 		ServiceNPC.registerWithAliases();
 		LevelupNPC.registerWithAliases();
+		DummyNPC.registerWithAliases();
 		ConfigurationSerialization.registerClass(MessagePart.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ArbitraryTextTypeComponent.class);
 		ConfigurationSerialization.registerClass(TextualComponent.ComplexTextTypeComponent.class);

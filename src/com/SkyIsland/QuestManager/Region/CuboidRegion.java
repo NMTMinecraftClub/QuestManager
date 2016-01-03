@@ -164,6 +164,9 @@ public class CuboidRegion extends Region {
 			//there's not ground below
 			loc.add(0, -1, 0);
 			if (loc.getY() < least.getY()) {
+				if (!loc.clone().add(0, -1, 0).getBlock().getType().isSolid()) {
+					return randomLocation(safe);
+				}
 				break;
 			}
 		}
