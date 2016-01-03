@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
@@ -45,8 +47,7 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 			e.getLocation().getChunk().load();
 			e.remove();
 			
-			for (int i = 0; i < 10; i++)
-				e.getLocation().getWorld().playEffect(e.getLocation(), Effect.SMOKE, 0);
+			playDeathEffect(e.getLocation());
 		}
 		
 		QuestManagerPlugin.questManagerPlugin.getSummonManager().unregisterSummon(this);
@@ -99,6 +100,14 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 			return;
 		}
 		
+		if (entity.getPassenger() != null) {
+			entity.eject();
+		}
+		if (entity.getVehicle() != null) {
+			entity.leaveVehicle();
+		}
+		
+		playDeathEffect(entity.getLocation());
 		entity.remove();
 	}
 	
@@ -110,10 +119,17 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 	public void onSummonDeath(EntityDeathEvent e) {
 		if (e.getEntity().getUniqueId().equals(entityID)) {
 			Alarm.getScheduler().unregister(this);
-			for (int i = 0; i < 10; i++)
-				e.getEntity().getLocation().getWorld().playEffect(e.getEntity().getLocation(), Effect.SMOKE, 0);
 			
 			QuestManagerPlugin.questManagerPlugin.getSummonManager().unregisterSummon(this);
 		}
+	}
+	
+	private void playDeathEffect(Location location) {
+		for (int i = 0; i < 10; i++) {
+			location.getWorld().playEffect(location, Effect.SMOKE, 0);
+		}
+		
+		location.getWorld().playSound(location, Sound.GLASS, 1, 1.35f);
+		location.getWorld().playSound(location, Sound.FIREWORK_LARGE_BLAST, 1, 1.35f);
 	}
 }

@@ -70,6 +70,7 @@ public class SummonTamedEffect extends SpellEffect {
 		return new SummonTamedEffect(
 				(Integer) map.get("duration"),
 				EntityType.valueOf((String) map.get("type")),
+				(String) map.get("name"),
 				(Integer) map.get("count"),
 				hp);
 	}
@@ -82,6 +83,7 @@ public class SummonTamedEffect extends SpellEffect {
 		map.put("duration", duration);
 		map.put("count", count);
 		map.put("hp", hp);
+		map.put("name", name);
 		
 		return map;
 	}
@@ -107,15 +109,18 @@ public class SummonTamedEffect extends SpellEffect {
 	
 	private int count;
 	
-	public SummonTamedEffect(int duration, EntityType type, int count) {
-		this(duration, type, count, -1);
+	private String name;
+	
+	public SummonTamedEffect(int duration, EntityType type, String name, int count) {
+		this(duration, type, name, count, -1);
 	}
 	
-	public SummonTamedEffect(int duration, EntityType type, int count, int hp) {
+	public SummonTamedEffect(int duration, EntityType type, String name, int count, int hp) {
 		this.duration = duration;
 		this.type = type;
 		this.count = count;
 		this.hp = hp;
+		this.name = name;
 		if (!isTameable(type)) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning(
 					"WARNING! Summon'ed type [" + type + "] may not be tameable, and could "
@@ -161,6 +166,9 @@ public class SummonTamedEffect extends SpellEffect {
 		Tameable tame = (Tameable) ent;
 		tame.setTamed(true);
 		tame.setOwner((AnimalTamer) cause);
+		
+		ent.setCustomName(cause.getName() + "'s " + name);
+		ent.setCustomNameVisible(true);
 		
 		if (ent instanceof LivingEntity) {
 			LivingEntity live = (LivingEntity) ent;
