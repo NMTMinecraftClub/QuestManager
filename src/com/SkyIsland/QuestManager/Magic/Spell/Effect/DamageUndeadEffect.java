@@ -46,7 +46,7 @@ public class DamageUndeadEffect extends SpellEffect {
 		}
 	}
 	
-	private boolean isUndead(EntityType type) {
+	private static boolean isUndead(EntityType type) {
 		switch (type) {
 		case SKELETON:
 		case ZOMBIE:
