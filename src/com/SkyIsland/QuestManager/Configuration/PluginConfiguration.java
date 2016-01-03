@@ -57,7 +57,8 @@ public class PluginConfiguration {
 		QUESTDIR("questDir"),
 		SAVEDIR("saveDir"),
 		ENEMYDIR("enemyDir"),
-		SPELLDIR("spellDir");
+		SPELLDIR("spellDir"),
+		SUMMONLIMIT("summonLimit");
 		
 		
 		private String key;
@@ -171,6 +172,14 @@ public class PluginConfiguration {
 	 */
 	public int getMaxPartySize() {
 		return config.getInt(PluginConfigurationKey.PARTYSIZE.key);
+	}
+	
+	/**
+	 * Returns how many summons a player is allowed to have
+	 * @return
+	 */
+	public int getSummonLimit() {
+		return config.getInt(PluginConfigurationKey.SUMMONLIMIT.key, 2);
 	}
 	
 	/**
