@@ -136,7 +136,7 @@ public class SummonTamedEffect extends SpellEffect {
 		
 		if (cause instanceof Player) {
 			if (!manager.registerSummon((Player) cause, s)) {
-				ent.remove();
+				s.remove();
 				cause.sendMessage(summonDenial);
 				return;
 			}

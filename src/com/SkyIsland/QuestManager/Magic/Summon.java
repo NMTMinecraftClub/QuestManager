@@ -89,6 +89,8 @@ public class Summon implements Alarmable<Integer>, Listener {
 	}
 	
 	public void remove() {
+		Alarm.getScheduler().unregister(this);
+		
 		getEntity();
 		if (entity == null) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to locate and remove "
