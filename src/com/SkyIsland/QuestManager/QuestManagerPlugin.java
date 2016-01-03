@@ -34,8 +34,11 @@ import com.SkyIsland.QuestManager.Magic.Spell.Effect.AreaEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.BlockEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageMPEffect;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageUndeadEffect;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.FireEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.HealEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.StatusEffect;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.SummonTamedEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.SwapEffect;
 import com.SkyIsland.QuestManager.NPC.DummyNPC;
 import com.SkyIsland.QuestManager.NPC.ForgeNPC;
@@ -223,6 +226,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 		AreaEffect.registerWithAliases();
 		DamageMPEffect.registerWithAliases();
 		SwapEffect.registerWithAliases();
+		SummonTamedEffect.registerWithAliases();
+		FireEffect.registerWithAliases();
+		DamageUndeadEffect.registerWithAliases();
 
 		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		inventoryGuiHandler = new InventoryGuiHandler();
