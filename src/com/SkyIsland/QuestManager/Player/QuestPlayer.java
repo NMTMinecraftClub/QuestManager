@@ -501,10 +501,6 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		return level;
 	}
 
-	public int getLevel() {
-		return level;
-	}
-
 	public int getMaxHp() {
 		return maxHp;
 	}
