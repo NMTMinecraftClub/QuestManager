@@ -28,6 +28,8 @@ public class Summon implements Alarmable<Integer>, Listener {
 		this.casterID = casterID;
 		
 		Alarm.getScheduler().schedule(this, 0, duration);
+		Bukkit.getPluginManager().registerEvents(this, 
+				QuestManagerPlugin.questManagerPlugin);
 	}
 	
 	@Override
@@ -38,13 +40,13 @@ public class Summon implements Alarmable<Integer>, Listener {
 		if (e == null) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to locate and remove "
 				+ "summon!");
+		} else {
+			e.getLocation().getChunk().load();
+			e.remove();
+			
+			for (int i = 0; i < 10; i++)
+				e.getLocation().getWorld().playEffect(e.getLocation(), Effect.SMOKE, 0);
 		}
-		
-		e.getLocation().getChunk().load();
-		e.remove();
-		
-		for (int i = 0; i < 10; i++)
-			e.getLocation().getWorld().playEffect(e.getLocation(), Effect.SMOKE, 0);
 		
 		QuestManagerPlugin.questManagerPlugin.getSummonManager().unregisterSummon(this);
 	}
@@ -103,8 +105,8 @@ public class Summon implements Alarmable<Integer>, Listener {
 	
 	@EventHandler
 	public void onSummonDeath(EntityDeathEvent e) {
-		if (e.getEntity().getUniqueId() == entityID) {
-			Alarm.getScheduler().unregister(this);
+		if (e.getEntity().getUniqueId().equals(entityID)) {
+			System.out.println("unregister: " + Alarm.getScheduler().unregister(this));
 			for (int i = 0; i < 10; i++)
 				e.getEntity().getLocation().getWorld().playEffect(e.getEntity().getLocation(), Effect.SMOKE, 0);
 			
