@@ -3,6 +3,8 @@ package com.SkyIsland.QuestManager.NPC;
 import java.util.Map;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
  * An NPC that is a monster for a quest.
@@ -25,6 +27,12 @@ public class QuestMonsterNPC extends NPC {
 	@Override
 	protected void interact(Player player) {
 		;
+	}
+	
+	@Override
+	@EventHandler
+	public void onEntityHurt(EntityDamageEvent e) {
+		
 	}
 
 }

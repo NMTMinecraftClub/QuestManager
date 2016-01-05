@@ -736,14 +736,17 @@ public class Quest implements Listener {
 		if (goals.size() <= goalIndex) {
 			this.ready = true;
 			
-			//check if end is to just finish
-			if (template.getEndType() == EndType.NOTURNIN) {
-				this.completeQuest(true);
-				return;
-			}
-			if (goals.size() == goalIndex)
+			if (goals.size() == goalIndex) {
+
+				//check if end is to just finish
+				if (template.getEndType() == EndType.NOTURNIN) {
+					this.completeQuest(true);
+					return;
+				}
+			
 				tellParticipants("The quest " + ChatColor.GOLD + getName() + ChatColor.RESET + " is ready to turn in!");
 			return;
+			}
 		}
 		
 		Goal goal = goals.get(goalIndex);

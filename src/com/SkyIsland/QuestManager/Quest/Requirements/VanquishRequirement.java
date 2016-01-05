@@ -11,7 +11,11 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Guardian;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Skeleton.SkeletonType;
+import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -113,6 +117,25 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		equipment.setBoots(econ.getBoots());
 		equipment.setItemInHand(econ.getHeld());
 		
+		//special checks
+		if (foe instanceof Guardian) {
+			if (foeState.getBoolean("elder", false)) {
+				((Guardian) foe).setElder(true);
+			}
+		}
+		
+		if (foe instanceof Slime) {
+			if (foeState.getInt("size", 1) > 1) {
+				((Slime) foe).setSize(foeState.getInt("size"));
+			}
+		}
+		
+		if (foe instanceof Skeleton) {
+			if (foeState.getBoolean("wither", false)) {
+				((Skeleton) foe).setSkeletonType(SkeletonType.WITHER);
+			}
+		}
+		
 		if (desc == null) {
 			desc = foeState.getString("description", "Slay " + foe.getCustomName());
 		}
@@ -193,6 +216,18 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		foeSection.set("hp", foe.getHealth());
 		foeSection.set("name", foe.getCustomName());
 		foeSection.set("location", foe.getLocation());
+		
+		if (foe instanceof Guardian) {
+			foeSection.set("elder", ((Guardian) foe).isElder());
+		}
+		
+		if (foe instanceof Slime) {
+			foeSection.set("size", ((Slime) foe).getSize());
+		}
+		
+		if (foe instanceof Skeleton) {
+			foeSection.set("wither", ((Skeleton) foe).getSkeletonType() == SkeletonType.WITHER);
+		}
 		
 		EquipmentConfiguration econ = new EquipmentConfiguration(foe.getEquipment());
 		foeSection.set("equipment", econ.getConfiguration());

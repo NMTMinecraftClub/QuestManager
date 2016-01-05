@@ -38,6 +38,8 @@ public class CountdownRequirement extends Requirement implements Tickable, State
 	
 	private Date targetTime;
 	
+	private int delay;
+	
 	private CountdownRequirement(Goal goal) {
 		super(goal);
 	}
@@ -52,6 +54,11 @@ public class CountdownRequirement extends Requirement implements Tickable, State
 	
 	@Override
 	public void activate() {
+		Calendar cal = Calendar.getInstance();
+		cal.clear();
+		cal.setTime(new Date());
+		cal.add(Calendar.SECOND, delay);
+		this.targetTime = cal.getTime();
 		IntervalScheduler.getScheduler().register(this);
 	}
 	
@@ -103,15 +110,9 @@ public class CountdownRequirement extends Requirement implements Tickable, State
 		if (!config.contains("type") || !config.getString("type").equals("countdownr")) {
 			throw new InvalidConfigurationException("\n  ---Invalid type! Expected 'countdownr' but got " + config.getString("type", "null"));
 		}
-		
+
 		desc = config.getString("description", "Wait for a period");
-		int offset = config.getInt("delay");
-		
-		Calendar cal = Calendar.getInstance();
-		cal.clear();
-		cal.setTime(new Date());
-		cal.add(Calendar.SECOND, offset);
-		this.targetTime = cal.getTime();
+		delay = config.getInt("delay", 10);
 		
 	}
 
