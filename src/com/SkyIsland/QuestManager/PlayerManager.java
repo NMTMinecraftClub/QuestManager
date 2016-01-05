@@ -45,12 +45,14 @@ public class PlayerManager implements Tickable {
 		
 		ConfigurationSection pSex = config.getConfigurationSection("players");
 		
-		if (!pSex.getKeys(false).isEmpty())
-		for (String key : pSex.getKeys(false)) {
-			players.put(
-					UUID.fromString(key), (QuestPlayer) pSex.get(key));
+		if (!pSex.getKeys(false).isEmpty()) {
+		QuestPlayer player;
+			for (String key : pSex.getKeys(false)) {
+				player = (QuestPlayer) pSex.get(key);
+				players.put(UUID.fromString(player.getIDString()), player);
+			}
 		}
-		
+			
 		ConfigurationSection gSex = config.getConfigurationSection("parties");
 		
 		if (!gSex.getKeys(false).isEmpty())
@@ -145,9 +147,12 @@ public class PlayerManager implements Tickable {
 		YamlConfiguration config = new YamlConfiguration();
 		ConfigurationSection playSex = config.createSection("players");
 		
+		QuestPlayer qp;
 		if (!players.isEmpty()) {
 			for (UUID key : players.keySet()) {
-				playSex.set(key.toString(), getPlayer(key));
+				qp = getPlayer(key);
+				String name = qp.getPlayer().getName();
+				playSex.set(name == null ? key.toString() : name + key.toString().substring(0, 5), getPlayer(key));
 			}
 		}
 		
