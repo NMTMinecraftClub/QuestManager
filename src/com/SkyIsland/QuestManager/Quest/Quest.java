@@ -275,8 +275,6 @@ public class Quest implements Listener {
 					}
 				}
 				
-				//cash reward
-				//TODO how can we implement cash rewards without tying it to an economy?
 				
 				//fame reward
 				qp.addFame(fame);
@@ -745,8 +743,9 @@ public class Quest implements Listener {
 				}
 			
 				tellParticipants("The quest " + ChatColor.GOLD + getName() + ChatColor.RESET + " is ready to turn in!");
-			return;
 			}
+			return;
+			
 		}
 		
 		Goal goal = goals.get(goalIndex);

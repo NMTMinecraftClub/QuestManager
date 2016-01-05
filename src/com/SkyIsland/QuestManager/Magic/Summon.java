@@ -118,9 +118,8 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 	@EventHandler
 	public void onSummonDeath(EntityDeathEvent e) {
 		if (e.getEntity().getUniqueId().equals(entityID)) {
-			Alarm.getScheduler().unregister(this);
-			
-			QuestManagerPlugin.questManagerPlugin.getSummonManager().unregisterSummon(this);
+			if (Alarm.getScheduler().unregister(this))
+				QuestManagerPlugin.questManagerPlugin.getSummonManager().unregisterSummon(this);
 		}
 	}
 	

@@ -395,6 +395,11 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		
 		history.addHistoryEvent(
 				new HistoryEvent("Completed the quest " + ChatColor.DARK_PURPLE + quest.getName()));
+		
+		if (getPlayer().isOnline()) {
+			Player p = getPlayer().getPlayer();
+			p.playSound(p.getLocation(), Sound.LEVEL_UP, 1, 1.2f);
+		}
 	}
 	
 	public int getFame() {

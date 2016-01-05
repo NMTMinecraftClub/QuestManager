@@ -45,11 +45,10 @@ public final class SummonManager {
 	}
 	
 	public void unregisterSummon(Summon summon) {
-		System.out.println("unregister");
 		summons.remove(summon);
 		if (playerCount.containsKey(summon.getCasterID())) {
 			int count = playerCount.get(summon.getCasterID());
-			count--;
+			count = Math.max(count - 1, 0);
 			playerCount.put(summon.getCasterID(), count);
 		}
 	}

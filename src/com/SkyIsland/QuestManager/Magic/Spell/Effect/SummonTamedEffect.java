@@ -150,7 +150,6 @@ public class SummonTamedEffect extends SpellEffect {
 			ent.remove();
 			return;
 		}
-		
 		Summon s = new Summon(cause.getUniqueId(), ent, duration);
 		
 		if (cause instanceof Player) {
