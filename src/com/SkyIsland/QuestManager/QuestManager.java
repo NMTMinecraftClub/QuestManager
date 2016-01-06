@@ -185,75 +185,91 @@ public class QuestManager implements Listener {
 			
 			
 			//files are [name]_[id]
+			int count = 0;
 			for (File stateFile : saveDirectory.listFiles()) {
-				if (stateFile.isDirectory()) {
-					continue;
-				}
-				String questName = stateFile.getName().substring(0, 
-						stateFile.getName().indexOf("_"));
-				
-				QuestConfiguration template = getQuestTemplate(questName);
-				Quest quest;
-				try {
-					quest = template.instanceQuest(null);
-					
-				} catch (InvalidConfigurationException e) {
-					e.printStackTrace();
-					
-					//remove it?
-					if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getKeepOnError()) {
-						stateFile.delete();
-					} else {
-						QuestManagerPlugin.questManagerPlugin.getLogger().info("Ignoring invalid config.");
-					}
-					
-					continue;
-				} catch (NullPointerException e) {
-					e.printStackTrace();
-					QuestManagerPlugin.questManagerPlugin.getLogger().warning("Missing quest template for save data: "
-							+ questName);
-					continue;
-				} catch (SessionConflictException e) {
-					QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to restore "
-							+ "quest state due to session conflict!");
-					continue;
-				}
-				
-				QuestState state = new QuestState();
-				YamlConfiguration config = new YamlConfiguration();
-				
-				
-				try {
-					config.load(stateFile);
-					state.load(config);
-				} catch (Exception e) {
-					e.printStackTrace();
-					continue;
-				} 
-				
-				try {
-					quest.loadState(state);
-					//if successfull, remove state info so we don't duplicate
-					
-					QuestManagerPlugin.questManagerPlugin.getLogger().info(
-							"Successfully loaded state information for quest!");
-					registerQuest(quest);
-					
-					stateFile.delete();
-					
-				} catch (InvalidConfigurationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					continue;
-				}
-				
-				
-				
-						
+				count += loadStateFile(stateFile);
 			}
+
+			QuestManagerPlugin.questManagerPlugin.getLogger().info(
+					"Successfully loaded state information for " + count + " quest(s)!");
 		}
 		
 		QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager Initialized!");
+	}
+	
+	/**
+	 * Loads state from a file, recursively visiting directories
+	 * @param stateFile
+	 * @return the number of state files loaded
+	 */
+	private int loadStateFile(File stateFile) {
+		
+		if (stateFile.isDirectory()) {
+			int count = 0;
+			for (File file : stateFile.listFiles()) {
+				count += loadStateFile(file);
+			}
+			return count;
+		}
+		String questName = stateFile.getName().substring(0, 
+				stateFile.getName().indexOf("_"));
+		
+		QuestConfiguration template = getQuestTemplate(questName);
+		Quest quest;
+		try {
+			quest = template.instanceQuest(null);
+			
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+			
+			//remove it?
+			if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getKeepOnError()) {
+				stateFile.delete();
+			} else {
+				QuestManagerPlugin.questManagerPlugin.getLogger().info("Ignoring invalid config.");
+			}
+			
+			return 0;
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Missing quest template for save data: "
+					+ questName);
+			return 0;
+		} catch (SessionConflictException e) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to restore "
+					+ "quest state due to session conflict!");
+			return 0;
+		}
+		
+		QuestState state = new QuestState();
+		YamlConfiguration config = new YamlConfiguration();
+		
+		
+		try {
+			config.load(stateFile);
+			state.load(config);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		} 
+		
+		try {
+			quest.loadState(state);
+			//if successfull, remove state info so we don't duplicate
+			
+			registerQuest(quest);
+			
+			stateFile.delete();
+			
+		} catch (InvalidConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return 0;
+		}
+		
+		
+		return 1;
+		
 	}
 	
 	/**
