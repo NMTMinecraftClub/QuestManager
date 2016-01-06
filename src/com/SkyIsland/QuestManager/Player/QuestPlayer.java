@@ -1102,7 +1102,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 							.color(ChatColor.WHITE)
 						.then(player.getTitle())
 						.then("\n\n")
-						.then("Level " + level + "\n")
+						.then("Level " + player.level + "\n")
 						.then("This player has ")
 						.then(player.money + "")
 							.color(ChatColor.GOLD)
