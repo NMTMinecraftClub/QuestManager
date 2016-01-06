@@ -112,7 +112,19 @@ public class QuestManager implements Listener {
 	}
 	
 	public void init(List<String> questNames) {
-		if (questNames.isEmpty()) {
+		if (questDirectory == null || !questDirectory.exists()) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to locate quest template directory: "
+					+ questDirectory.getAbsolutePath());
+			return;
+		}
+		
+		if (!questDirectory.isDirectory()) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Quest template directory points to a file, not a directory: "
+					+ questDirectory.getAbsolutePath());
+			return;
+		}
+
+		if (questDirectory.listFiles().length == 0) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().info(
 					"There were no quest templates to load!\n  "
 					+ "To add quests, place the proper configuration files in "
@@ -120,63 +132,15 @@ public class QuestManager implements Listener {
 			return;
 		}
 		
+		int count = 0;
+		
 		//lookup and load templates for each quest name given
-		for (String questName : questNames) {
-			File questConfigFile = new File(questDirectory, questName + ".yml");
-			if (!questConfigFile.exists() || questConfigFile.isDirectory()) {
-				QuestManagerPlugin.questManagerPlugin.getLogger().warning(
-						"Unable to locate quest config file: "
-						+ questConfigFile.getAbsolutePath());
-				continue;
-			}
-			
-			//found the file, let's load it up!
-			YamlConfiguration questConfig = new YamlConfiguration();
-			try {
-				questConfig.load(questConfigFile);
-			} catch (IOException | InvalidConfigurationException e) {
-				e.printStackTrace();
-				QuestManagerPlugin.questManagerPlugin.getLogger().warning(
-						"Unable to load quest from file: " + questConfigFile.getAbsolutePath());
-				continue;
-			}
-			
-			QuestConfiguration questTemplate;
-			try {
-				questTemplate = new QuestConfiguration(questConfig);
-			} catch (InvalidConfigurationException e) {
-				e.printStackTrace();
-				QuestManagerPlugin.questManagerPlugin.getLogger().warning(
-						"Error when parsing quest configuration file: " 
-						+ questConfigFile.getAbsolutePath());
-				continue;
-			}
-			
-			
-			questTemplates.add(questTemplate);
-			
-			//get quest static npcs
-			if (!questTemplate.getAuxNPCs().isEmpty())
-			for (NPC np : questTemplate.getAuxNPCs()) {
-				questNPCs.add(np);
-			}
-			
-			//now instantiate starting NPC associated ot this quest
-			NPC npc = questTemplate.GetStartingNPCInstance();
-			if (npc != null) {
-				questNPCs.add(npc);
-			}
-			
-			
-//			try {
-//				registerQuest(questTemplate.instanceQuest(this));
-//
-//			} catch (InvalidConfigurationException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-			
+		for (File templateFile : questDirectory.listFiles()) {
+			count += loadTemplateFile(templateFile);			
 		}
+		
+		QuestManagerPlugin.questManagerPlugin.getLogger().info(
+				"Loaded " + count + " quest template(s)!");
 		
 		//check if there is any state information for this manager
 		if (saveDirectory.listFiles().length != 0) {
@@ -185,7 +149,7 @@ public class QuestManager implements Listener {
 			
 			
 			//files are [name]_[id]
-			int count = 0;
+			count = 0;
 			for (File stateFile : saveDirectory.listFiles()) {
 				count += loadStateFile(stateFile);
 			}
@@ -197,12 +161,70 @@ public class QuestManager implements Listener {
 		QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager Initialized!");
 	}
 	
+	private int loadTemplateFile(File templateFile) {
+		if (templateFile == null || !templateFile.exists()) {
+			return 0;
+		}
+		
+		if (templateFile.isDirectory()) {
+			int count = 0;
+			
+			for (File f : templateFile.listFiles()) {
+				count += loadTemplateFile(f);
+			}
+			
+			return count;
+		}
+		
+		//found the file, let's load it up!
+		YamlConfiguration questConfig = new YamlConfiguration();
+		try {
+			questConfig.load(templateFile);
+		} catch (IOException | InvalidConfigurationException e) {
+			e.printStackTrace();
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning(
+					"Unable to load quest from file: " + templateFile.getAbsolutePath());
+			return 0;
+		}
+		
+		QuestConfiguration questTemplate;
+		try {
+			questTemplate = new QuestConfiguration(questConfig);
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning(
+					"Error when parsing quest configuration file: " 
+					+ templateFile.getAbsolutePath());
+			return 0;
+		}
+		
+		
+		questTemplates.add(questTemplate);
+		
+		//get quest static npcs
+		if (!questTemplate.getAuxNPCs().isEmpty())
+		for (NPC np : questTemplate.getAuxNPCs()) {
+			questNPCs.add(np);
+		}
+		
+		//now instantiate starting NPC associated ot this quest
+		NPC npc = questTemplate.GetStartingNPCInstance();
+		if (npc != null) {
+			questNPCs.add(npc);
+		}
+		
+		return 1;
+	}
+	
 	/**
 	 * Loads state from a file, recursively visiting directories
 	 * @param stateFile
 	 * @return the number of state files loaded
 	 */
 	private int loadStateFile(File stateFile) {
+		if (stateFile == null || !stateFile.exists()) {
+			return 0;
+		}		
 		
 		if (stateFile.isDirectory()) {
 			int count = 0;
