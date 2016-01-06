@@ -176,6 +176,11 @@ public class QuestManager implements Listener {
 			return count;
 		}
 		
+		if (!templateFile.getName().endsWith(".yml") && 
+				!templateFile.getName().endsWith(".yaml")) {
+			return 0;
+		}
+		
 		//found the file, let's load it up!
 		YamlConfiguration questConfig = new YamlConfiguration();
 		try {
