@@ -82,7 +82,14 @@ public class TreeChatMenu extends ChatMenu implements RespondableMenu {
 				Option opt = options.get(key);
 				Message msg = opt.getResult();
 				
-				msg.setSourceLabel(opt.getLabel());
+				try {
+					FancyMessage newSL = opt.getLabel().clone();
+					msg.setSourceLabel(newSL);
+				} catch (CloneNotSupportedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					msg.setSourceLabel(new FancyMessage("(Continued)"));
+				}
 				
 				ChatMenu.getDefaultMenu(msg).show(player, this.getQuestBacker());
 				return true;

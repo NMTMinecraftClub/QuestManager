@@ -14,8 +14,6 @@ Needed
 + A nice party interface
 + The ability to drop quests
 + Fame merchants
-+ Character growth (auto via fame, or no? if so, growth rate...?)
-+ Character trades (increase character stats, see above)
 
 Extra Features
 --------------
