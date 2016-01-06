@@ -566,6 +566,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 			//to get here, either is leader or not in a party
 			QuestPlayer other = null;
 			for (QuestPlayer p : playerManager.getPlayers()) {
+				if (p.getPlayer() == null || p.getPlayer().getName() == null) {
+					continue;
+				}
 				if (p.getPlayer().getName().equals(args[0])) {
 					other = p;
 					break;

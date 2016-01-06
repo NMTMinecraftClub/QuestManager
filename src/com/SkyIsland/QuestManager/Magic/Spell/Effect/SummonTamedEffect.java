@@ -169,8 +169,10 @@ public class SummonTamedEffect extends SpellEffect {
 		ent.setCustomName(cause.getName() + "'s " + name);
 		ent.setCustomNameVisible(true);
 		
+		
 		if (ent instanceof LivingEntity) {
 			LivingEntity live = (LivingEntity) ent;
+			live.setRemoveWhenFarAway(false);
 			if (hp > 0) {
 					live.setMaxHealth(hp);
 					live.setHealth(hp);

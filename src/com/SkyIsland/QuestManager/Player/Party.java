@@ -304,7 +304,7 @@ public class Party implements Participant, Listener {
 		for (QuestPlayer qp : members) {
 			if (qp.getPlayer().getUniqueId().equals(p.getUniqueId())) {
 				double old = p.getHealth();
-				p.setHealth(old - e.getFinalDamage());
+				p.setHealth(Math.max(Math.min(p.getMaxHealth(), old - e.getFinalDamage()), 0.0));
 				updateScoreboard();
 				p.setHealth(old);
 				return;
