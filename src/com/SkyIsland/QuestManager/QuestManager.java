@@ -107,7 +107,7 @@ public class QuestManager implements Listener {
 		
 		makeAnchors();
 
-		QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager finished!");	
+		QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager created!");	
 
 	}
 	
@@ -252,6 +252,8 @@ public class QuestManager implements Listener {
 						
 			}
 		}
+		
+		QuestManagerPlugin.questManagerPlugin.getLogger().info("Quest Manager Initialized!");
 	}
 	
 	/**

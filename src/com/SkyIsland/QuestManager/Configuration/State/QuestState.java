@@ -57,7 +57,6 @@ public class QuestState {
 			history = new History();
 		}
 		
-		System.out.println("loading participants:");
 		this.participant = (Participant) QuestManagerPlugin.questManagerPlugin.getPlayerManager()
 				.getParticipant(config.getString("participants"));
 		
