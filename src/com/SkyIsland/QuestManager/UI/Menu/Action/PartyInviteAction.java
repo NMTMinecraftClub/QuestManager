@@ -19,6 +19,9 @@ public class PartyInviteAction implements MenuAction {
 	private static final String denyMessage = 
 			"That player is already in a party!";
 	
+	private static final String sameMessage = 
+			"You cannot invite yourself to a party!";
+	
 	private QuestPlayer leader;
 	
 	private QuestPlayer other;
@@ -37,6 +40,11 @@ public class PartyInviteAction implements MenuAction {
 		
 		if (other.getParty() != null) {
 			leader.getPlayer().getPlayer().sendMessage(PartyInviteAction.denyMessage);
+			return;
+		}
+		
+		if (leader.getPlayer().getUniqueId().equals(other.getPlayer().getUniqueId())) {
+			leader.getPlayer().getPlayer().sendMessage(PartyInviteAction.sameMessage);
 			return;
 		}
 		
