@@ -111,7 +111,7 @@ public class QuestManager implements Listener {
 
 	}
 	
-	public void init(List<String> questNames) {
+	public void init() {
 		if (questDirectory == null || !questDirectory.exists()) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to locate quest template directory: "
 					+ questDirectory.getAbsolutePath());

@@ -53,7 +53,7 @@ public class PluginConfiguration {
 		HOLDERNAME("interface.magic.holderName"),
 		ALTERTYPE("interface.magic.alterBlockType"),
 		WORLDS("questWorlds"),
-		QUESTS("quests"),
+		//QUESTS("quests"),
 		QUESTDIR("questDir"),
 		SAVEDIR("saveDir"),
 		ENEMYDIR("enemyDir"),
@@ -111,18 +111,6 @@ public class PluginConfiguration {
 	 */
 	public double getVersion() {
 		return config.getDouble(PluginConfigurationKey.VERSION.key, 0.0);
-	}
-	
-	
-	/**
-	 * Returns a list of quest names that are listed under the provided manager.
-	 * @param managerName The name of the manager to look up
-	 * @return A set of all quest names under the specified manager, or <i>null</i> if the
-	 * manager is not in the configuration file.
-	 */
-	public List<String> getQuests() {
-		
-		return config.getStringList(PluginConfigurationKey.QUESTS.key);
 	}
 	
 	public List<String> getWorlds() {
@@ -431,8 +419,6 @@ public class PluginConfiguration {
 		config.set(PluginConfigurationKey.WORLDS.key, worlds);
 		//ConfigurationSection managers = config.createSection("managers");
 		
-		List<String> questNames = new ArrayList<String>(1);
-		config.set(PluginConfigurationKey.QUESTS.key, questNames);
 		config.set(PluginConfigurationKey.QUESTDIR.key, "quests/");
 		config.set(PluginConfigurationKey.SAVEDIR.key, "savedata/");
 		config.set(PluginConfigurationKey.ENEMYDIR.key, "enemies/");

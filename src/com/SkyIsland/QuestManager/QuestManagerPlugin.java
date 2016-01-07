@@ -270,7 +270,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 				questDirectory, 
 				saveDirectory);
 		
-		manager.init(config.getQuests());
+		manager.init();
 		
 		regionManager = new RegionManager(enemyDirectory, 3);
 
