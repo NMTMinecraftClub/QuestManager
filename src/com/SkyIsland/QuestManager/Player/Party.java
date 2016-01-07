@@ -295,9 +295,9 @@ public class Party implements Participant, Listener {
 		Player p = (Player) e.getEntity();
 		if (leader.getPlayer().getUniqueId().equals(p.getUniqueId())) {
 			double old = p.getHealth();
-			p.setHealth(old - e.getFinalDamage());
+			p.setHealth(Math.max(Math.min(p.getMaxHealth(), old - e.getFinalDamage()), 0.0));
 			updateScoreboard();
-			p.setHealth(old);
+			p.setHealth(Math.max(Math.min(p.getMaxHealth(), old), 0.0));
 			return;
 		}
 		if (!members.isEmpty())
@@ -306,7 +306,7 @@ public class Party implements Participant, Listener {
 				double old = p.getHealth();
 				p.setHealth(Math.max(Math.min(p.getMaxHealth(), old - e.getFinalDamage()), 0.0));
 				updateScoreboard();
-				p.setHealth(old);
+				p.setHealth(Math.max(Math.min(p.getMaxHealth(), old), 0.0));
 				return;
 			}
 		}
@@ -321,7 +321,7 @@ public class Party implements Participant, Listener {
 		Player p = (Player) e.getEntity();
 		if (leader.getPlayer().getUniqueId().equals(p.getUniqueId())) {
 			double old = p.getHealth();
-			double to = Math.min(20.0, old + e.getAmount());
+			double to = Math.min(p.getMaxHealth(), old + e.getAmount());
 			p.setHealth(to);
 			updateScoreboard();
 			p.setHealth(old);
@@ -331,7 +331,7 @@ public class Party implements Participant, Listener {
 		for (QuestPlayer qp : members) {
 			if (qp.getPlayer().getUniqueId().equals(p.getUniqueId())) {
 				double old = p.getHealth();
-				double to = Math.min(20.0, old + e.getAmount());
+				double to = Math.min(p.getMaxHealth(), old + e.getAmount());
 				p.setHealth(to);
 				updateScoreboard();
 				p.setHealth(old);
