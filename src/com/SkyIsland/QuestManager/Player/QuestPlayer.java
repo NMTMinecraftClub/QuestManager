@@ -124,6 +124,11 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	
 	private int fame;
 	
+	/**
+	 * Tracks how much fame this player has ever had, not how much is fluid and spendable
+	 */
+	private int alphaFame;
+	
 	private int money;
 	
 	private int level;
@@ -225,6 +230,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	
 	private QuestPlayer() {
 		this.fame = 0;
+		this.alphaFame = 0;
 		this.money = 0;
 		this.maxMp = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 				.getStartingMana();
@@ -406,12 +412,24 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		return fame;
 	}
 	
+	/**
+	 * Returns how much fame this player has received over their game life.<Br />
+	 * Alpha fame is not spent when leveling up or doing similar fame-spending activities.
+	 * @return
+	 */
+	public int getAlphaFame() {
+		return alphaFame;
+	}
+	
 	public String getTitle() {
 		return title;
 	}
 	
 	public void addFame(int fame) {
 		this.fame += fame;
+		if (fame > 0) {
+			this.alphaFame += fame;
+		}
 	}
 	
 	public void setFame(int fame) {
@@ -613,6 +631,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		map.put("title", title);
 		map.put("unlockedtitles", unlockedTitles);
 		map.put("fame", fame);
+		map.put("alphaFame", alphaFame);
 		map.put("money", money);
 		map.put("level", level);
 		map.put("maxhp", maxHp);
@@ -669,6 +688,11 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		qp.journalNotes = (List<String>) map.get("notes");
 		
 		////////Update code 1///////////
+		if (map.containsKey("alphaFame")) {
+			qp.alphaFame = (int) map.get("alphaFame");
+		} else {
+			qp.alphaFame = qp.fame;
+		}
 		if (map.containsKey("mp")) {
 			qp.mp = (int) map.get("mp");
 		} //else handled by default constructor
@@ -1105,6 +1129,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 						.then("Level " + player.level + "\n")
 						.then("This player has ")
 						.then(player.money + "")
+							.color(ChatColor.GOLD)
+						.then(" and " + player.alphaFame + " fame")
 							.color(ChatColor.GOLD)
 						.then(" gold.\nThis player has completed ")
 							.color(ChatColor.WHITE)

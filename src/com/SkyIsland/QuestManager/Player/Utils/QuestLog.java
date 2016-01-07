@@ -145,7 +145,7 @@ public class QuestLog {
 				.command("/player title")
 			.then("\nLevel: " + qp.getLevel())
 				.color(ChatColor.BLACK)
-			.then("\n-----\n  Fame: " + qp.getFame() + "\n  Gold: " + qp.getMoney())
+			.then("\n-----\n  Fame: " + qp.getAlphaFame() + " (" + qp.getFame() + ")\n  Gold: " + qp.getMoney())
 				.color(ChatColor.GOLD)
 			.then("\n\n  Current Quests: " + qp.getCurrentQuests().size())
 				.color(ChatColor.DARK_GREEN)
