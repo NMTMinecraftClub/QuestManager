@@ -188,11 +188,13 @@ public class PlayerManager implements Tickable {
 				if (day != 0 && (time < 13000 || time >= 23000))
 				if (!pc.getMagicRegenOutside() || (ploc.getBlockY() < ploc.getWorld().getMaxHeight()
 						&& ploc.getBlock().getLightFromSky() > 13)) {
+										
 					qp.regenMP(day);
 				}
 				if (night != 0 && (time >= 13000 && time < 23000)) 
 				if (!pc.getMagicRegenOutside() || (ploc.getBlockY() < ploc.getWorld().getMaxHeight()
 						&& p.getPlayer().getLocation().getBlock().getLightFromSky() > 13)) {
+										
 					qp.regenMP(night);
 				}
 			}

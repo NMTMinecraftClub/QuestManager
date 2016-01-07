@@ -43,6 +43,7 @@ import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
 import com.SkyIsland.QuestManager.Effects.ChargeEffect;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
+import com.SkyIsland.QuestManager.Magic.MagicRegenEvent;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Magic.Spell.SelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Spell;
@@ -1439,6 +1440,18 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	 * @param amt
 	 */
 	public void regenMP(int amt) {
+		if (amt == 0) {
+			return;
+		}
+		
+		MagicRegenEvent e = new MagicRegenEvent(this, amt);
+		
+		Bukkit.getPluginManager().callEvent(e);
+		
+		if (e.isCancelled()) {
+			return;
+		}
+		
 		if (amt < 0) {
 			//it's a rate
 			addMP((this.maxMp * -amt) / 100);
