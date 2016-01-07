@@ -229,6 +229,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 //	}
 	
 	private QuestPlayer() {
+		System.out.println("creation");
 		this.fame = 0;
 		this.alphaFame = 0;
 		this.money = 0;
@@ -919,6 +920,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			return;
 		}
 		
+		System.out.println("ID's matched for " + p.getName() + " and " + e.getEntity().getName());
+		System.out.println(this.hashCode());
+		
+		
 		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 				.getWorlds().contains(p.getWorld().getName())) {
 			return;
@@ -972,6 +977,11 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()
 				.getWorlds().contains(e.getRespawnLocation().getWorld().getName())) {
 			return;
+		}
+		
+		refreshPlayer();
+		if (this.party != null) {
+			this.party.updateScoreboard(this, this.maxHp);
 		}
 		
 		//in a quest world, so put them back to their last checkpoint
@@ -1507,6 +1517,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 				this.updateQuestLog(true);
 				this.updateQuestLog(true);
 				this.updateCompass(true);
+				
+				if (this.party != null) {
+					this.party.updateScoreboard(this, (int) p.getHealth());
+				}
 			}
 		}
 	}

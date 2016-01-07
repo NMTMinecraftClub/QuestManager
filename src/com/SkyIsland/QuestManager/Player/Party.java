@@ -170,6 +170,21 @@ public class Party implements Participant, Listener {
 		}
 	}
 	
+	/**
+	 * Updates the scoreboard to reflect the given score for the given player.
+	 * @param player
+	 * @param score
+	 */
+	public void updateScoreboard(QuestPlayer player, int score) {
+		if (!leader.getIDString().equals(player.getIDString()) && !members.contains(player)) {
+			System.out.println("Not found in party!");
+			return;
+		}
+		
+		Objective side = partyBoard.getObjective(DisplaySlot.SIDEBAR);
+		side.getScore(player.getPlayer().getName()).setScore(score);
+	}
+	
 	public QuestPlayer getLeader() {
 		return leader;
 	}
@@ -294,19 +309,13 @@ public class Party implements Participant, Listener {
 		
 		Player p = (Player) e.getEntity();
 		if (leader.getPlayer().getUniqueId().equals(p.getUniqueId())) {
-			double old = p.getHealth();
-			p.setHealth(Math.max(Math.min(p.getMaxHealth(), old - e.getFinalDamage()), 0.0));
-			updateScoreboard();
-			p.setHealth(Math.max(Math.min(p.getMaxHealth(), old), 0.0));
+			updateScoreboard(leader, (int) (p.getHealth() - e.getFinalDamage()));
 			return;
 		}
 		if (!members.isEmpty())
 		for (QuestPlayer qp : members) {
 			if (qp.getPlayer().getUniqueId().equals(p.getUniqueId())) {
-				double old = p.getHealth();
-				p.setHealth(Math.max(Math.min(p.getMaxHealth(), old - e.getFinalDamage()), 0.0));
-				updateScoreboard();
-				p.setHealth(Math.max(Math.min(p.getMaxHealth(), old), 0.0));
+				updateScoreboard(qp, (int) (p.getHealth() - e.getFinalDamage()));
 				return;
 			}
 		}
@@ -320,21 +329,13 @@ public class Party implements Participant, Listener {
 		
 		Player p = (Player) e.getEntity();
 		if (leader.getPlayer().getUniqueId().equals(p.getUniqueId())) {
-			double old = p.getHealth();
-			double to = Math.min(p.getMaxHealth(), old + e.getAmount());
-			p.setHealth(to);
-			updateScoreboard();
-			p.setHealth(old);
+			updateScoreboard(leader, (int) (p.getHealth() + e.getAmount()));
 			return;
 		}
 		if (!members.isEmpty())
 		for (QuestPlayer qp : members) {
 			if (qp.getPlayer().getUniqueId().equals(p.getUniqueId())) {
-				double old = p.getHealth();
-				double to = Math.min(p.getMaxHealth(), old + e.getAmount());
-				p.setHealth(to);
-				updateScoreboard();
-				p.setHealth(old);
+				updateScoreboard(qp, (int) (p.getHealth() + e.getAmount()));
 				return;
 			}
 		}
