@@ -201,7 +201,7 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 							update();
 						}
 					}
-				}
+				} 
 			}
 			
 		}

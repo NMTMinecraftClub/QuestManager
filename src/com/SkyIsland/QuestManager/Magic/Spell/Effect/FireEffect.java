@@ -74,6 +74,7 @@ public class FireEffect extends SpellEffect {
 		if (e instanceof LivingEntity) {
 			LivingEntity targ = (LivingEntity) e;
 			targ.setFireTicks(duration);
+			targ.damage(0.0, cause);
 		}
 	}
 	
