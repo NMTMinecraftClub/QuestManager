@@ -5,9 +5,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
@@ -164,20 +166,41 @@ public class SlayRequirement extends Requirement implements Listener, Statekeepi
 		if (e.getEntityType().equals(type)) {
 			
 			//if name is null (SHORT CIRCUIT IF SO) or if the name matches
-			if (name == null || (e.getEntity().getCustomName() != null && e.getEntity().getCustomName().equals(name)))
-			if (e.getEntity().getKiller() != null) {
-				boolean trip = false;
-				for (QuestPlayer quester : participants.getParticipants()) {
-					if (quester.getPlayer().getUniqueId().equals(e.getEntity().getKiller().getUniqueId())) {
-						trip = true;
-						break;
+			if (name == null || (e.getEntity().getCustomName() != null && e.getEntity().getCustomName().equals(name))) {
+				if (e.getEntity().getKiller() != null) {
+					boolean trip = false;
+					for (QuestPlayer quester : participants.getParticipants()) {
+						if (quester.getPlayer().getUniqueId().equals(e.getEntity().getKiller().getUniqueId())) {
+							trip = true;
+							break;
+						}
 					}
-				}
-				
-				if (trip)
-				{
-					progress++;
-					update();
+					
+					if (trip)
+					{
+						progress++;
+						update();
+					}
+				} else if (e.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+					EntityDamageByEntityEvent eEvent = (EntityDamageByEntityEvent) e.getEntity().getLastDamageCause();
+					
+					if (eEvent.getDamager() instanceof Tameable) {
+						System.out.println("Tame kill");
+						Tameable tame = (Tameable) eEvent.getDamager();
+						boolean trip = false;
+						for (QuestPlayer quester : participants.getParticipants()) {
+							if (quester.getPlayer().getUniqueId().equals(tame.getOwner().getUniqueId())) {
+								trip = true;
+								break;
+							}
+						}
+						
+						if (trip)
+						{
+							progress++;
+							update();
+						}
+					}
 				}
 			}
 			

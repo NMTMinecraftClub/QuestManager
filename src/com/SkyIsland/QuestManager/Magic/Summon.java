@@ -1,5 +1,6 @@
 package com.SkyIsland.QuestManager.Magic;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -8,9 +9,13 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.inventory.ItemStack;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.NPC.QuestMonsterNPC;
@@ -116,11 +121,14 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 	}
 	
 	@EventHandler
-	public void onSummonDeath(EntityDeathEvent e) {
+	public void onEntityDeath(EntityDeathEvent e) {
 		if (e.getEntity().getUniqueId().equals(entityID)) {
+			//is summon entity
 			if (Alarm.getScheduler().unregister(this))
 				QuestManagerPlugin.questManagerPlugin.getSummonManager().unregisterSummon(this);
+			return;
 		}
+		
 	}
 	
 	private void playDeathEffect(Location location) {

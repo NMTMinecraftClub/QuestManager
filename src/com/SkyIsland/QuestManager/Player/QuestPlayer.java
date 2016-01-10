@@ -1469,6 +1469,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			//we killed it; regen mana
 			int amt = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenKill();
 			regenMP(amt);
+			return;
 		}
 	}
 	
