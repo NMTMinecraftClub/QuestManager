@@ -18,6 +18,7 @@ import com.SkyIsland.QuestManager.Configuration.Utils.GUID;
 import com.SkyIsland.QuestManager.Player.Participant;
 import com.SkyIsland.QuestManager.Player.Party;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Player.Special.TitleEffect;
 import com.SkyIsland.QuestManager.Scheduling.IntervalScheduler;
 import com.SkyIsland.QuestManager.Scheduling.Tickable;
 
@@ -31,6 +32,8 @@ public class PlayerManager implements Tickable {
 	private Map<UUID, QuestPlayer> players;
 	
 	private Map<GUID, Party> parties;
+	
+	private TitleEffect titleEffect;
 	
 	/**
 	 * Creates and loads player manager information from the provided configuration file.
@@ -67,6 +70,8 @@ public class PlayerManager implements Tickable {
 		if (pc.getMagicRegenDay() != 0 || pc.getMagicRegenNight() != 0) {
 			IntervalScheduler.getScheduler().register(this);
 		}
+		
+		this.titleEffect = new TitleEffect();
 		
 	}
 	
@@ -199,6 +204,10 @@ public class PlayerManager implements Tickable {
 				}
 			}
 		}
+	}
+	
+	public TitleEffect getTitleEffect() {
+		return titleEffect;
 	}
 	
 }
