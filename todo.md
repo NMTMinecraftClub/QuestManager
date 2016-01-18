@@ -1,10 +1,8 @@
 QuestMananager TODO List
 ========================
 
-<<< If you are unfamiliar with .md, I'm using the wiki page for it (wiki Markdown and you should get there). >>>
+Listed here are some things that need or are wanted to be included in QM.
 
-Listed here are some things that need or are wanted to be included in QM.  
-Things that are needed before launch of the plugin, things that are needed for a successfull plugin, and things that would be cool all have an appropriate section.
 
 Needed
 ------
