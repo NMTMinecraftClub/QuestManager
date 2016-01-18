@@ -1,8 +1,8 @@
 name: QuestManager
-main: nmt.minecraft.QuestManager.QuestManagerPlugin
+main: com.SkyIsland.QuestManager.QuestManagerPlugin
 version: 1.0
 softdepend: [Fanciful, Multiverse-Core]
-loadfirst:
+loadfirst: Multiverse-Core, Multiverse-Portals, Multiverse-Inventories
 permissions:
     questmanager.admin:
         description: The permission to do plugin-critical things like reload

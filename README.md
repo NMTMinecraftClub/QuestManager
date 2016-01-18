@@ -20,10 +20,16 @@ Features
 There already are a large number of features available. A lot of work has been put in to create an more traditional-MMO/RPG feel than what's usually experienced in Minecraft. Features include:
 
     * Chat-based menu system with automatic handling and proofing
+    * Inventory-based menu systems for shops and service providers
     * Multiple NPC types with custom functionality
-    * Eight requirement types to build completely custom goals
+    * Shops and Service Shops (for selling and crafting)
+    * 10 requirement types to build completely custom goals
     * Player stats including current & completed quest count and Fame
-    * Self-updated Quest-log
+    * Self-updated Quest-log and Quest Journal
+    * A magic-compass feature
+    * A portal feature that allows easy integration with Multiverse Worlds
+    * Title system for cross-world rewards
+    * Extensive plugin-wide configuration
 
 
 Still To Come
